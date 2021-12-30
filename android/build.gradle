@@ -1,0 +1,82 @@
+group 'ai.docty.mobile_smart_watch'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        //jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        //jcenter()
+        mavenCentral()
+        flatDir {
+            dirs 'libs'
+            //dirs project(':<plugin_name>').file('libs')
+            // e.g. dirs project(':url_launcher').file('libs')  - don't miss the ':'
+            //  dirs "<path to flutter SDK>/.pub-cache/hosted/pub.dartlang.org/<name and version of plugin>/android/libs"
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+    useLibrary 'org.apache.http.legacy'
+    defaultConfig {
+        minSdkVersion 18
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+        ndk {
+            abiFilters 'armeabi-v7a', 'x86', 'x86_64', 'arm64-v8a'
+        }
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+        //abortOnError false
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            debuggable true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        /*release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }*/
+    }
+    dependencies {
+        //  implementation (name: 'ute_sdk', ext: 'aar')
+    }
+}
+dependencies {
+    implementation(name: 'ute_sdk', ext: 'aar')
+    //implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    // implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
+    //or individual
+//    implementation fileTree(include: ['*.jar'], dir: 'libs')
+//    implementation fileTree(include: ['*.aar'], dir: 'libs')
+    //implementation files("libs/ute_sdk.aar")
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.annotation:annotation:1.3.0'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+}

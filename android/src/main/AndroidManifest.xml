@@ -1,0 +1,61 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+  package="ai.docty.mobile_smart_watch">
+
+    <!--    <uses-feature android:name="android.hardware.bluetooth_le" />
+<uses-permission android:name="android.permission.BLUETOOTH" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- NRF upgrade required -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- The custom dial of the demo needs to take photos to replace the background-->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <!-- Needed only if your app makes the device discoverable to Bluetooth devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+
+    <application>
+        <!--<service
+            android:name="com.yc.pedometer.sdk.BluetoothLeService"
+            android:enabled="true"
+            android:theme="@style/PcmTextAppearance" />-->
+
+        <!--  改成你的key，请联系sdk开发者申请提供 -->
+        <meta-data
+            android:name="YCAPPKEY"
+            tools:replace="android:value"
+            android:value="dcd05f241b65ec7b6af0bbe6f05145c2" />
+
+        <!--Solve the bug of using ProtocolVersion to throw exception on android9.0-->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <!--DFU firmware upgrade-->
+        <!-- <activity android:name="com.yc.pedometer.update.NotificationActivity" />
+         <service android:name="com.yc.pedometer.update.DfuService" />-->
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+</manifest>
