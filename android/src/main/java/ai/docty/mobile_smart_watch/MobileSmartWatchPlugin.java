@@ -13,7 +13,18 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yc.pedometer.info.CustomTestStatusInfo;
+import com.yc.pedometer.info.DeviceParametersInfo;
+import com.yc.pedometer.info.HeartRateHeadsetSportModeInfo;
+import com.yc.pedometer.info.SportsModesInfo;
 import com.yc.pedometer.sdk.BluetoothLeService;
+import com.yc.pedometer.sdk.DataProcessing;
+import com.yc.pedometer.sdk.ICallback;
+import com.yc.pedometer.sdk.ICallbackStatus;
+import com.yc.pedometer.sdk.WriteCommandToBLE;
+import com.yc.pedometer.utils.GetFunctionList;
+import com.yc.pedometer.utils.GlobalVariable;
+import com.yc.pedometer.utils.SPUtil;
 
 import org.json.JSONObject;
 
@@ -57,9 +68,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     // pedometer integration
     private BluetoothLeService mBluetoothLeService;
-//  private WriteCommandToBLE mWriteCommand;
+    private WriteCommandToBLE mWriteCommand;
     // private Updates mUpdates;
-    // private DataProcessing mDataProcessing;
+     private DataProcessing mDataProcessing;
 
     //sdk return results
     private Result flutterInitResultBlu;
@@ -77,6 +88,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         methodChannel.setMethodCallHandler(mobileSmartWatchPlugin);
 
         mobileConnect = new MobileConnect(applicationContext.getApplicationContext(), activity);
+        mWriteCommand = WriteCommandToBLE.getInstance(applicationContext.getApplicationContext());
+        mDataProcessing = DataProcessing.getInstance(applicationContext.getApplicationContext());
     }
 
     @Override
@@ -90,22 +103,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             case WatchConstants.START_DEVICE_SEARCH:
                 searchForBTDevices( result);
                 break;
-            case WatchConstants.STOP_DEVICE_SEARCH:
+           /* case WatchConstants.STOP_DEVICE_SEARCH:
                 String resultStatus = mobileConnect.stopDevicesScan();
                 result.success(resultStatus);
-                break;
+                break;*/
             case WatchConstants.BIND_DEVICE:
                 connectBluDevice(call, result);
                 break;
             case WatchConstants.UNBIND_DEVICE:
-                // disconnectBluDevice(call, result);
+                 disconnectBluDevice(result);
                 break;
-            case WatchConstants.GET_DEVICE_BATTERY_VERSION:
-                //getDeviceBatteryNVersion(call, result);
+            case WatchConstants.SET_USER_PARAMS:
+                setUserParams(call, result);
                 break;
 
-            case WatchConstants.SET_USER_PARAMS:
-                //setUserParams(call, result);
+            case WatchConstants.GET_DEVICE_BATTERY_VERSION:
+                getDeviceBatteryNVersion(call, result);
                 break;
 
             case WatchConstants.GET_SYNC_STEPS:
@@ -215,71 +228,173 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         this.mBluetoothLeService = this.mobileConnect.getBluetoothLeService();
         if (this.mBluetoothLeService != null) {
             Log.e("mBluetoothLeService::", "inside not null call the listeners");
-            //initBlueServices();
+            initBlueServices();
         }
         result.success(status);
     }
-  /*private void setUserParams(MethodCall call, Result result) {
-    String age = (String) call.argument("age");
-    String height = (String) call.argument("height");
-    String weight = (String) call.argument("weight");
-    String gender = ((String) call.argument("gender"));
-    String steps = (String) call.argument("steps");
-    String isCel = (String) call.argument("isCelsius");
-    String screenOffTime = (String) call.argument("screenOffTime");
-    String isChineseLang = (String) call.argument("isChineseLang");
 
+    private void initBlueServices() {
+        mBluetoothLeService.setICallback(new ICallback() {
+            @Override
+            public void OnResult(boolean status, int result) {
+                Log.e("onResult:", "status>> "+status+" resultValue>> "+result);
+                switch (result) {
+                    case ICallbackStatus.GET_BLE_VERSION_OK:
+                        String deviceVersion =  SPUtil.getInstance(mContext).getImgLocalVersion();
+                        Log.e("deviceVersion::", deviceVersion);
+                        break;
+                    case ICallbackStatus.GET_BLE_BATTERY_OK:
+                        String batteryStatus = ""+SPUtil.getInstance(mContext).getBleBatteryValue();
+                        Log.e("batteryStatus::", batteryStatus);
+                        break;
+                        // while connecting a device
+                    case ICallbackStatus.READ_CHAR_SUCCESS: // 137
+                        break;
 
-    assert age != null;
-    int bodyAge = Integer.parseInt(age);
-    assert height != null;
-    int bodyHeight = Integer.parseInt(height);
-    assert weight != null;
-    int bodyWeight = Integer.parseInt(weight);
-    assert steps != null;
-    int bodySteps = Integer.parseInt(steps);
+                    case ICallbackStatus.WRITE_COMMAND_TO_BLE_SUCCESS: // 148
+                        break;
+                    case ICallbackStatus.SYNC_TIME_OK: // 6
+                        //sync time ok
+                        break;
+                    case ICallbackStatus.CONNECTED_STATUS: // 20
+                        // connected successfully
+                        break;
+                    case ICallbackStatus.DISCONNECT_STATUS: // 19
+                        // disconnected successfully
+                        break;
+                }
+            }
 
-    assert screenOffTime != null;
-    int setScreenOffTime = Integer.parseInt(screenOffTime);
+            @Override
+            public void OnDataResult(boolean status, int i, byte[] bytes) {
+                Log.e("OnDataResult:", "status>> "+status+"resultValue>> "+i);
+            }
 
-    boolean isMale = false;
-    assert gender != null;
-    if (gender.trim().equalsIgnoreCase("male")){
-      isMale = true;
+            @Override
+            public void onCharacteristicWriteCallback(int i) {
+                Log.e("onCharWriteCallback:", "status>> "+i);
+            }
+
+            @Override
+            public void onIbeaconWriteCallback(boolean b, int i, int i1, String s) {
+
+            }
+
+            @Override
+            public void onQueryDialModeCallback(boolean b, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onControlDialCallback(boolean b, int i, int i1) {
+
+            }
+
+            @Override
+            public void onSportsTimeCallback(boolean b, String s, int i, int i1) {
+
+            }
+
+            @Override
+            public void OnResultSportsModes(boolean b, int i, int i1, int i2, SportsModesInfo sportsModesInfo) {
+
+            }
+
+            @Override
+            public void OnResultHeartRateHeadset(boolean b, int i, int i1, int i2, HeartRateHeadsetSportModeInfo heartRateHeadsetSportModeInfo) {
+
+            }
+
+            @Override
+            public void OnResultCustomTestStatus(boolean b, int i, CustomTestStatusInfo customTestStatusInfo) {
+
+            }
+        });
     }
-    boolean isCelsius = false;
-    assert isCel != null;
-    if (isCel.equalsIgnoreCase("true")){
-      isCelsius = true;
+
+    private void disconnectBluDevice(Result result) {
+        boolean status = mobileConnect.disconnectDevice();
+        result.success(status);
     }
 
-    boolean isChinese = false;
-    assert isChineseLang != null;
-    if (isChineseLang.equalsIgnoreCase("true")){
-      isChinese = true;
+    private void setUserParams(MethodCall call, Result result) {
+        String age = (String) call.argument("age");
+        String height = (String) call.argument("height");
+        String weight = (String) call.argument("weight");
+        String gender = ((String) call.argument("gender"));
+        String steps = (String) call.argument("steps");
+        String isCel = (String) call.argument("isCelsius");
+        String screenOffTime = (String) call.argument("screenOffTime");
+        String isChineseLang = (String) call.argument("isChineseLang");
+
+
+        assert age != null;
+        int bodyAge = Integer.parseInt(age);
+        assert height != null;
+        int bodyHeight = Integer.parseInt(height);
+        assert weight != null;
+        int bodyWeight = Integer.parseInt(weight);
+        assert steps != null;
+        int bodySteps = Integer.parseInt(steps);
+
+        assert screenOffTime != null;
+        int setScreenOffTime = Integer.parseInt(screenOffTime);
+
+        boolean isMale = false;
+        assert gender != null;
+        if (gender.trim().equalsIgnoreCase("male")) {
+            isMale = true;
+        }
+        boolean isCelsius = false;
+        assert isCel != null;
+        if (isCel.equalsIgnoreCase("true")) {
+            isCelsius = true;
+        }
+
+        boolean isChinese = false;
+        assert isChineseLang != null;
+        if (isChineseLang.equalsIgnoreCase("true")) {
+            isChinese = true;
+        }
+
+        boolean isSupported = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
+        Log.e("isSupported::", "isSupported>>" + isSupported);
+
+        if (isSupported) {
+            DeviceParametersInfo info = new DeviceParametersInfo();
+            info.setBodyAge(bodyAge);
+            info.setBodyHeight(bodyHeight);
+            info.setBodyWeight(bodyWeight);
+            info.setStepTask(bodySteps);
+            info.setBodyGender(isMale ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
+            info.setCelsiusFahrenheitValue(isCelsius ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
+            info.setOffScreenTime(setScreenOffTime);
+            info.setOnlySupportEnCn(isChinese ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // no for english, yes for chinese
+
+//    info.setRaisHandbrightScreenSwitch(DeviceParametersInfo.switchStatusYes);
+//    info.setHighestRateAndSwitch(141, DeviceParametersInfo.switchStatusYes);
+//     info.setDeviceLostSwitch(DeviceParametersInfo.switchStatusNo);
+            if (mWriteCommand != null) {
+                mWriteCommand.sendDeviceParametersInfoToBLE(info);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } else {
+            result.success(WatchConstants.SC_NOT_SUPPORTED);
+        }
     }
 
-    boolean isSupported = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
-    Log.e("isSupported::", "isSupported>>" + isSupported);
-
-    if (isSupported) {
-      DeviceParametersInfo info = new DeviceParametersInfo();
-      info.setBodyAge(bodyAge);
-      info.setBodyHeight(bodyHeight);
-      info.setBodyWeight(bodyWeight);
-      info.setStepTask(bodySteps);
-      info.setBodyGender(isMale ? DeviceParametersInfo.switchStatusYes:DeviceParametersInfo.switchStatusNo);
-      info.setCelsiusFahrenheitValue(isCelsius? DeviceParametersInfo.switchStatusYes :  DeviceParametersInfo.switchStatusNo);
-      info.setOffScreenTime(setScreenOffTime);
-      info.setOnlySupportEnCn(isChinese ? DeviceParametersInfo.switchStatusYes:  DeviceParametersInfo.switchStatusNo);  // no for english, yes for chinese
-
-//            info.setRaisHandbrightScreenSwitch(DeviceParametersInfo.switchStatusYes);
-//            info.setHighestRateAndSwitch(141, DeviceParametersInfo.switchStatusYes);
-//            info.setDeviceLostSwitch(DeviceParametersInfo.switchStatusNo);
-
-      mWriteCommand.sendDeviceParametersInfoToBLE(info);
+    private void getDeviceBatteryNVersion(MethodCall call, Result result) {
+        if (mWriteCommand!=null){
+            mWriteCommand.sendToReadBLEVersion();
+            mWriteCommand.sendToReadBLEBattery();
+            result.success(WatchConstants.SC_INIT);
+        }else{
+            result.success(WatchConstants.SC_FAILURE);
+        }
     }
-  }*/
+
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {

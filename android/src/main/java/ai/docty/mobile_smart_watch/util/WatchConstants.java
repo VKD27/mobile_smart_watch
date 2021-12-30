@@ -8,11 +8,12 @@ public class WatchConstants {
     public static final String SC_COMPLETE = "complete";
     public static final String SC_CANCELED = "canceled";
     public static final String SC_INIT = "initiated";
+    public static final String SC_NOT_SUPPORTED = "notSupported";
     
     // device connections
     public static final String DEVICE_INITIALIZE = "initDeviceConnection";
     public static final String START_DEVICE_SEARCH = "startDeviceSearch";
-    public static final String STOP_DEVICE_SEARCH = "stopDeviceSearch";
+  //  public static final String STOP_DEVICE_SEARCH = "stopDeviceSearch";
     public static final  String BIND_DEVICE = "connectDevice";
     public static final  String UNBIND_DEVICE = "disconnectDevice";
     public static final  String BLE_NOT_SUPPORTED = "bleNotSupported";

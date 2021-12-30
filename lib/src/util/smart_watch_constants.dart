@@ -39,6 +39,7 @@ class SmartWatchConstants {
   static const String SC_COMPLETE = "complete";
   static const String SC_CANCELED = "canceled";
   static const String SC_INIT = "initiated";
+  static const String SC_NOT_SUPPORTED = "notSupported";
 
   //relates to device connections
   static const String DEVICE_INITIALIZE = "initDeviceConnection";

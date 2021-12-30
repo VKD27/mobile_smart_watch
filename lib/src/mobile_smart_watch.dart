@@ -86,7 +86,7 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.UNBIND_DEVICE);
   }
 
-  Future<bool> setUserParameters(var userParams) async{
+  Future<String> setUserParameters(var userParams) async{
     var userParamsSample = {
       "age":"50",  // user age (0-254)
       "height":"50", // always cm
@@ -96,12 +96,16 @@ class MobileSmartWatch {
       "isCelsius": "true", // if celsius then send "true" else "false" for Fahrenheit
       "screenOffTime": "15", //screen off time
       "isChineseLang": "false", //true for chinese lang setup and false for english
-      // "units": "celsius" // Celsius, Celsius
     };
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_USER_PARAMS, userParams);
   }
 
-  
+
+  Future<String> getBatteryStatus() async{
+    //returns result status == SC_INIT or SC_FAILURE
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_VERSION);
+  }
+
 
   /*static const MethodChannel _channel = const MethodChannel('mobile_smart_watch');
 
