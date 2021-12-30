@@ -34,10 +34,12 @@
 
 
     <application>
-        <!--<service
+        <!--android:label="mobile_smart_watch_example"
+        tools:replace="android:label"-->
+        <service
             android:name="com.yc.pedometer.sdk.BluetoothLeService"
             android:enabled="true"
-            android:theme="@style/PcmTextAppearance" />-->
+            android:theme="@style/PcmTextAppearance" />
 
         <!--  改成你的key，请联系sdk开发者申请提供 -->
         <meta-data
@@ -51,8 +53,8 @@
             android:required="false" />
 
         <!--DFU firmware upgrade-->
-        <!-- <activity android:name="com.yc.pedometer.update.NotificationActivity" />
-         <service android:name="com.yc.pedometer.update.DfuService" />-->
+         <activity android:name="com.yc.pedometer.update.NotificationActivity" />
+         <service android:name="com.yc.pedometer.update.DfuService" />
 
         <meta-data
             android:name="flutterEmbedding"

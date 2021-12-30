@@ -24,7 +24,7 @@ public class MobileConnect {
     private  Context context;
     private  Activity activity;
 
-    private BLEServiceOperate mBLEServiceOperate;
+    private final BLEServiceOperate mBLEServiceOperate;
     private BluetoothLeService mBluetoothLeService;
     private List<BleDevices> mLeDevices;
 
@@ -37,14 +37,14 @@ public class MobileConnect {
     public MobileConnect(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
-        this.mBLEServiceOperate = BLEServiceOperate.getInstance(context);
+        this.mBLEServiceOperate =  BLEServiceOperate.getInstance(context);
     }
 
     public BluetoothLeService getBluetoothLeService(){
         return this.mBluetoothLeService;
     }
     
-    public boolean initializeEnable() {
+    public boolean isBleEnabled() {
        // this. mBLEServiceOperate = BLEServiceOperate.getInstance(context);
         // mBLEServiceOperate.setDeviceScanListener(this);
         return this.mBLEServiceOperate.isBleEnabled();
@@ -60,12 +60,12 @@ public class MobileConnect {
             @Override
             public void LeScanCallback(BluetoothDevice device, int rssi, byte[] bytes) {
                 // Log.e("inside_scan ", "LeScanCallback");
-               // Log.e("inside_scan ", "LeScanCallback::"+rssi);
+                //Log.e("inside_scan ", "LeScanCallback::"+rssi);
                 if (mLeDevices == null) {
                     mLeDevices = new ArrayList<>();
                 }
                 if (device != null && device.getName() != null) {
-                    Log.e("inside_device", "" + device.getName());
+                    //Log.e("inside_device", "" + device.getName());
 
                     if (!TextUtils.isEmpty(device.getName())) {
                         BleDevices mBleDevices;
@@ -88,6 +88,7 @@ public class MobileConnect {
 
     public String startDevicesScan() {
         clearDeviceList();
+        Log.e("mBLEServiceOperate",""+this.mBLEServiceOperate);
         //mScanning = false;
         this.mBLEServiceOperate.startLeScan();
         return "success";
@@ -131,7 +132,7 @@ public class MobileConnect {
     }
 
     private void addDevice(BleDevices device) {
-        //Log.e("addDevice ", "BleDevices::" + device.getAddress());
+        Log.e("addDevice ", "BleDevices::" + device.getAddress());
         boolean repeat = false;
         for (int i = 0; i < this.mLeDevices.size(); i++) {
             if (this.mLeDevices.get(i).getAddress().equals(device.getAddress())) {
