@@ -113,11 +113,11 @@ class MobileSmartWatch {
 
 
   void onDeviceCallbackData(Function callback) async {
-    startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
+   // startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
   }
 
   void onCancelCallbackData(Function callback) async {
-    startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
+    //startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
   }
 
 /*static const MethodChannel _channel = const MethodChannel('mobile_smart_watch');
