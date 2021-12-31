@@ -53,7 +53,8 @@ class MobileSmartWatch {
     if (resultDevices != null) {
       List<SmartDeviceModel> deviceList = [];
       Map<String, dynamic> responseBody = jsonDecode(resultDevices);
-      List<dynamic> responseData = jsonDecode(responseBody["data"]);
+     // List<dynamic> responseData = jsonDecode(responseBody["data"]);
+      List<dynamic> responseData = responseBody["data"];
       for (var data in responseData) {
         deviceList.add(new SmartDeviceModel.fromJson(data));
       }
@@ -113,11 +114,11 @@ class MobileSmartWatch {
 
 
   void onDeviceCallbackData(Function callback) async {
-   // startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
+    startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
   }
 
-  void onCancelCallbackData(Function callback) async {
-    //startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
+  void onCancelCallbackData() async {
+   // stopListening(callback as void Function(), SmartWatchConstants.SMART_CALLBACK);
   }
 
 /*static const MethodChannel _channel = const MethodChannel('mobile_smart_watch');

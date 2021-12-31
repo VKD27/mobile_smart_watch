@@ -26,6 +26,8 @@ import com.yc.pedometer.utils.GetFunctionList;
 import com.yc.pedometer.utils.GlobalVariable;
 import com.yc.pedometer.utils.SPUtil;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -180,19 +182,35 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     String resultStat = mobileConnect.stopDevicesScan();
                     Log.e("resultStat ", "deviceScanStop::" + resultStat);
                     ArrayList<BleDevices> bleDeviceList = mobileConnect.getDevicesList();
+                    JSONArray jsonArray = new JSONArray();
+
                     for (BleDevices device : bleDeviceList) {
                         Log.e("device_for ", "device::" + device.getName());
+                        try {
+                            JSONObject jsonObj = new JSONObject();
+                            jsonObj.put("name",device.getName());
+                            jsonObj.put("address",device.getAddress());
+                            jsonObj.put("rssi",device.getRssi());
+                            jsonObj.put("deviceType",device.getDeviceType());
+                            jsonObj.put("bondState",device.getBondState());
+                            jsonObj.put("alias",device.getAlias());
+                            jsonArray.put(jsonObj);
+
+                        } catch (Exception e) {
+                          //  e.printStackTrace();
+                            Log.e("jsonExp::", "jsonParse::" + e.getMessage());
+                        }
                     }
                     // mDevices = mLeDevices;
-                    Type listType = new TypeToken<ArrayList<BleDevices>>() {
-                    }.getType();
-                    String jsonString = new Gson().toJson(bleDeviceList, listType);
+//                    Type listType = new TypeToken<ArrayList<BleDevices>>() {
+//                    }.getType();
+//                    String jsonString = new Gson().toJson(bleDeviceList, listType);
 
-                    Log.e("jsonString ", "jsonString::" + jsonString);
+                    Log.e("jsonString ", "jsonString::" + jsonArray.toString());
 
                     try {
                         jsonObject.put("status", WatchConstants.SC_SUCCESS);
-                        jsonObject.put("data", jsonString);
+                        jsonObject.put("data", jsonArray);
                         Log.e("jsonStringList", jsonObject.toString());
                         result.success(jsonObject.toString());
                     } catch (Exception e) {
