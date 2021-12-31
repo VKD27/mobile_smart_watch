@@ -29,6 +29,7 @@ import com.yc.pedometer.utils.SPUtil;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import ai.docty.mobile_smart_watch.model.BleDevices;
@@ -178,12 +179,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 new Handler().postDelayed(() -> {
                     String resultStat = mobileConnect.stopDevicesScan();
                     Log.e("resultStat ", "deviceScanStop::" + resultStat);
-                    List<BleDevices> bleDeviceList = mobileConnect.getDevicesList();
+                    ArrayList<BleDevices> bleDeviceList = mobileConnect.getDevicesList();
                     for (BleDevices device : bleDeviceList) {
                         Log.e("device_for ", "device::" + device.getName());
                     }
                     // mDevices = mLeDevices;
-                    Type listType = new TypeToken<List<BleDevices>>() {
+                    Type listType = new TypeToken<ArrayList<BleDevices>>() {
                     }.getType();
                     String jsonString = new Gson().toJson(bleDeviceList, listType);
                     try {
@@ -395,6 +396,20 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void syncAllStepsData(Result result) {
+        Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
+        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+            if (mWriteCommand!=null){
+                mWriteCommand.syncAllStepData();
+                result.success(WatchConstants.SC_INIT);
+            }else{
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        }else{
+            //device disconnected
+            result.success(WatchConstants.SC_DISCONNECTED);
+        }
+    }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {

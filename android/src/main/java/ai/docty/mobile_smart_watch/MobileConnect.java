@@ -26,7 +26,7 @@ public class MobileConnect {
 
     private final BLEServiceOperate mBLEServiceOperate;
     private BluetoothLeService mBluetoothLeService;
-    private List<BleDevices> mLeDevices;
+    private ArrayList<BleDevices> mLeDevices;
 
     private Handler mHandler;
     private boolean mScanning;
@@ -126,7 +126,7 @@ public class MobileConnect {
     }
     
 
-    public List<BleDevices> getDevicesList() {
+    public ArrayList<BleDevices> getDevicesList() {
         Log.e("getDevicesList ", "BleDevices::" + this.mLeDevices.size());
         return this.mLeDevices;
     }

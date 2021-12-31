@@ -11,6 +11,7 @@ import 'dart:async';
 
 part 'src/mobile_smart_watch.dart';
 part 'src/util/smart_watch_constants.dart';
+part 'src/util/callbacks.dart';
 part 'src/models/smart_device_model.dart';
 
 

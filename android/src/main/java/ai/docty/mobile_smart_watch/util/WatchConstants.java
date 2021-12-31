@@ -7,6 +7,7 @@ public class WatchConstants {
     public static final String SC_FAILURE = "failure";
     public static final String SC_COMPLETE = "complete";
     public static final String SC_CANCELED = "canceled";
+    public static final String SC_DISCONNECTED = "disconnected";
     public static final String SC_INIT = "initiated";
     public static final String SC_NOT_SUPPORTED = "notSupported";
     

@@ -38,6 +38,7 @@ class SmartWatchConstants {
   static const String SC_FAILURE = "failure";
   static const String SC_COMPLETE = "complete";
   static const String SC_CANCELED = "canceled";
+  static const String SC_DISCONNECTED = "disconnected";
   static const String SC_INIT = "initiated";
   static const String SC_NOT_SUPPORTED = "notSupported";
 
@@ -63,6 +64,8 @@ class SmartWatchConstants {
 
   //for continuous call backs from the hardware device search
   static const String SMART_CALLBACK = "smartCallbacks";
+  static const String START_LISTENING = "startListening";
+  static const String STOP_LISTENING = "cancelListening";
 
 
 

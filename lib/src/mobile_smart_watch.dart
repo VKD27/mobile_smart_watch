@@ -106,8 +106,21 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_VERSION);
   }
 
+  Future<String> syncStepsData() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_STEPS);
+  }
 
-  /*static const MethodChannel _channel = const MethodChannel('mobile_smart_watch');
+
+  void onDeviceCallbackData(Function callback) async {
+    startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
+  }
+
+  void onCancelCallbackData(Function callback) async {
+    startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
+  }
+
+/*static const MethodChannel _channel = const MethodChannel('mobile_smart_watch');
 
   static Future<String?> get platformVersion async {
     final String? version = await _channel.invokeMethod('getPlatformVersion');
