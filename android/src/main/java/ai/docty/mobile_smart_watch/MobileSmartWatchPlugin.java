@@ -187,6 +187,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     Type listType = new TypeToken<ArrayList<BleDevices>>() {
                     }.getType();
                     String jsonString = new Gson().toJson(bleDeviceList, listType);
+
+                    Log.e("jsonString ", "jsonString::" + jsonString);
+
                     try {
                         jsonObject.put("status", WatchConstants.SC_SUCCESS);
                         jsonObject.put("data", jsonString);
