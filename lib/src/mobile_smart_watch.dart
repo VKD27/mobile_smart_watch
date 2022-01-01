@@ -6,24 +6,24 @@ class MobileSmartWatch {
   static MobileSmartWatch? _instance;
   Map? mapOptions;
 
-
   factory MobileSmartWatch([options]) {
     if (_instance == null) {
       MethodChannel methodChannel = const MethodChannel(SmartWatchConstants.SMART_METHOD_CHANNEL);
 
-      EventChannel eventChannel = EventChannel(SmartWatchConstants.DC_EVENTS_CHANNEL); // temporary
+      EventChannel eventChannel = EventChannel(SmartWatchConstants.SMART_EVENTS); // temporary for stream events
 
       //check if the option variable is AFOptions type or map type
-      // assert(options is Map);
-      // if (options is Map) {
-      _instance = MobileSmartWatch.private(methodChannel, eventChannel, mapOptions: options);
-      // }
+      //assert(options is Map);
+     // if (options is Map) {
+        _instance = MobileSmartWatch.private(methodChannel, eventChannel, mapOptions: options);
+     // }
     }
     return _instance!;
   }
 
   @visibleForTesting
   MobileSmartWatch.private(this._methodChannel, this._eventChannel, {this.mapOptions});
+
 
   Future<String> initializeDeviceConnection() async {
     var result = await _methodChannel.invokeMethod(SmartWatchConstants.DEVICE_INITIALIZE);
@@ -114,7 +114,7 @@ class MobileSmartWatch {
 
 
   void onDeviceCallbackData(Function callback) async {
-   // startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
+    startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
   }
 
   void onCancelCallbackData() async {

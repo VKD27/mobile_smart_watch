@@ -25,6 +25,9 @@ class HomePageState extends State<HomePage> {
   void initState() {
    // smartCare = SmartCare();
     super.initState();
+    _mobileSmartWatch.onDeviceCallbackData((res) {
+      print("onDeviceCallbackData1 res: " + res.toString());
+    });
   }
 
   @override
@@ -106,7 +109,7 @@ class HomePageState extends State<HomePage> {
                          // call this in the initstate in the app.
                          callInitiation(context);
                        },
-                       child: Text('Initialize & Search Devices',
+                       child: Text('Initialize SDK',
                            style: TextStyle(color: Colors.white)),
                      ),
                    ),
@@ -149,6 +152,16 @@ class HomePageState extends State<HomePage> {
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
              ],
+           ),
+           SizedBox(
+             height: 8,
+           ),
+           TextButton(
+             onPressed: () async {
+               // call this function on the dispose method of the screens.
+               await cancelCallback();
+             }, child:  Text('Cancel CallBacks',
+               style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
            ),
            //Text('No Devices Found'),
            Container(
@@ -383,6 +396,10 @@ class HomePageState extends State<HomePage> {
      String batteryStatus = await _mobileSmartWatch.getBatteryStatus();
      print('batteryStatus>> $batteryStatus');
    }
+
+   Future<void> cancelCallback() async {
+
+  }
 
 
 

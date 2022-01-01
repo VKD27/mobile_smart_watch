@@ -65,19 +65,19 @@ class SmartWatchConstants {
   //for continuous call backs from the hardware device search
   static const String SMART_CALLBACK = "smartCallbacks";
   static const String START_LISTENING = "startListening";
+  static const String SERVICE_LISTENING = "serviceListener";
+  static const String CALL_LISTENER = "callListener";
   static const String STOP_LISTENING = "cancelListening";
 
 
 
-  static const String DC_DEVICE_CALLBACK = "deviceCallbacks";
-
-  static const String DC_EVENTS_CHANNEL = "deviceEvents";
-
+  //listeners ids list
+  static const String BATTERY_VERSION = "batteryVersion";
 
 
-  static const String DC_DEVICE_CONNECT = "deviceConnect";
 
-  static const String DC_DEVICE_OPERATIONS = "deviceOperations";
+  static const String SMART_EVENTS = "smartEvents";
+
 
   static const String DC_SUCCESS = "success";
   static const String DC_FAILURE = "failure";
@@ -96,11 +96,11 @@ class SmartWatchConstants {
   static const String SPIRO_DISPOSE_ALL = "disposeAll";*/
 
   //DEVICE_STATUS
-  static const  String CONNECT_UNSUPPORT_DEVICETYPE = "unSupportedDevice";
-  static const  String CONNECT_UNSUPPORT_BLUETOOTHTYPE = "unSupportedBluetooth";
-  static const  String CONNECT_CONNECTING = "connecting";
-  static const  String CONNECT_CONNECTED = "connected";
-  static const  String CONNECT_DISCONNECTED = "disconnected";
+  // static const  String CONNECT_UNSUPPORT_DEVICETYPE = "unSupportedDevice";
+  // static const  String CONNECT_UNSUPPORT_BLUETOOTHTYPE = "unSupportedBluetooth";
+  // static const  String CONNECT_CONNECTING = "connecting";
+  // static const  String CONNECT_CONNECTED = "connected";
+  // static const  String CONNECT_DISCONNECTED = "disconnected";
 
 
   //requires only for IOS

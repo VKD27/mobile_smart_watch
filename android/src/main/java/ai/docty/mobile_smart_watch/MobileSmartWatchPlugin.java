@@ -7,11 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.yc.pedometer.info.CustomTestStatusInfo;
 import com.yc.pedometer.info.DeviceParametersInfo;
@@ -32,7 +34,9 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ai.docty.mobile_smart_watch.model.BleDevices;
 import ai.docty.mobile_smart_watch.util.WatchConstants;
@@ -60,7 +64,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private ActivityPluginBinding activityPluginBinding;
 
     private MethodChannel methodChannel;
+    private MethodChannel mCallbackChannel;
 
+    // Callbacks
+    final Handler uiThreadHandler = new Handler(Looper.getMainLooper());
+    // private Map<String, Runnable> callbackById = new HashMap<>();
+    private Map<String, Map<String, Object>> mCallbacks = new HashMap<>();
 
     private Context mContext;
     private Activity activity;
@@ -68,12 +77,29 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private MobileConnect mobileConnect;
 
     private final int REQUEST_ENABLE_BT = 1212;
+    private Boolean validateDeviceListCallback = false;
 
     // pedometer integration
     private BluetoothLeService mBluetoothLeService;
     private WriteCommandToBLE mWriteCommand;
     // private Updates mUpdates;
-     private DataProcessing mDataProcessing;
+    private DataProcessing mDataProcessing;
+
+
+    MethodCallHandler callbacksHandler = new MethodCallHandler() {
+        @Override
+        public void onMethodCall(MethodCall call, Result result) {
+            final String method = call.method;
+            Log.e("calling_method", "callbacksHandler++ "+method);
+            //WatchConstants.START_LISTENING.equalsIgnoreCase(method)
+            //if ("startListening".equals(method)) {
+            if (WatchConstants.START_LISTENING.equalsIgnoreCase(method)) {
+                startListening(call.arguments, result);
+            } else {
+                result.notImplemented();
+            }
+        }
+    };
 
     //sdk return results
     private Result flutterInitResultBlu;
@@ -89,6 +115,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private void setUpEngine(MobileSmartWatchPlugin mobileSmartWatchPlugin, BinaryMessenger binaryMessenger, Context applicationContext) {
         methodChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_METHOD_CHANNEL); // "mobile_smart_watch"
         methodChannel.setMethodCallHandler(mobileSmartWatchPlugin);
+
+        mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
+        mCallbackChannel.setMethodCallHandler(callbacksHandler);
 
         mobileConnect = new MobileConnect(applicationContext.getApplicationContext(), activity);
         mWriteCommand = WriteCommandToBLE.getInstance(applicationContext.getApplicationContext());
@@ -121,7 +150,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 break;
 
             case WatchConstants.GET_DEVICE_BATTERY_VERSION:
-                getDeviceBatteryNVersion(call, result);
+                getDeviceBatteryNVersion(result);
                 break;
 
             case WatchConstants.GET_SYNC_STEPS:
@@ -174,7 +203,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private void searchForBTDevices( Result result) {
+    private void searchForBTDevices(Result result) {
         try {
             JSONObject jsonObject = new JSONObject();
             if (mobileConnect != null) {
@@ -205,7 +234,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                    Type listType = new TypeToken<ArrayList<BleDevices>>() {
 //                    }.getType();
 //                    String jsonString = new Gson().toJson(bleDeviceList, listType);
-
+//                    JsonArray jsonArray2 = new Gson().toJsonTree(bleDeviceList, listType).getAsJsonArray();
                     Log.e("jsonString ", "jsonString::" + jsonArray.toString());
 
                     try {
@@ -259,42 +288,57 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         mBluetoothLeService.setICallback(new ICallback() {
             @Override
             public void OnResult(boolean status, int result) {
-                Log.e("onResult:", "status>> "+status+" resultValue>> "+result);
-                switch (result) {
-                    case ICallbackStatus.GET_BLE_VERSION_OK:
-                        String deviceVersion =  SPUtil.getInstance(mContext).getImgLocalVersion();
-                        Log.e("deviceVersion::", deviceVersion);
-                        break;
-                    case ICallbackStatus.GET_BLE_BATTERY_OK:
-                        String batteryStatus = ""+SPUtil.getInstance(mContext).getBleBatteryValue();
-                        Log.e("batteryStatus::", batteryStatus);
-                        break;
+                Log.e("onResult:", "status>> " + status + " resultValue>> " + result);
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    switch (result) {
+                        case ICallbackStatus.GET_BLE_VERSION_OK:
+                            String deviceVersion = SPUtil.getInstance(mContext).getImgLocalVersion();
+                            Log.e("deviceVersion::", deviceVersion);
+                            jsonObject.put("deviceVersion", deviceVersion);
+                            runOnUIThread(new JSONObject(), WatchConstants.DEVICE_VERSION, WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.GET_BLE_BATTERY_OK:
+                            String deviceVer = SPUtil.getInstance(mContext).getImgLocalVersion();
+                            String batteryStatus = "" + SPUtil.getInstance(mContext).getBleBatteryValue();
+                            Log.e("batteryStatus::", batteryStatus);
+                            jsonObject.put("deviceVersion", deviceVer);
+                            jsonObject.put("batteryStatus", batteryStatus);
+                           // runOnUIThread(jsonObject, WatchConstants.BATTERY_VERSION, WatchConstants.SC_SUCCESS);
+                            runOnUIThread(jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
                         // while connecting a device
-                    case ICallbackStatus.READ_CHAR_SUCCESS: // 137
-                        break;
+                        case ICallbackStatus.READ_CHAR_SUCCESS: // 137
+                            break;
 
-                    case ICallbackStatus.WRITE_COMMAND_TO_BLE_SUCCESS: // 148
-                        break;
-                    case ICallbackStatus.SYNC_TIME_OK: // 6
-                        //sync time ok
-                        break;
-                    case ICallbackStatus.CONNECTED_STATUS: // 20
-                        // connected successfully
-                        break;
-                    case ICallbackStatus.DISCONNECT_STATUS: // 19
-                        // disconnected successfully
-                        break;
+                        case ICallbackStatus.WRITE_COMMAND_TO_BLE_SUCCESS: // 148
+                            break;
+                        case ICallbackStatus.SYNC_TIME_OK: // 6
+                            //sync time ok
+                            break;
+                        case ICallbackStatus.CONNECTED_STATUS: // 20
+                            // connected successfully
+                            runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.DISCONNECT_STATUS: // 19
+                            // disconnected successfully
+                            runOnUIThread(new JSONObject(), WatchConstants.DEVICE_DISCONNECTED, WatchConstants.SC_SUCCESS);
+                            break;
+                    }
+                } catch (Exception exp) {
+                    Log.e("ble_service_exp:", exp.getMessage());
+                    runOnUIThread(new JSONObject(), WatchConstants.SERVICE_LISTENING, WatchConstants.SC_FAILURE);
                 }
             }
 
             @Override
             public void OnDataResult(boolean status, int i, byte[] bytes) {
-                Log.e("OnDataResult:", "status>> "+status+"resultValue>> "+i);
+                Log.e("OnDataResult:", "status>> " + status + "resultValue>> " + i);
             }
 
             @Override
             public void onCharacteristicWriteCallback(int i) {
-                Log.e("onCharWriteCallback:", "status>> "+i);
+                Log.e("onCharWriteCallback:", "status>> " + i);
             }
 
             @Override
@@ -407,10 +451,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private void getDeviceBatteryNVersion(MethodCall call, Result result) {
+    private void getDeviceBatteryNVersion(Result result) {
         if (mWriteCommand!=null){
-            mWriteCommand.sendToReadBLEVersion();
             mWriteCommand.sendToReadBLEBattery();
+            mWriteCommand.sendToReadBLEVersion();
             result.success(WatchConstants.SC_INIT);
         }else{
             result.success(WatchConstants.SC_FAILURE);
@@ -457,6 +501,55 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     @Override
     public void onDetachedFromActivity() {
         Log.e("onDetachedFromActivity", "onDetachedFromActivity");
+    }
+
+    private void startListening(Object arguments, Result rawResult) {
+        // Get callback id
+        String callbackName = (String) arguments;
+
+        Log.e("callbackName", "start_listener "+ callbackName);
+
+        if (callbackName.equals(WatchConstants.SMART_CALLBACK)) {
+            validateDeviceListCallback = true;
+        }
+
+        Map<String, Object> args = new HashMap<>();
+        args.put("id", callbackName);
+        mCallbacks.put(callbackName, args);
+
+        rawResult.success(null);
+    }
+    private void cancelListening(Object args, MethodChannel.Result result) {
+        // Get callback id
+      //  int currentListenerId = (int) args;
+        String callbackName = (String) args;
+        Log.e("callbackName", "cancel_listener "+callbackName);
+        // Remove callback
+        mCallbacks.remove(callbackName);
+        // Do additional stuff if required to cancel the listener
+        result.success(null);
+    }
+
+    private void runOnUIThread(final JSONObject data, final String callbackName, final String status) {
+        uiThreadHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("runOnUIThread", "Calling runOnUIThread with: " + data);
+
+                        try {
+                            JSONObject args = new JSONObject();
+                            args.put("id", callbackName);
+                            args.put("status", status);
+                            args.put("data", data);
+                            mCallbackChannel.invokeMethod(WatchConstants.CALL_LISTENER, args.toString());
+
+                        } catch (Exception e) {
+                            // e.printStackTrace();
+                            Log.e("data_run_exp:", e.getMessage());
+                        }
+                    }
+                }
+        );
     }
 
 /*    @Override

@@ -33,42 +33,38 @@ public class WatchConstants {
 
     //to listen for continuous call backs from the hardware device search
     public static final String SMART_CALLBACK = "smartCallbacks";
+    public static final String START_LISTENING = "startListening";
+    public static final String SERVICE_LISTENING = "serviceListener";
+    public static final String CALL_LISTENER = "callListener";
+    public static final String STOP_LISTENING = "cancelListening";
+
+    //listeners ids list
+    public static final String BATTERY_VERSION = "batteryVersion";
+    public static final String DEVICE_VERSION = "deviceVersion";
+    public static final String DEVICE_DISCONNECTED = "deviceDisconnected";
+    public static final String DEVICE_CONNECTED = "deviceConnected";
 
 
     // for streaming broadcast action event name
     public static final String BROADCAST_ACTION_NAME = "ai.docty.smartcare";
-    
-    
-    
-
- 
-
-
-    final static String DC_EVENTS_CHANNEL = "deviceEvents";
-
-    final static String DC_METHOD_CHANNEL = "deviceMethods";
-    
-    final static String DC_DEVICE_CONNECT = "deviceConnect";
-
-    final static String DC_DEVICE_OPERATIONS = "deviceOperations";
 
 
    
 
 
     //device init methods calls
-    final static String SMART_STOP_SEARCH = "stopDeviceSearch";
-    final static String SMART_SET_USER_DATA = "setUserParams";
-    final static String SMART_CONNECT_DEVICE = "connectWithDevice";
-    final static String SMART_DISCONNECT_DEVICE = "disconnectDevice";
-    final static String SMART_DELETE_DATA = "deleteData";
-    final static String SMART_GET_DATA = "getDeviceData";
-    final static String SMART_DISPOSE_ALL = "disposeAll";
+//    final static String SMART_STOP_SEARCH = "stopDeviceSearch";
+//    final static String SMART_SET_USER_DATA = "setUserParams";
+//    final static String SMART_CONNECT_DEVICE = "connectWithDevice";
+//    final static String SMART_DISCONNECT_DEVICE = "disconnectDevice";
+//    final static String SMART_DELETE_DATA = "deleteData";
+//    final static String SMART_GET_DATA = "getDeviceData";
+//    final static String SMART_DISPOSE_ALL = "disposeAll";
 
     //DEVICE_STATUS
-    final static String CONNECT_UNSUPPORT_DEVICETYPE = "unSupportedDevice";
-    final static String CONNECT_UNSUPPORT_BLUETOOTHTYPE = "unSupportedBluetooth";
-    final static String CONNECT_CONNECTING = "connecting";
-    final static String CONNECT_CONNECTED = "connected";
-    final static String CONNECT_DISCONNECTED = "disconnected";
+//    final static String CONNECT_UNSUPPORT_DEVICETYPE = "unSupportedDevice";
+//    final static String CONNECT_UNSUPPORT_BLUETOOTHTYPE = "unSupportedBluetooth";
+//    final static String CONNECT_CONNECTING = "connecting";
+//    final static String CONNECT_CONNECTED = "connected";
+//    final static String CONNECT_DISCONNECTED = "disconnected";
 }
