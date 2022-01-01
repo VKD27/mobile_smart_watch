@@ -97,14 +97,19 @@ class MobileSmartWatch {
       "isCelsius": "true", // if celsius then send "true" else "false" for Fahrenheit
       "screenOffTime": "15", //screen off time
       "isChineseLang": "false", //true for chinese lang setup and false for english
+      "raiseHandWakeUp": "false", //true or false -- send true to wake up bright light switch
     };
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_USER_PARAMS, userParams);
   }
 
+  Future<String> getDeviceVersion() async{
+    //returns result status == SC_INIT or SC_FAILURE
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_VERSION);
+  }
 
   Future<String> getBatteryStatus() async{
-    //returns result status == SC_INIT or SC_FAILURE
-    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_VERSION);
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_STATUS);
   }
 
   Future<String> syncStepsData() async{
@@ -112,6 +117,31 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_STEPS);
   }
 
+  Future<String> syncRateData() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_RATE);
+  }
+
+  Future<String> syncBloodPressure() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SYNC_BP);
+  }
+
+  Future<String> startBloodPressure() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.START_BP_TEST);
+  }
+  Future<String> stopBloodPressure() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.STOP_BP_TEST);
+  }
+
+
+
+  Future<String> testTempData() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.START_TEST_TEMP);
+  }
 
   void onDeviceCallbackData(Function callback) async {
     startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);

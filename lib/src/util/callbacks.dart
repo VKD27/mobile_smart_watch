@@ -10,7 +10,7 @@ Future<void> _methodCallHandler(MethodCall call) async {
   print('methodCallHandler method: ${call.method}');
   print('methodCallHandler argument : ${jsonDecode(call.arguments)}');
   dynamic callMap = jsonDecode(call.arguments);
-  print('methodCallHandler callMap : ${callMap}');
+  //print('methodCallHandler callMap : ${callMap}');
   switch (call.method) {
     case SmartWatchConstants.CALL_LISTENER:
       //_callbacksById[call.arguments["id"]](call.arguments["args"]);

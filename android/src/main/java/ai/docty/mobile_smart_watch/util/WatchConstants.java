@@ -20,13 +20,17 @@ public class WatchConstants {
     public static final  String BLE_NOT_SUPPORTED = "bleNotSupported";
     
     //device data
-    public static final String GET_DEVICE_BATTERY_VERSION = "fetchBatteryNVersion";
+    public static final String GET_DEVICE_VERSION = "fetchDeviceVersion";
+    public static final String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
     public static final String SET_USER_PARAMS = "setUserDetails";
 
     // daily activities & operations
     public static final String GET_SYNC_STEPS = "syncAllStepsData";
     public static final String GET_SYNC_RATE = "syncRateData";
-
+    public static final String START_TEST_TEMP = "startTestTemp";
+    public static final String START_BP_TEST = "startBPTest";
+    public static final String STOP_BP_TEST = "stopBPTest";
+    public static final String SYNC_BP = "syncBP";
 
     //method channel
     public static final String SMART_METHOD_CHANNEL = "mobile_smart_watch";
@@ -38,11 +42,21 @@ public class WatchConstants {
     public static final String CALL_LISTENER = "callListener";
     public static final String STOP_LISTENING = "cancelListening";
 
-    //listeners ids list
-    public static final String BATTERY_VERSION = "batteryVersion";
+    //listeners result callback list
+    public static final String BATTERY_STATUS = "batteryStatus";
     public static final String DEVICE_VERSION = "deviceVersion";
-    public static final String DEVICE_DISCONNECTED = "deviceDisconnected";
+   // public static final String DEVICE_NOT_VALID = "deviceNotValid";
+    public static final String DEVICE_DISCONNECTED = "deviceDisConnected";
     public static final String DEVICE_CONNECTED = "deviceConnected";
+    public static final String UPDATE_DEVICE_PARAMS = "updateDeviceParams";
+
+    //real time sync data constants
+    public static final String STEPS_REAL_TIME = "stepsRealTime";
+    public static final String HR_REAL_TIME = "heartRateRT";
+    public static final String BP_RESULT = "bpResult";
+
+
+    public static final String CALLBACK_EXCEPTION = "callbackException";
 
 
     // for streaming broadcast action event name

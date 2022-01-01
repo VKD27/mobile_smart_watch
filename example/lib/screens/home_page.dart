@@ -21,12 +21,123 @@ class HomePageState extends State<HomePage> {
   bool showProgress = false;
   bool deviceConnected = false;
 
+  String deviceMessage ='';
+  String deviceVersion ='';
+  String batteryStatus ='';
+
+  String  mSteps ='',mCal ='',mDistance ='';
+  String  heartRate ='';
+  String  mHigh ='',mLow ='';
+
   @override
   void initState() {
-   // smartCare = SmartCare();
     super.initState();
-    _mobileSmartWatch.onDeviceCallbackData((res) {
-      print("onDeviceCallbackData1 res: " + res.toString());
+    _mobileSmartWatch.onDeviceCallbackData((response) {
+      print("onDeviceCallbackData1 res: " + response.toString());
+      if (response['id'].toString() == SmartWatchConstants.SMART_CALLBACK) {
+        // only 3 params, result is return resultant, status is success/failure, & data is json object of multiple data
+        String result = response['result'].toString();
+        String status = response['status'].toString();
+        var jsonData = response['data'];
+        //
+        switch (result) {
+          case SmartWatchConstants.DEVICE_VERSION:
+            // data contains only "deviceVersion" returns as String
+            String deviceVer = jsonData['deviceVersion'].toString();
+            setState(() {
+              deviceVersion = deviceVer;
+            });
+            break;
+          case SmartWatchConstants.BATTERY_STATUS:
+            // data contains only "deviceVersion"," batteryStatus" returns as String
+            // String deviceVersion = jsonData['deviceVersion'].toString();
+            print('inside battery status');
+            String batteryStat = jsonData['batteryStatus'].toString();
+            //print('inside battery status');
+            setState(() {
+              batteryStatus = batteryStat + "%";
+            });
+            break;
+
+          case SmartWatchConstants.DEVICE_CONNECTED:
+            // data object will be empty always
+            if (status == SmartWatchConstants.SC_SUCCESS) {
+              print('inside device connect status');
+              // then the device is successfully connected.
+              setState(() {
+                deviceConnected = true;
+                deviceMessage = "Device Connected";
+              });
+            }
+            break;
+
+          case SmartWatchConstants.UPDATE_DEVICE_PARAMS:
+            // data object will be empty always
+            if (status == SmartWatchConstants.SC_SUCCESS) {
+              // this message can vary with the corresponding update from/to the patient app.
+              Global.showAlertDialog(context, "Updated User Params", "We ahve updated your profile data with the smart watch.");
+            }
+            break;
+
+          case SmartWatchConstants.DEVICE_DISCONNECTED:
+            // data object will be empty always
+            if (status == SmartWatchConstants.SC_SUCCESS) {
+              setState(() {
+                deviceConnected = false;
+                deviceMessage = "Device Disconnected";
+              });
+              // not a valid device to connect the data or fetch the data
+              //Global.showAlertDialog(context, "Invalid Device", "The device trying to connect is not a valid device or unsupported to connect the data or fetch the data");
+              Global.showAlertDialog(context, "Device Disconnected", "Your device has been diconnected");
+            }
+            break;
+          case SmartWatchConstants.STEPS_REAL_TIME:
+          // real time sync as well as the daily sync
+            if (status == SmartWatchConstants.SC_SUCCESS) {
+              print('inside steps real time');
+              String steps = jsonData['steps'].toString();
+              String distance = jsonData['distance'].toString();
+              String calories = jsonData['calories'].toString();
+
+              setState(() {
+                mSteps = steps;
+                mCal = calories; // will be always in kCal units
+                mDistance = distance;// will be always in kM units
+              });
+            }
+            break;
+          case SmartWatchConstants.HR_REAL_TIME:
+          // real time sync as well as the daily sync
+            if (status == SmartWatchConstants.SC_SUCCESS) {
+              print('inside hr real time');
+              String hr = jsonData['hr'].toString();
+              setState(() {
+                heartRate = hr; // always bpm
+              });
+            }
+            break;
+
+          case SmartWatchConstants.BP_RESULT:
+          // real time sync as well as the daily sync
+            if (status == SmartWatchConstants.SC_SUCCESS) {
+              print('inside bp result');
+              String high = jsonData['high'].toString();
+              String low = jsonData['low'].toString();
+              setState(() {
+                mHigh = high;
+                mLow = low;
+              });
+            }
+            break;
+
+
+          case SmartWatchConstants.CALLBACK_EXCEPTION:
+            // something went wrong, which falls in the exception
+            break;
+          default:
+            break;
+        }
+      }
     });
   }
 
@@ -35,7 +146,7 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Device Care'),
+        title: Text('Mobile Smart Care'),
         elevation: 1.5,
         actions: [
           IconButton(
@@ -127,7 +238,7 @@ class HomePageState extends State<HomePage> {
                        onPressed: () async {
                          await disconnectDevice();
                        },
-                       child: Text('Disconnect Device', style: TextStyle(color: Colors.white)),
+                       child: Text('Disconnect', style: TextStyle(color: Colors.white)),
                      ),
                    ),
                  ),
@@ -156,19 +267,105 @@ class HomePageState extends State<HomePage> {
            SizedBox(
              height: 8,
            ),
-           TextButton(
-             onPressed: () async {
-               // call this function on the dispose method of the screens.
-               await cancelCallback();
-             }, child:  Text('Cancel CallBacks',
-               style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+           Row(
+             children: [
+               TextButton(
+                 onPressed: () async {
+                   // if device is connected call this method in the initState after checking the device connection condition.
+                   await fetchSyncStepsData();
+                 }, child:  Text('Sync Steps Data',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
+               ),
+               TextButton(
+                 onPressed: () async {
+
+                 }, child:  Text('Sync Heart Rate',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
+               ),
+
+             ],
+           ),
+           Row(
+             children: [
+               TextButton(
+                 onPressed: () async {
+                   await startBloodPressure();
+                 }, child:  Text('Start BP',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
+               ),
+               TextButton(
+                 onPressed: () async {
+                   await stopBloodPressure();
+                 }, child:  Text('Stop BP',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
+               ),
+               TextButton(
+                 onPressed: () async {
+                   await syncBloodPressure();
+                 }, child:  Text('Sync BP',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+             ],
+           ),
+
+           Row(
+             children: [
+               TextButton(
+                 onPressed: () async {
+                   // if device is connected call this method in the initState after checking the device connection condition.
+                   await startTempTest();
+                 }, child:  Text('Test Temperature',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
+               ),
+               TextButton(
+                 onPressed: () async {
+                   // call this function on the dispose method of the screens.
+                   await cancelCallback();
+                 }, child:  Text('Cancel CallBacks',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+             ],
            ),
            //Text('No Devices Found'),
-           Container(
-             margin: const EdgeInsets.all(8.0),
-             child: showDeviceContainer(smartDevicesList),
-           )
-         ],
+           Visibility(
+              visible: !deviceConnected,
+             child: Container(
+               margin: const EdgeInsets.all(8.0),
+               child: showDeviceContainer(smartDevicesList),
+             ),
+           ),
+           Visibility(
+              visible: deviceConnected,
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Text('$deviceMessage'),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Text('Version: ($deviceVersion) -- Battery: $batteryStatus'),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Text('Steps: $mSteps -- Cal: $mCal kCal -- Distance: $mDistance km'),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Text('HR: $heartRate bpm'),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Text('Blood Pressure: $mHigh / $mLow mmHg'),
+                  ),
+                 /* Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Text('HR: $heartRate bpm'),
+                  ),*/
+                ],
+              ),
+            )
+          ],
 
           // child: showDeviceContainer(deviceList),
        ),
@@ -362,9 +559,9 @@ class HomePageState extends State<HomePage> {
     } else {
 
 
-      setState(() {
+    /*  setState(() {
         deviceConnected = startDeviceSearch;
-      });
+      });*/
     }
   }
 
@@ -389,17 +586,45 @@ class HomePageState extends State<HomePage> {
     print('disconnectDevice>> $deviceDisconnected');
     setState(() {
       deviceConnected = deviceDisconnected;
+      deviceMessage = "Device Disconnected";
     });
   }
 
    Future<void> fetchBatteryNVersion() async {
      String batteryStatus = await _mobileSmartWatch.getBatteryStatus();
+     String deviceVersion = await _mobileSmartWatch.getDeviceVersion();
      print('batteryStatus>> $batteryStatus');
+     print('deviceVersion>> $deviceVersion');
+   }
+
+   Future<void> fetchSyncStepsData() async{
+     String stepsStatus = await _mobileSmartWatch.syncStepsData();
+     print('syncStepsStatus>> $stepsStatus');
+   }
+
+   Future<void>  startBloodPressure() async {
+     String startBPStatus = await _mobileSmartWatch.startBloodPressure();
+     print('startBloodPressure>> $startBPStatus');
+   }
+   Future<void>  stopBloodPressure() async {
+     String stopBPStatus = await _mobileSmartWatch.stopBloodPressure();
+     print('stopBloodPressure>> $stopBPStatus');
+   }
+   Future<void> syncBloodPressure() async {
+     String syncBPStatus = await _mobileSmartWatch.syncBloodPressure();
+     print('syncBloodPressure>> $syncBPStatus');
+   }
+
+
+   Future<void> startTempTest() async{
+     String tempStatus = await _mobileSmartWatch.testTempData();
+
    }
 
    Future<void> cancelCallback() async {
 
   }
+
 
 
 
