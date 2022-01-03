@@ -585,7 +585,7 @@ class HomePageState extends State<HomePage> {
     bool deviceDisconnected = await _mobileSmartWatch.disconnectDevice();
     print('disconnectDevice>> $deviceDisconnected');
     setState(() {
-      deviceConnected = deviceDisconnected;
+     // deviceConnected = false;
       deviceMessage = "Device Disconnected";
     });
   }
