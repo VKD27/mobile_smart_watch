@@ -75,7 +75,7 @@ class HomePageState extends State<HomePage> {
             // data object will be empty always
             if (status == SmartWatchConstants.SC_SUCCESS) {
               // this message can vary with the corresponding update from/to the patient app.
-              Global.showAlertDialog(context, "Updated User Params", "We ahve updated your profile data with the smart watch.");
+              Global.showAlertDialog(context, "Updated User Params", "We have updated your profile data with the smart watch.");
             }
             break;
 
@@ -272,6 +272,7 @@ class HomePageState extends State<HomePage> {
                TextButton(
                  onPressed: () async {
                    // if device is connected call this method in the initState after checking the device connection condition.
+
                    await fetchSyncStepsData();
                  }, child:  Text('Sync Steps Data',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
@@ -575,6 +576,7 @@ class HomePageState extends State<HomePage> {
        "isCelsius": "false", // if celsius then send "true" else "false" for Fahrenheit
        "screenOffTime": "15", //screen off time
        "isChineseLang": "false", //true for chinese lang setup and false for english
+       "raiseHandWakeUp": "true", //true or false -- send true to wake up bright light switch
      };
      String resultStatus = await _mobileSmartWatch.setUserParameters(userData);
      print('resultStatus>> $resultStatus');
