@@ -27,6 +27,7 @@ class HomePageState extends State<HomePage> {
 
   String  mSteps ='',mCal ='',mDistance ='';
   String  heartRate ='';
+  String  sleepTimings ='';
   String  mHigh ='',mLow ='';
 
   @override
@@ -117,6 +118,22 @@ class HomePageState extends State<HomePage> {
             }
             break;
 
+          case SmartWatchConstants.TEMP_RESULT:
+          // real time sync as well as the daily sync
+            if (status == SmartWatchConstants.SC_SUCCESS) {
+              print('inside temperature result');
+              String inCelsius = jsonData['inCelsius'].toString();
+              String inFahrenheit = jsonData['inFahrenheit'].toString();
+              String startDate = jsonData['startDate'].toString();
+              String time = jsonData['time'].toString();
+              String calender = jsonData['calender'].toString();
+
+              setState(() {
+               // heartRate = hr; // always bpm
+              });
+            }
+            break;
+
           case SmartWatchConstants.BP_RESULT:
           // real time sync as well as the daily sync
             if (status == SmartWatchConstants.SC_SUCCESS) {
@@ -139,6 +156,16 @@ class HomePageState extends State<HomePage> {
         }
       }
     });
+  }
+
+  void callOnInitStateSync(){
+    // if the device is connected then call the below methods
+    // in the initstate of the app while every sync
+    // this is to sync the data from the device to the SDK, and then the APP side can obtain the data by calling each individual methods
+    fetchSyncStepsData();
+    fetchSyncSleepData();
+    syncBloodPressure();
+
   }
 
   @override
@@ -274,16 +301,39 @@ class HomePageState extends State<HomePage> {
                    // if device is connected call this method in the initState after checking the device connection condition.
 
                    await fetchSyncStepsData();
-                 }, child:  Text('Sync Steps Data',
+                 }, child:  Text('S_Steps',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
                TextButton(
                  onPressed: () async {
-
-                 }, child:  Text('Sync Heart Rate',
+                   await fetchSyncSleepData();
+                 }, child:  Text('S_Sleep',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
-
+               TextButton(
+                 onPressed: () async {
+                   await syncBloodPressure();
+                 }, child:  Text('S_BP',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+               TextButton(
+                 onPressed: () async {
+                   await syncOxygen();
+                 }, child:  Text('S_BP',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+               TextButton(
+                 onPressed: () async {
+                   await syncHeartRate();
+                 }, child:  Text('S_HR',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
+               ),
+               TextButton(
+                 onPressed: () async {
+                   await syncTemperature();
+                 }, child:  Text('S_TEMP',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
+               ),
              ],
            ),
            Row(
@@ -302,22 +352,98 @@ class HomePageState extends State<HomePage> {
                ),
                TextButton(
                  onPressed: () async {
-                   await syncBloodPressure();
-                 }, child:  Text('Sync BP',
+                   // call this function on the dispose method of the screens.
+                   await startHR();
+                 }, child:  Text('Start HR',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+               TextButton(
+                 onPressed: () async {
+                   await stopHR();
+                 }, child:  Text('Stop HR',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
              ],
            ),
+           Container(
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.start,
+               mainAxisSize: MainAxisSize.max,
+               children: [
+                 TextButton(
+                   onPressed: () async {
+                     // call this function on the dispose method of the screens.
+                     await fetchStepsByDate();
+                   }, child:  Text('F_StepsDT',
+                     style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+                 ),
+                 TextButton(
+                   onPressed: () async {
+                     await fetchSleepByDate();
+                   }, child:  Text('F_SleepDT',
+                     style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+                 ),
+                 TextButton(
+                   onPressed: () async {
+                     await fetchHeartRateByDate();
+                   }, child:  Text('F_HRDT',
+                     style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+                 ),
+                 TextButton(
+                   onPressed: () async {
+                     await fetch24HourHRByDate();
+                   }, child:  Text('F_24HRDT',
+                     style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+                 ),
 
+               ],
+             ),
+           ),
            Row(
              children: [
                TextButton(
                  onPressed: () async {
+                   await fetchTemperatureByDate();
+                 }, child:  Text('F_TEMPDT',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+               TextButton(
+                 onPressed: () async {
                    // if device is connected call this method in the initState after checking the device connection condition.
                    await startTempTest();
-                 }, child:  Text('Test Temperature',
+                 }, child:  Text('Test Temp',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
+
+               TextButton(
+                 onPressed: () async {
+                   // call this function on the dispose method of the screens.
+                   await fetchAllTemperatureData();
+                 }, child:  Text('GetAll Temp',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+             ],
+           ),
+           Row(
+             children: [
+               TextButton(
+                 onPressed: () async {
+                   // call this function on the dispose method of the screens.
+                   await fetchAllStepsData();
+                 }, child:  Text('GetAll Steps',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+               TextButton(
+                 onPressed: () async {
+                   // call this function on the dispose method of the screens.
+                   await fetchAllSleepData();
+                 }, child:  Text('GetAll Sleep',
+                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
+               ),
+             ],
+           ),
+           Row(
+             children: [
                TextButton(
                  onPressed: () async {
                    // call this function on the dispose method of the screens.
@@ -358,6 +484,10 @@ class HomePageState extends State<HomePage> {
                   Container(
                     margin: const EdgeInsets.all(8.0),
                     child: Text('Blood Pressure: $mHigh / $mLow mmHg'),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Text('Sleep Timings: $sleepTimings'),
                   ),
                  /* Container(
                     margin: const EdgeInsets.all(8.0),
@@ -603,6 +733,10 @@ class HomePageState extends State<HomePage> {
      String stepsStatus = await _mobileSmartWatch.syncStepsData();
      print('syncStepsStatus>> $stepsStatus');
    }
+   Future<void> fetchSyncSleepData() async{
+     String stepsStatus = await _mobileSmartWatch.syncSleepData();
+     print('syncSleepStatus>> $stepsStatus');
+   }
 
    Future<void>  startBloodPressure() async {
      String startBPStatus = await _mobileSmartWatch.startBloodPressure();
@@ -616,6 +750,91 @@ class HomePageState extends State<HomePage> {
      String syncBPStatus = await _mobileSmartWatch.syncBloodPressure();
      print('syncBloodPressure>> $syncBPStatus');
    }
+   Future<void> syncOxygen() async {
+     String syncBPStatus = await _mobileSmartWatch.syncOxygenSaturation();
+     print('syncOxygen>> $syncBPStatus');
+   }
+   Future<void> syncTemperature() async {
+     String syncTempStatus = await _mobileSmartWatch.syncTemperature();
+     print('syncTemperature>> $syncTempStatus');
+   }
+
+   Future<void> syncHeartRate() async {
+     String syncBPStatus = await _mobileSmartWatch.syncRateData();
+     print('syncHeartRate>> $syncBPStatus');
+   }
+
+   Future<void> startHR() async {
+     String startBPStatus = await _mobileSmartWatch.startHR();
+     print('startHR>> $startBPStatus');
+   }
+   Future<void> stopHR() async {
+     String stopBPStatus = await _mobileSmartWatch.stopHR();
+     print('stopHR>> $stopBPStatus');
+   }
+
+
+
+
+
+   Future<void> fetchStepsByDate() async{
+     var tempStatus = await _mobileSmartWatch.fetchStepsByDate("20220105");
+
+   }
+
+   Future<void> fetchHeartRateByDate() async{
+     var tempStatus = await _mobileSmartWatch.fetchHeartRateByDate("20220105");
+
+   }
+   Future<void> fetch24HourHRByDate() async{
+     var tempStatus = await _mobileSmartWatch.fetch24HourHRByDate("20220105");
+
+   }
+
+   Future<void> fetchTemperatureByDate() async{
+     var tempStatus = await _mobileSmartWatch.fetchTemperatureByDate("20220105");
+
+   }
+
+
+
+  Future<void> fetchSleepByDate() async {
+    Map<String, dynamic> resultData = await _mobileSmartWatch.fetchSleepByDate("20220105");
+    String status = resultData['status'];
+    String total = resultData['total'];
+    String light = resultData['light'];
+    String deep = resultData['deep'];
+    String awake = resultData['awake'];
+    String beginTime = resultData['beginTime'];
+    String endTime = resultData['endTime'];
+    List<dynamic> responseData = resultData['data'];
+    List<SmartSleepModel> sleepList =[];
+    for (var data in responseData) {
+      sleepList.add(new SmartSleepModel.fromJson(data));
+    }
+    print("sleepList>> ${sleepList.length}");
+
+    setState(() {
+      sleepTimings = "Total: "+total+", Light: "+light+", deep: "+deep+", awake: "+awake+", beginTime: "+beginTime+", endTime: "+endTime;
+    });
+  }
+
+  Future<void> fetchAllStepsData() async{
+     var tempStatus = await _mobileSmartWatch.fetchAllStepsData();
+
+   }
+
+   Future<void> fetchAllSleepData() async{
+     var tempStatus = await _mobileSmartWatch.fetchAllSleepData();
+
+   }
+
+   Future<void> fetchAllTemperatureData() async{
+     var tempStatus = await _mobileSmartWatch.fetchAllTemperatureData();
+
+   }
+
+
 
 
    Future<void> startTempTest() async{

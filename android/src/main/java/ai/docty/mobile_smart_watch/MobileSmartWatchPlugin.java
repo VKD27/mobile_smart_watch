@@ -15,9 +15,14 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
+import com.yc.pedometer.info.BPVOneDayInfo;
 import com.yc.pedometer.info.CustomTestStatusInfo;
 import com.yc.pedometer.info.DeviceParametersInfo;
 import com.yc.pedometer.info.HeartRateHeadsetSportModeInfo;
+import com.yc.pedometer.info.OxygenInfo;
+import com.yc.pedometer.info.Rate24HourDayInfo;
+import com.yc.pedometer.info.RateOneDayInfo;
+import com.yc.pedometer.info.SleepInfo;
 import com.yc.pedometer.info.SleepTimeInfo;
 import com.yc.pedometer.info.SportsModesInfo;
 import com.yc.pedometer.info.StepInfo;
@@ -25,6 +30,9 @@ import com.yc.pedometer.info.StepOneDayAllInfo;
 import com.yc.pedometer.info.StepOneHourInfo;
 import com.yc.pedometer.info.StepRunHourInfo;
 import com.yc.pedometer.info.StepWalkHourInfo;
+import com.yc.pedometer.info.TemperatureInfo;
+import com.yc.pedometer.listener.OxygenRealListener;
+import com.yc.pedometer.listener.TemperatureListener;
 import com.yc.pedometer.sdk.BloodPressureChangeListener;
 import com.yc.pedometer.sdk.BluetoothLeService;
 import com.yc.pedometer.sdk.DataProcessing;
@@ -58,6 +66,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import ai.docty.mobile_smart_watch.model.BleDevices;
+import ai.docty.mobile_smart_watch.util.GlobalMethods;
 import ai.docty.mobile_smart_watch.util.WatchConstants;
 
 import io.flutter.embedding.android.FlutterActivity;
@@ -129,7 +138,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         this.flutterPluginBinding = flutterPluginBinding;
         this.mContext = flutterPluginBinding.getApplicationContext();
         setUpEngine(this, flutterPluginBinding.getBinaryMessenger(), flutterPluginBinding.getApplicationContext());
-
     }
 
     private void setUpEngine(MobileSmartWatchPlugin mobileSmartWatchPlugin, BinaryMessenger binaryMessenger, Context applicationContext) {
@@ -149,7 +157,53 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         mDataProcessing.setOnRateListener(mOnRateListener);
         mDataProcessing.setOnRateOf24HourListenerRate(mOnRateOf24HourListener);
         mDataProcessing.setOnBloodPressureListener(mOnBloodPressureListener);
+
     }
+
+    private final OxygenRealListener oxygenRealListener = new OxygenRealListener() {
+        @Override
+        public void onTestResult(int  status, OxygenInfo oxygenInfo) {
+            Log.e("oxygenRealListener", "value: " + oxygenInfo.getOxygenValue() + ", status: " + status);
+        }
+    };
+
+    private final TemperatureListener temperatureListener = new TemperatureListener() {
+        @Override
+        public void onTestResult(TemperatureInfo temperatureInfo) {
+
+            Log.e("temperatureListener", "temperature: " + temperatureInfo.getBodyTemperature() + ", type: " + temperatureInfo.getType());
+
+            try {
+                JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("calender", "" + temperatureInfo.getCalendar());
+//                jsonObject.put("type", "" + temperatureInfo.getType());
+//                jsonObject.put("bodyTemp", "" + temperatureInfo.getBodyTemperature());
+//                jsonObject.put("ambientTemp", "" + temperatureInfo.getAmbientTemperature());
+//                jsonObject.put("surfaceTemp", "" + temperatureInfo.getBodySurfaceTemperature());
+//                jsonObject.put("startDate", "" + temperatureInfo.getStartDate());
+//                jsonObject.put("time", "" + temperatureInfo.getSecondTime());
+
+                jsonObject.put("calender",  temperatureInfo.getCalendar());
+                jsonObject.put("type", "" + temperatureInfo.getType());
+                jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+                jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+
+                Log.e("onTestResult", "object: " + jsonObject.toString());
+
+                runOnUIThread(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+            } catch (Exception exp) {
+                Log.e("onTestResultExp:", exp.getMessage());
+            }
+
+        }
+
+        @Override
+        public void onSamplingResult(TemperatureInfo temperatureInfo) {
+
+        }
+    };
 
     private final RateChangeListener mOnRateListener = new RateChangeListener() {
         @Override
@@ -162,10 +216,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             } catch (Exception exp) {
                 Log.e("onRateExp: ", exp.getMessage());
             }
-
-
         }
     };
+
     private final RateOf24HourRealTimeListener mOnRateOf24HourListener = new RateOf24HourRealTimeListener() {
         @Override
         public void onRateOf24HourChange(int maxHeartRateValue, int minHeartRateValue, int averageHeartRateValue, boolean isRealTimeValue) {
@@ -174,6 +227,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             Log.e("onRateOf24Hour", "maxHeartRateValue: " + maxHeartRateValue + ", minHeartRateValue: " + minHeartRateValue + ", averageHeartRateValue=" + averageHeartRateValue + ", isRealTimeValue=" + isRealTimeValue);
         }
     };
+
     private final SleepChangeListener mOnSleepChangeListener = new SleepChangeListener() {
         @Override
         public void onSleepChange() {
@@ -212,7 +266,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         public void onStepChange(StepOneDayAllInfo info) {
             try {
                 if (info != null) {
-                    Log.e("onStepChange1", "calendar: " + info.getCalendar());
+                    //Log.e("onStepChange1", "calendar: " + info.getCalendar());
                     Log.e("onStepChange2", "mSteps: " + info.getStep() + ", mDistance: " + info.getDistance() + ", mCalories=" + info.getCalories());
                     Log.e("onStepChange3", "mRunSteps: " + info.getRunSteps() + ", mRunDistance: " + info.getRunDistance() + ", mRunCalories=" + info.getRunCalories() + ", mRunDurationTime=" + info.getRunDurationTime());
                     Log.e("onStepChange4", "mWalkSteps: " + info.getWalkSteps() + ", mWalkDistance: " + info.getWalkDistance() + ", mWalkCalories=" + info.getWalkCalories() + ", mWalkDurationTime=" + info.getWalkDurationTime());
@@ -222,31 +276,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     jsonObject.put("steps", "" + info.getStep());
 //                    jsonObject.put("distance", ""+info.getDistance());
 //                    jsonObject.put("calories", ""+info.getCalories());
-                    jsonObject.put("distance", "" + convertDoubleToStringWithDecimal((double) info.getDistance()));
-                    jsonObject.put("calories", "" + convertDoubleToStringWithDecimal((double) info.getCalories()));
-
-/*
-                    ArrayList<StepWalkHourInfo> stepWalkHourArrayInfo = stepOneDayAllInfo.getStepWalkHourArrayInfo();
-                    Log.e("onStepChange115", "stepWalkHourArrayInfo: " +  stepWalkHourArrayInfo.size());
-                    for(StepWalkHourInfo stepWalkHourInfo :stepWalkHourArrayInfo){
-                        Log.e("stepWalkHourInfo", "getWalkSteps: " + stepWalkHourInfo.getWalkSteps());
-                        Log.e("stepWalkHourInfo", "getTime: " + stepWalkHourInfo.getTime());
-                        Log.e("stepWalkHourInfo", "getWalkDurationTime: " + stepWalkHourInfo.getWalkDurationTime());
-                        Log.e("stepWalkHourInfo", "getStartWalkTime: " + stepWalkHourInfo.getStartWalkTime());
-                        Log.e("stepWalkHourInfo", "getEndWalkTime: " + stepWalkHourInfo.getEndWalkTime());
-                    }
-                    ArrayList<StepRunHourInfo> stepRunHourInfo = stepOneDayAllInfo.getStepRunHourArrayInfo();
-                    Log.e("onStepChange116", "stepRunHourInfo: " +  stepRunHourInfo.size());
-                    for(StepRunHourInfo stepRunHour :stepRunHourInfo){
-                        Log.e("onStepChange116", "getRunSteps: " + stepRunHour.getRunSteps());
-                        Log.e("onStepChange116", "getTime: " + stepRunHour.getTime());
-                    }*/
-
-                   /* StepInfo stepInfo = mUTESQLOperate.queryStepInfo(_calender);
-
-                    Log.e("onStepChange221", "getStep: " +  stepInfo.getStep());
-                    Log.e("onStepChange221", "getCalories: " +  stepInfo.getCalories());
-                    Log.e("onStepChange221", "getDistance: " +  stepInfo.getDistance());*/
+                    jsonObject.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal((double) info.getDistance()));
+                    jsonObject.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal((double) info.getCalories()));
 
                     runOnUIThread(WatchConstants.STEPS_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                 }
@@ -254,40 +285,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 Log.e("onStepChangeExp::", exp.getMessage());
                 // runOnUIThread(WatchConstants.STEPS_REAL_TIME, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
             }
-
-
-
-            /*this.setStepOneHourArrayInfo(var13);
-            this.setStepRunHourArrayInfo(var14);
-            this.setStepWalkHourArrayInfo(var15);
-
-            if (info!=null) {
-                mSteps = info.getStep();
-                mDistance = info.getDistance();
-                mCalories = info.getCalories();
-
-                mRunSteps	= info.getRunSteps();
-                mRunCalories= info.getRunCalories();
-                mRunDistance= info.getRunDistance();
-                mRunDurationTime= info.getRunDurationTime();
-
-                mWalkSteps= info.getWalkSteps();
-                mWalkCalories= info.getWalkCalories();
-                mWalkDistance= info.getWalkDistance();
-                mWalkDurationTime= info.getWalkDurationTime();
-
-            }
-            LogUtils.d(TAG, "mSteps =" + mSteps + ",mDistance ="
-                    + mDistance + ",mCalories =" + mCalories + ",mRunSteps ="
-                    + mRunSteps + ",mRunCalories =" + mRunCalories
-                    + ",mRunDistance =" + mRunDistance + ",mRunDurationTime ="
-                    + mRunDurationTime + ",mWalkSteps =" + mWalkSteps
-                    + ",mWalkCalories =" + mWalkCalories + ",mWalkDistance ="
-                    + mWalkDistance + ",mWalkDurationTime ="
-                    + mWalkDurationTime);
-
-            mHandler.sendEmptyMessage(UPDATE_STEP_UI_MSG);*/
-
         }
     };
 
@@ -323,23 +320,81 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 getDeviceBatteryStatus(result);
                 break;
 
+                // sync all the data,from watch to the local (android SDK)
             case WatchConstants.GET_SYNC_STEPS:
                 syncAllStepsData(result);
                 break;
-            case WatchConstants.GET_SYNC_RATE:
-                //syncRateData(call, result);
+            case WatchConstants.GET_SYNC_SLEEP:
+                syncAllSleepData(result);
                 break;
+            case WatchConstants.GET_SYNC_RATE:
+                syncRateData(result);
+                break;
+            case WatchConstants.GET_SYNC_BP:
+                syncBloodPressure(result);
+                break;
+            case WatchConstants.GET_SYNC_OXYGEN:
+                syncOxygenSaturation(result);
+                break;
+            case WatchConstants.GET_SYNC_TEMPERATURE:
+                syncBodyTemperature(result);
+                break;
+                //start doing test here
             case WatchConstants.START_BP_TEST:
-                startBloodPressure(call, result);
+                startBloodPressure(result);
                 break;
             case WatchConstants.STOP_BP_TEST:
-                stopBloodPressure(call, result);
+                stopBloodPressure(result);
                 break;
-            case WatchConstants.SYNC_BP:
-                syncBloodPressure(call, result);
+            case WatchConstants.START_HR_TEST:
+                startHeartRate(result);
                 break;
+            case WatchConstants.STOP_HR_TEST:
+                stopHeartRate(result);
+                break;
+            case WatchConstants.START_OXYGEN_TEST:
+                startOxygenSaturation(result);
+                break;
+            case WatchConstants.STOP_OXYGEN_TEST:
+                stopOxygenSaturation(result);
+                break;
+
             case WatchConstants.START_TEST_TEMP:
-                startTempTest(call, result);
+                startTempTest(result);
+                break;
+
+                //fetch individual data
+            case WatchConstants.FETCH_STEPS_BY_DATE:
+                fetchStepsBySelectedDate(call, result);
+                break;
+            case WatchConstants.FETCH_SLEEP_BY_DATE:
+                fetchSleepByDate(call, result);
+                break;
+            case WatchConstants.FETCH_BP_BY_DATE:
+                fetchBPByDate(call, result);
+                break;
+            case WatchConstants.FETCH_HR_BY_DATE:
+                fetchHRByDate(call, result);
+                break;
+            case WatchConstants.FETCH_24_HOUR_HR_BY_DATE:
+                fetch24HourHRDateByDate(call, result);
+                break;
+            case WatchConstants.FETCH_TEMP_BY_DATE:
+                fetchTemperatureByDate(call, result);
+                break;
+
+                // fetch all the dats
+            case WatchConstants.FETCH_ALL_STEPS_DATA:
+                fetchAllStepsData( result);
+                break;
+            case WatchConstants.FETCH_ALL_SLEEP_DATA:
+                fetchAllSleepData(result);
+                break;
+            case WatchConstants.FETCH_ALL_BP_DATA:
+                fetchAllBPData(result);
+                break;
+            case WatchConstants.FETCH_ALL_TEMP_DATA:
+                fetchAllTemperatureData(result);
                 break;
             default:
                 result.notImplemented();
@@ -579,6 +634,15 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
             }
         });
+
+        if(GetFunctionList.isSupportFunction_Fifth(mContext,GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST)){
+            mBluetoothLeService.setTemperatureListener(temperatureListener);
+        }
+
+        if(GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN)){
+            mBluetoothLeService.setOxygenListener(oxygenRealListener);
+        }
+
     }
 
     private void disconnectBluDevice(Result result) {
@@ -586,90 +650,95 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         result.success(status);
     }
 
-    private String convertDoubleToStringWithDecimal(double infoValue) {
+    /*private String GlobalMethods.convertDoubleToStringWithDecimal(double infoValue) {
         String resultValue = new DecimalFormat("0.00").format(infoValue);
         Log.e("resultValue", "decimal_ddf: " + resultValue);
         return resultValue;
-    }
+    }*/
 
     private void setUserParams(MethodCall call, Result result) {
-        String age = (String) call.argument("age");
-        String height = (String) call.argument("height");
-        String weight = (String) call.argument("weight");
-        String gender = (String) call.argument("gender");
-        String steps = (String) call.argument("steps");
-        String isCel = (String) call.argument("isCelsius");
-        String screenOffTime = (String) call.argument("screenOffTime");
-        String isChineseLang = (String) call.argument("isChineseLang");
-        String raiseHandWakeUp = (String) call.argument("raiseHandWakeUp");
+        try {
+            String age = (String) call.argument("age");
+            String height = (String) call.argument("height");
+            String weight = (String) call.argument("weight");
+            String gender = (String) call.argument("gender");
+            String steps = (String) call.argument("steps");
+            String isCel = (String) call.argument("isCelsius");
+            String screenOffTime = (String) call.argument("screenOffTime");
+            String isChineseLang = (String) call.argument("isChineseLang");
+            String raiseHandWakeUp = (String) call.argument("raiseHandWakeUp");
 
 
-        assert age != null;
-        int bodyAge = Integer.parseInt(age);
-        assert height != null;
-        int bodyHeight = Integer.parseInt(height);
-        assert weight != null;
-        int bodyWeight = Integer.parseInt(weight);
-        assert steps != null;
-        int bodySteps = Integer.parseInt(steps);
+            assert age != null;
+            int bodyAge = Integer.parseInt(age);
+            assert height != null;
+            int bodyHeight = Integer.parseInt(height);
+            assert weight != null;
+            int bodyWeight = Integer.parseInt(weight);
+            assert steps != null;
+            int bodySteps = Integer.parseInt(steps);
 
-        assert screenOffTime != null;
-        int setScreenOffTime = Integer.parseInt(screenOffTime);
+            assert screenOffTime != null;
+            int setScreenOffTime = Integer.parseInt(screenOffTime);
 
-        boolean isMale = false;
-        assert gender != null;
-        if (gender.trim().equalsIgnoreCase("male")) {
-            isMale = true;
-        }
-        boolean isCelsius = false;
-        assert isCel != null;
-        if (isCel.equalsIgnoreCase("true")) {
-            isCelsius = true;
-        }
+            boolean isMale = false;
+            assert gender != null;
+            if (gender.trim().equalsIgnoreCase("male")) {
+                isMale = true;
+            }
+            boolean isCelsius = false;
+            assert isCel != null;
+            if (isCel.equalsIgnoreCase("true")) {
+                isCelsius = true;
+            }
 
-        boolean isChinese = false;
-        assert isChineseLang != null;
-        if (isChineseLang.equalsIgnoreCase("true")) {
-            isChinese = true;
-        }
+            boolean isChinese = false;
+            assert isChineseLang != null;
+            if (isChineseLang.equalsIgnoreCase("true")) {
+                isChinese = true;
+            }
 
-        boolean isRaiseHandWakeUp = false;
-        assert raiseHandWakeUp != null;
-        if (raiseHandWakeUp.equalsIgnoreCase("true")) {
-            isRaiseHandWakeUp = true;
-        }
+            boolean isRaiseHandWakeUp = false;
+            assert raiseHandWakeUp != null;
+            if (raiseHandWakeUp.equalsIgnoreCase("true")) {
+                isRaiseHandWakeUp = true;
+            }
 
 
-        boolean isSupported = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
-        Log.e("isSupported::", "isSupported>>" + isSupported);
+            boolean isSupported = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
+            Log.e("isSupported::", "isSupported>>" + isSupported);
 
-        boolean isSupp = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
-        Log.e("isSupp::", "isSupp>>" + isSupp);
+            boolean isSupp = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
+            Log.e("isSupp::", "isSupp>>" + isSupp);
 
-        //if (isSupported) {
-        DeviceParametersInfo info = new DeviceParametersInfo();
-        info.setBodyAge(bodyAge);
-        info.setBodyHeight(bodyHeight);
-        info.setBodyWeight(bodyWeight);
-        info.setStepTask(bodySteps);
-        info.setBodyGender(isMale ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
-        info.setCelsiusFahrenheitValue(isCelsius ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
-        info.setOffScreenTime(setScreenOffTime);
-        info.setOnlySupportEnCn(isChinese ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // no for english, yes for chinese
-        info.setRaisHandbrightScreenSwitch(isRaiseHandWakeUp ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // true if bright light turn on
+            //if (isSupported) {
+            DeviceParametersInfo info = new DeviceParametersInfo();
+            info.setBodyAge(bodyAge);
+            info.setBodyHeight(bodyHeight);
+            info.setBodyWeight(bodyWeight);
+            info.setStepTask(bodySteps);
+            info.setBodyGender(isMale ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
+            info.setCelsiusFahrenheitValue(isCelsius ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
+            info.setOffScreenTime(setScreenOffTime);
+            info.setOnlySupportEnCn(isChinese ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // no for english, yes for chinese
+            info.setRaisHandbrightScreenSwitch(isRaiseHandWakeUp ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // true if bright light turn on
 
 //    info.setRaisHandbrightScreenSwitch(DeviceParametersInfo.switchStatusYes);
 //    info.setHighestRateAndSwitch(141, DeviceParametersInfo.switchStatusYes);
 //     info.setDeviceLostSwitch(DeviceParametersInfo.switchStatusNo);
-        if (mWriteCommand != null) {
-            mWriteCommand.sendDeviceParametersInfoToBLE(info);
-            result.success(WatchConstants.SC_INIT);
-        } else {
-            result.success(WatchConstants.SC_FAILURE);
-        }
+            if (mWriteCommand != null) {
+                mWriteCommand.sendDeviceParametersInfoToBLE(info);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
 //        } else {
 //            result.success(WatchConstants.SC_NOT_SUPPORTED);
 //        }
+        }catch (Exception exp){
+            Log.e("setUserParamsExp::", exp.getMessage());
+            result.success(WatchConstants.SC_FAILURE);
+        }
     }
 
     private void getDeviceVersion(Result result) {
@@ -695,6 +764,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    // sync the activities
+
     private void syncAllStepsData(Result result) {
         Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
@@ -710,6 +781,100 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void syncAllSleepData(Result result) {
+        Log.e("sleep_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
+        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+            if (mWriteCommand != null) {
+                mWriteCommand.syncAllSleepData();
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } else {
+            //device disconnected
+            result.success(WatchConstants.SC_DISCONNECTED);
+        }
+    }
+
+    private void syncRateData(Result result) {
+        boolean support = GetFunctionList.isSupportFunction_Second(mContext,GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
+        Log.e("support", "" + support);
+        Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
+        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+            if (mWriteCommand != null) {
+                mWriteCommand.syncRateData();
+                /*mWriteCommand. syncAllRateData();
+                boolean support = GetFunctionList.isSupportFunction_Second(mContext,GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
+                if (support){
+                    mWriteCommand.sync24HourRate();
+                }*/
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } else {
+            //device disconnected
+            result.success(WatchConstants.SC_DISCONNECTED);
+        }
+    }
+
+    private void syncBloodPressure(Result result) {
+        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+            if (mWriteCommand != null) {
+                mWriteCommand.syncAllBloodPressureData();
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } else {
+            result.success(WatchConstants.SC_DISCONNECTED);
+        }
+    }
+
+    private void syncOxygenSaturation(Result result) {
+        boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
+        Log.e("syncOxygenSat", "isSupported: " + isSupported);
+        if (isSupported){
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncOxygenData();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
+                }
+            } else {
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
+        } else {
+            result.success(WatchConstants.SC_NOT_SUPPORTED);
+        }
+
+        // below methods need to called, while it supports
+        // mBluetoothLeService.setOxygenListener(oxygenRealListener);
+    }
+
+    private void syncBodyTemperature(Result result) {
+        boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext,GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST);
+        Log.e("syncBodyTemp", "isSupported: " + isSupported);
+        if (isSupported){
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncAllTemperatureData();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
+                }
+            } else {
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
+        } else {
+            result.success(WatchConstants.SC_NOT_SUPPORTED);
+        }
+        // mBluetoothLeService.setTemperatureListener(temperatureListener);
+    }
+
+    // fetch by date time
+
     private void fetchStepsBySelectedDate(MethodCall call, Result result) {
         // providing proper list of the data on basis of the result.
         try {
@@ -719,85 +884,448 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (mUTESQLOperate != null) {
 
                 StepOneDayAllInfo stepOneDayAllInfo = mUTESQLOperate.queryRunWalkInfo(dateTime);
+
+                jsonObject.put("status", WatchConstants.SC_SUCCESS);
+
                 jsonObject.put("steps", stepOneDayAllInfo.getStep());
 
                 Log.e("onStepChange111", "getStep: " + stepOneDayAllInfo.getStep());
                 Log.e("onStepChange112", "getCalories: " + stepOneDayAllInfo.getCalories());
                 Log.e("onStepChange113", "getDistance: " + stepOneDayAllInfo.getDistance());
 
-                jsonObject.put("distance", "" + convertDoubleToStringWithDecimal((double) stepOneDayAllInfo.getDistance()));
-                jsonObject.put("calories", "" + convertDoubleToStringWithDecimal((double) stepOneDayAllInfo.getCalories()));
+                jsonObject.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal((double) stepOneDayAllInfo.getDistance()));
+                jsonObject.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal((double) stepOneDayAllInfo.getCalories()));
 
                 ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = stepOneDayAllInfo.getStepOneHourArrayInfo();
                 JSONArray jsonArray = new JSONArray();
                 for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
                     JSONObject object = new JSONObject();
-                    object.put("step", stepOneHourInfo.getStep());
+                    object.put("stepValue", stepOneHourInfo.getStep());
                     Log.e("onStepChange114", "oneHourStep: " + stepOneHourInfo.getStep());
                     Log.e("onStepChange114", "oneHourStep: " + stepOneHourInfo.getTime());
-                    Log.e("onStepChange114", "intToString: " + getIntegerToHHmm(stepOneHourInfo.getTime())); // as per glory fit
+                    Log.e("onStepChange114", "intToString: " + GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime())); // as per glory fit
                     //Log.e("onStepChange114", "fromMinutesToHHmm: " + fromMinutesToHHmm(stepOneHourInfo.getTime()));
-                    object.put("time", getIntegerToHHmm(stepOneHourInfo.getTime()));
+                    object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
                     jsonArray.put(object);
                 }
                 jsonObject.put("data", jsonArray);
 
+                List<StepOneDayAllInfo> list = mUTESQLOperate.queryRunWalkAllDay();
+                Log.e("list", "list: " + list.size());
+                for(StepOneDayAllInfo info: list){
+                    Log.e("list_info:", "calender: " + info.getCalendar());
+                    Log.e("list_info:", "step: " + info.getStep());
+                    Log.e("list_info:", "cal: " + info.getCalories());
+                    Log.e("list_info:", "dis: " + info.getDistance());
+                }
+
+                result.success(jsonObject.toString());
+            }else{
+                result.success(jsonObject.toString());
             }
         } catch (Exception exp) {
-
+            Log.e("fetchStepExp::", exp.getMessage());
+          //  result.success(WatchConstants.SC_FAILURE);
         }
     }
 
-    public String getIntegerToHHmm(int minutes) {
-        int hour = (minutes / 60);
-        int min = (minutes - hour * 60);
-        return String.format(Locale.getDefault(), "%02d:%02d", (hour - 1), min);
+    private void fetchSleepByDate(MethodCall call, Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            //  new SimpleDateFormat("yyyyMMdd", Locale.US)).format(var1) //20220212
+            String dateTime = (String) call.argument("dateTime"); // always in "yyyyMMdd";
+            JSONObject resultJson = new JSONObject();
+            if (mUTESQLOperate != null) {
+
+                SleepTimeInfo sleepTimeInfo = mUTESQLOperate.querySleepInfo(dateTime);
+
+                resultJson.put("status", WatchConstants.SC_SUCCESS);
+                resultJson.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
+                resultJson.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
+                resultJson.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
+                resultJson.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
+                resultJson.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
+                resultJson.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
+
+
+//                Log.e("sleepTimeInfo111", "getBeginTime: " +  GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
+//                Log.e("sleepTimeInfo111", "getEndTime: " + GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
+//                Log.e("sleepTimeInfo111", "getDeepTime: " + GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
+//                Log.e("sleepTimeInfo111", "getAwakeTime: " +GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
+//                Log.e("sleepTimeInfo111", "getLightTime: " + GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
+//                Log.e("sleepTimeInfo111", "getSleepTotalTime: " + GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
+
+                // fetch the particular day sleep along state records
+                List<SleepInfo>  sleepInfoList  = sleepTimeInfo.getSleepInfoList();
+                Log.e("sleepInfoList", "sleepInfoList: " + sleepInfoList.size());
+                JSONArray jsonArray = new JSONArray();
+                for (SleepInfo sleepInfo : sleepInfoList) {
+                    JSONObject object = new JSONObject();
+                    object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
+                    object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
+                    object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
+                    object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+
+                    Log.e("sleepInfoList", "getColorIndex: " + sleepInfo.getColorIndex());
+                    Log.e("sleepInfoList", "getDiffTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                    Log.e("sleepInfoList", "getStartTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime())+ " -- " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
+                   // Log.e("sleepInfoList", );
+                    jsonArray.put(object);
+                }
+
+                resultJson.put("data", jsonArray);
+
+                result.success(resultJson.toString());
+            }else{
+                result.success(resultJson.toString());
+            }
+        } catch (Exception exp) {
+            Log.e("fetchStepExp::", exp.getMessage());
+           // result.success(WatchConstants.SC_FAILURE);
+        }
     }
 
-    /*public String fromMinToHHmm(int minutes) {
-        int h = minutes / 60;
-        int m = minutes % 60;
-        //String.format(Locale.getDefault(), "%02d"+TIME_SEPARATOR+"%02d", hours, minutes);
-        // another result
-//        int hours = (int) minutes/ 3600;
-//        int temp = (int) minutes - hours * 3600;
-//        int mins = temp / 60;
-//        temp = temp - mins * 60;
-//        int secs = temp;
-//        Log.e("hours-mins-secs::", String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, mins, secs));
-        int deep_hour = minutes / 60;
-        int deep_minute = (minutes - deep_hour * 60);
-        Log.e("hours_mins::", String.format(Locale.getDefault(), "%02d:%02d",deep_hour,deep_minute));
+    private void fetchBPByDate(MethodCall call, Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            //  new SimpleDateFormat("yyyyMMdd", Locale.US)).format(var1) //20220212
+            String dateTime = (String) call.argument("dateTime"); // always in "yyyyMMdd";
+            JSONObject resultJson = new JSONObject();
+            if (mUTESQLOperate != null) {
 
-        return  String.format(Locale.getDefault(),"%02d:%02d",h,m); // output : "02:00"
-    }*/
+                List<BPVOneDayInfo> bpvOneDayInfoList = mUTESQLOperate.queryBloodPressureOneDayInfo(dateTime);
+                Log.e("bpvOneDayInfoList", "bpvOneDayInfoList: " + bpvOneDayInfoList.size());
 
-    public String fromMinutesToHHmm(int minutes) {
-        long hours = TimeUnit.MINUTES.toHours((long) minutes);
-        long remainMinutes = minutes - TimeUnit.HOURS.toMinutes(hours);
-        return String.format(Locale.getDefault(), "%02d:%02d", hours, remainMinutes);
+                resultJson.put("status", WatchConstants.SC_SUCCESS);
+                JSONArray jsonArray = new JSONArray();
+                for (BPVOneDayInfo bpvOneDayInfo : bpvOneDayInfoList) {
+                    JSONObject object = new JSONObject();
+                    object.put("calender",  bpvOneDayInfo.getCalendar());
+                    object.put("time",  GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+                    object.put("high",  bpvOneDayInfo.getHightBloodPressure());
+                    object.put("low",  bpvOneDayInfo.getLowBloodPressure());
+                    Log.e("bpObject", "object: " + object.toString());
+                    jsonArray.put(object);
+                }
+
+                resultJson.put("data", jsonArray);
+                result.success(resultJson.toString());
+            }else{
+                result.success(resultJson.toString());
+            }
+        } catch (Exception exp) {
+            Log.e("fetchStepExp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
     }
 
-    /*private String intToStringTimeFormat(int time)
-    {
-        String strTemp;
-        int minutes = time / 60;
-        int seconds = time % 60;
+    private void fetchHRByDate(MethodCall call, Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            //  new SimpleDateFormat("yyyyMMdd", Locale.US)).format(var1) //20220212
+            String dateTime = (String) call.argument("dateTime"); // always in "yyyyMMdd";
+            JSONObject resultJson = new JSONObject();
+            if (mUTESQLOperate != null) {
 
-        if(minutes < 10)
-            strTemp = "0" + Integer.toString(minutes) + ":";
-        else
-            strTemp = Integer.toString(minutes) + ":";
+                List<RateOneDayInfo> rateOneDayInfoList = mUTESQLOperate.queryRateOneDayDetailInfo(dateTime);
+               // List<RateOneDayInfo> rateOneDayInfoList = mUTESQLOperate.queryRateAllInfo(); // list for the current date //size 5
+//                RateOneDayInfo rateOneDay = mUTESQLOperate.queryRateOneDayMainInfo(dateTime);
+//                Log.e("rateOneDay", "getRate: " +  rateOneDay.getRate());
+//                Log.e("rateOneDay", "getTime: " +  GlobalMethods.getTimeByIntegerMin(rateOneDay.getTime()));
 
-        if(seconds < 10)
-            strTemp = strTemp + "0" + Integer.toString(seconds);
-        else
-            strTemp = strTemp + Integer.toString(seconds);
 
-        return strTemp;
-    }*/
+                Log.e("rateOneDayInfoList", "rateOneDayInfoList: " + rateOneDayInfoList.size());
 
-    private void startBloodPressure(MethodCall call, Result result) {
+                resultJson.put("status", WatchConstants.SC_SUCCESS);
+                JSONArray jsonArray = new JSONArray();
+                for (RateOneDayInfo rateOneDayInfo : rateOneDayInfoList) {
+                    JSONObject object = new JSONObject();
+                    object.put("calender",  rateOneDayInfo.getCalendar());
+                    object.put("time",  GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
+                    //object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
+                    object.put("rate",  rateOneDayInfo.getRate());
+                    //object.put("currentRate",  rateOneDayInfo.getCurrentRate());
+                    //object.put("high",  rateOneDayInfo.getHighestRate());
+                    //object.put("low",  rateOneDayInfo.getLowestRate());
+                   // object.put("average",  rateOneDayInfo.getVerageRate());
+                    Log.e("jsonObject", "object: " + object.toString());
+                    jsonArray.put(object);
+                }
+
+                resultJson.put("data", jsonArray);
+                result.success(resultJson.toString());
+            }else{
+                result.success(resultJson.toString());
+            }
+        } catch (Exception exp) {
+            Log.e("fetchHRExp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void fetch24HourHRDateByDate(MethodCall call, Result result) {
+        try {
+            String dateTime = (String) call.argument("dateTime"); // always in "yyyyMMdd";
+            JSONObject resultJson = new JSONObject();
+            if (mUTESQLOperate != null) {
+
+              //  List<Rate24HourDayInfo> rate24HourDayInfoList =  mUTESQLOperate.query24HourRateAllInfo(); // provides overall available 24 hrs data from storage
+                List<Rate24HourDayInfo> rate24HourDayInfoList =  mUTESQLOperate.query24HourRateDayInfo(dateTime);
+                Log.e("rateOneDayInfoList", "rateOneDayInfoList: " + rate24HourDayInfoList.size());
+
+                resultJson.put("status", WatchConstants.SC_SUCCESS);
+                JSONArray jsonArray = new JSONArray();
+                for (Rate24HourDayInfo rate24HourDayInfo : rate24HourDayInfoList) {
+                    JSONObject object = new JSONObject();
+                    object.put("calender",  rate24HourDayInfo.getCalendar());
+                    object.put("time",  GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
+                    object.put("rate",  rate24HourDayInfo.getRate());
+                    Log.e("jsonObject", "object: " + object.toString());
+                    jsonArray.put(object);
+                }
+
+                resultJson.put("data", jsonArray);
+
+                result.success(resultJson.toString());
+            }else{
+                result.success(resultJson.toString());
+            }
+        } catch (Exception exp) {
+            Log.e("fetch24HourHRExp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void fetchTemperatureByDate(MethodCall call, Result result) {
+        try {
+            String dateTime = (String) call.argument("dateTime"); // always in "yyyyMMdd";
+            JSONObject resultJson = new JSONObject();
+            if (mUTESQLOperate != null) {
+
+                List<TemperatureInfo> temperatureInfoList =  mUTESQLOperate.queryTemperatureDate(dateTime);
+                Log.e("temperatureInfoList", "temperatureInfoList: " + temperatureInfoList.size());
+
+                resultJson.put("status", WatchConstants.SC_SUCCESS);
+                JSONArray jsonArray = new JSONArray();
+                for (TemperatureInfo temperatureInfo : temperatureInfoList) {
+                    JSONObject object = new JSONObject();
+                    object.put("calender",  temperatureInfo.getCalendar());
+
+                    object.put("type", "" + temperatureInfo.getType());
+                    object.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                    object.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+//                    object.put("ambientTemp", "" + temperatureInfo.getAmbientTemperature());
+//                    object.put("surfaceTemp", "" + temperatureInfo.getBodySurfaceTemperature());
+                    object.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                    object.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+                    Log.e("jsonObject", "object: " + object.toString());
+                    jsonArray.put(object);
+                }
+
+                resultJson.put("data", jsonArray);
+
+                result.success(resultJson.toString());
+            }else{
+                result.success(resultJson.toString());
+            }
+        } catch (Exception exp) {
+            Log.e("fetchTempByDate::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void fetchAllStepsData(Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            JSONObject resultObject = new JSONObject();
+            if (mUTESQLOperate != null) {
+
+                List<StepOneDayAllInfo> list = mUTESQLOperate.queryRunWalkAllDay();
+                Log.e("list", "list: " + list.size());
+
+                resultObject.put("status", WatchConstants.SC_SUCCESS);
+
+                JSONArray jsonArray = new JSONArray();
+                for(StepOneDayAllInfo info: list){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("calender", info.getCalendar());
+                    jsonObject.put("steps", info.getStep());
+                    jsonObject.put("cal", GlobalMethods.convertDoubleToStringWithDecimal(info.getCalories()));
+                    jsonObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(info.getDistance()));
+
+                    Log.e("list_info:", "calender: " + info.getCalendar());
+                    Log.e("list_info:", "step: " + info.getStep());
+                    Log.e("list_info:", "cal: " + info.getCalories());
+                    Log.e("list_info:", "dis: " + info.getDistance());
+
+                    ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = info.getStepOneHourArrayInfo();
+                    JSONArray stepsArray = new JSONArray();
+                    for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
+                        JSONObject object = new JSONObject();
+                        object.put("stepValue", stepOneHourInfo.getStep());
+                        object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
+                        stepsArray.put(object);
+                    }
+                    jsonObject.put("stepsData", stepsArray);
+
+                    jsonArray.put(jsonObject);
+                }
+                resultObject.put("data",jsonArray);
+            }
+            result.success(resultObject.toString());
+        } catch (Exception exp) {
+            Log.e("fetchAllStepExp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void fetchAllSleepData( Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            JSONObject resultObject = new JSONObject();
+            if (mUTESQLOperate != null) {
+
+                List<SleepTimeInfo> sleepTimeInfoList = mUTESQLOperate.queryAllSleepInfo();
+                Log.e("list", "list: " + sleepTimeInfoList.size());
+
+                resultObject.put("status", WatchConstants.SC_SUCCESS);
+
+                JSONArray jsonArray = new JSONArray();
+                for(SleepTimeInfo sleepTimeInfo: sleepTimeInfoList){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("calender", sleepTimeInfo.getCalendar());
+                    jsonObject.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
+                    jsonObject.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
+                    jsonObject.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
+                    jsonObject.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
+                    jsonObject.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
+                    jsonObject.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
+
+                    List<SleepInfo>  sleepInfoList  = sleepTimeInfo.getSleepInfoList();
+                    Log.e("sleepInfoList", "sleepInfoList: " + sleepInfoList.size());
+                    
+                    JSONArray sleepDataArray = new JSONArray();
+                    for (SleepInfo sleepInfo : sleepInfoList) {
+                        JSONObject object = new JSONObject();
+                        object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
+                        object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
+                        object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
+                        object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                        sleepDataArray.put(object);
+                    }
+                    
+                    jsonObject.put("sleepData", sleepDataArray);
+
+                    jsonArray.put(jsonObject);
+                }
+                resultObject.put("data",jsonArray);
+            }
+            result.success(resultObject.toString());
+        } catch (Exception exp) {
+            Log.e("fetchAllStepExp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void fetchAllBPData( Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            JSONObject resultObject = new JSONObject();
+            if (mUTESQLOperate != null) {
+                List<BPVOneDayInfo> bpvOneDayInfoList = mUTESQLOperate.queryAllBloodPressureInfo();
+                Log.e("list", "list: " + bpvOneDayInfoList.size());
+                resultObject.put("status", WatchConstants.SC_SUCCESS);
+                JSONArray jsonArray = new JSONArray();
+                for(BPVOneDayInfo bpvOneDayInfo: bpvOneDayInfoList){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("calender",  bpvOneDayInfo.getCalendar());
+                    jsonObject.put("time",  GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+                    jsonObject.put("high",  bpvOneDayInfo.getHightBloodPressure());
+                    jsonObject.put("low",  bpvOneDayInfo.getLowBloodPressure());
+                    jsonArray.put(jsonObject);
+                }
+                resultObject.put("data",jsonArray);
+            }
+            result.success(resultObject.toString());
+        } catch (Exception exp) {
+            Log.e("fetchAllBPExp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void fetchAllTemperatureData( Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            JSONObject resultObject = new JSONObject();
+            if (mUTESQLOperate != null) {
+                List<TemperatureInfo> temperatureInfoList = mUTESQLOperate.queryTemperatureAll();
+                Log.e("list", "list: " + temperatureInfoList.size());
+                resultObject.put("status", WatchConstants.SC_SUCCESS);
+                JSONArray jsonArray = new JSONArray();
+                for(TemperatureInfo temperatureInfo: temperatureInfoList){
+                    JSONObject jsonObject = new JSONObject();
+//                    jsonObject.put("calender",  temperatureInfo.getCalendar());
+//                    jsonObject.put("bodyTemp",  temperatureInfo.getBodyTemperature());
+//                    jsonObject.put("time",  GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+//                    jsonObject.put("high",  bpvOneDayInfo.getHightBloodPressure());
+//                    jsonObject.put("low",  bpvOneDayInfo.getLowBloodPressure());
+
+
+                    jsonObject.put("calender",  temperatureInfo.getCalendar());
+                    jsonObject.put("type", "" + temperatureInfo.getType());
+                    jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                    jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+                    jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                    jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+                    jsonArray.put(jsonObject);
+                }
+                resultObject.put("data",jsonArray);
+            }
+            result.success(resultObject.toString());
+        } catch (Exception exp) {
+            Log.e("fetchAllBPExp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    // start -stop test
+    private void startOxygenSaturation(Result result) {
+        boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
+        if (isSupported){
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.startOxygenTest();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
+                }
+            } else {
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
+        } else {
+            result.success(WatchConstants.SC_NOT_SUPPORTED);
+        }
+    }
+
+    private void stopOxygenSaturation(Result result) {
+        boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
+        if (isSupported){
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.stopOxygenTest();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
+                }
+            } else {
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
+        } else {
+            result.success(WatchConstants.SC_NOT_SUPPORTED);
+        }
+    }
+
+    private void startBloodPressure(Result result) {
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
             if (mWriteCommand != null) {
                 mWriteCommand.sendBloodPressureTestCommand(GlobalVariable.BLOOD_PRESSURE_TEST_START);
@@ -808,10 +1336,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         } else {
             result.success(WatchConstants.SC_DISCONNECTED);
         }
-
     }
 
-    private void stopBloodPressure(MethodCall call, Result result) {
+    private void stopBloodPressure(Result result) {
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
             if (mWriteCommand != null) {
                 mWriteCommand.sendBloodPressureTestCommand(GlobalVariable.BLOOD_PRESSURE_TEST_STOP);
@@ -824,10 +1351,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private void syncBloodPressure(MethodCall call, Result result) {
+    private void startHeartRate(Result result) {
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
             if (mWriteCommand != null) {
-                mWriteCommand.syncAllBloodPressureData();
+                mWriteCommand.sendRateTestCommand(GlobalVariable.RATE_TEST_START);
                 result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
@@ -835,11 +1362,33 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         } else {
             result.success(WatchConstants.SC_DISCONNECTED);
         }
-
     }
 
-    private void startTempTest(MethodCall call, Result result) {
+    private void stopHeartRate(Result result) {
+        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+            if (mWriteCommand != null) {
+                mWriteCommand.sendRateTestCommand(GlobalVariable.RATE_TEST_STOP);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } else {
+            result.success(WatchConstants.SC_DISCONNECTED);
+        }
+    }
 
+
+    private void startTempTest(Result result) {
+        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+            if (mWriteCommand != null) {
+                mWriteCommand.queryCurrentTemperatureData();
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } else {
+            result.success(WatchConstants.SC_DISCONNECTED);
+        }
     }
 
     @Override
@@ -900,24 +1449,25 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private void runOnUIThread(final String result, final JSONObject data, final String callbackName, final String status) {
         //  final String result
         uiThreadHandler.post(new Runnable() {
-                                 @Override
-                                 public void run() {
-                                     Log.d("runOnUIThread", "Calling runOnUIThread with: " + data);
+          @Override
+           public void run() {
+            Log.d("runOnUIThread", "Calling runOnUIThread with: " + data);
 
-                                     try {
-                                         JSONObject args = new JSONObject();
-                                         args.put("id", callbackName);
-                                         args.put("status", status);
-                                         args.put("result", result);
-                                         args.put("data", data);
-                                         mCallbackChannel.invokeMethod(WatchConstants.CALL_LISTENER, args.toString());
+            try {
+             JSONObject args = new JSONObject();
+             args.put("id", callbackName);
+             args.put("status", status);
+             args.put("result", result);
+             args.put("data", data);
+             mCallbackChannel.invokeMethod(WatchConstants.CALL_LISTENER, args.toString());
 
-                                     } catch (Exception e) {
-                                         // e.printStackTrace();
-                                         Log.e("data_run_exp:", e.getMessage());
-                                     }
-                                 }
-                             }
+            } catch (Exception e) {
+             // e.printStackTrace();
+            Log.e("data_run_exp:", e.getMessage());
+            }
+
+           }
+          }
         );
     }
 

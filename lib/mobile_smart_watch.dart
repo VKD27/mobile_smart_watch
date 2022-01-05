@@ -13,6 +13,10 @@ part 'src/mobile_smart_watch.dart';
 part 'src/util/smart_watch_constants.dart';
 part 'src/util/callbacks.dart';
 part 'src/models/smart_device_model.dart';
+part 'src/models/smart_sleep_model.dart';
+part 'src/models/smart_hr_model.dart';
+part 'src/models/smart_bp_model.dart';
+part 'src/models/smart_temperature_model.dart';
 
 
 /*import 'dart:async';

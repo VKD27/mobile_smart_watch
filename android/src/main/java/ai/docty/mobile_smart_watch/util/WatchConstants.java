@@ -27,10 +27,33 @@ public class WatchConstants {
     // daily activities & operations
     public static final String GET_SYNC_STEPS = "syncAllStepsData";
     public static final String GET_SYNC_RATE = "syncRateData";
+    public static final String GET_SYNC_SLEEP = "syncSleepData";
+    public static final String GET_SYNC_BP = "syncBP";
+    public static final String GET_SYNC_OXYGEN = "syncOxygen";
+    public static final String GET_SYNC_TEMPERATURE = "syncTemperature";
+    
     public static final String START_TEST_TEMP = "startTestTemp";
     public static final String START_BP_TEST = "startBPTest";
     public static final String STOP_BP_TEST = "stopBPTest";
-    public static final String SYNC_BP = "syncBP";
+
+    public static final String START_HR_TEST = "startHRTest";
+    public static final String STOP_HR_TEST = "stopHRTest";
+
+    public static final String START_OXYGEN_TEST = "startOxygenTest";
+    public static final String STOP_OXYGEN_TEST = "stopOxygenTest";
+
+    public static final String FETCH_STEPS_BY_DATE = "fetchStepsByDate";
+    public static final String FETCH_SLEEP_BY_DATE = "fetchSleepByDate";
+    public static final String FETCH_BP_BY_DATE = "fetchBPByDate";
+    public static final String FETCH_HR_BY_DATE = "fetchHRByDate";
+    public static final String FETCH_24_HOUR_HR_BY_DATE = "fetch24HourHRDateByDate";
+    public static final String FETCH_TEMP_BY_DATE = "fetchTemperatureByDate";
+
+    public static final String FETCH_ALL_STEPS_DATA = "fetchAllStepsData";
+    public static final String FETCH_ALL_SLEEP_DATA = "fetchAllSleepData";
+    public static final String FETCH_ALL_BP_DATA = "fetchAllBPData";
+    public static final String FETCH_ALL_TEMP_DATA = "fetchAllTempData";
+
 
     //method channel
     public static final String SMART_METHOD_CHANNEL = "mobile_smart_watch";
@@ -54,6 +77,7 @@ public class WatchConstants {
     public static final String STEPS_REAL_TIME = "stepsRealTime";
     public static final String HR_REAL_TIME = "heartRateRT";
     public static final String BP_RESULT = "bpResult";
+    public static final String TEMP_RESULT = "tempResult";
 
 
     public static final String CALLBACK_EXCEPTION = "callbackException";
@@ -62,23 +86,4 @@ public class WatchConstants {
     // for streaming broadcast action event name
     public static final String BROADCAST_ACTION_NAME = "ai.docty.smartcare";
 
-
-   
-
-
-    //device init methods calls
-//    final static String SMART_STOP_SEARCH = "stopDeviceSearch";
-//    final static String SMART_SET_USER_DATA = "setUserParams";
-//    final static String SMART_CONNECT_DEVICE = "connectWithDevice";
-//    final static String SMART_DISCONNECT_DEVICE = "disconnectDevice";
-//    final static String SMART_DELETE_DATA = "deleteData";
-//    final static String SMART_GET_DATA = "getDeviceData";
-//    final static String SMART_DISPOSE_ALL = "disposeAll";
-
-    //DEVICE_STATUS
-//    final static String CONNECT_UNSUPPORT_DEVICETYPE = "unSupportedDevice";
-//    final static String CONNECT_UNSUPPORT_BLUETOOTHTYPE = "unSupportedBluetooth";
-//    final static String CONNECT_CONNECTING = "connecting";
-//    final static String CONNECT_CONNECTED = "connected";
-//    final static String CONNECT_DISCONNECTED = "disconnected";
 }

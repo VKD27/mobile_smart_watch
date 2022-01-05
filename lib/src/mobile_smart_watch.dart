@@ -117,6 +117,12 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_STEPS);
   }
 
+  Future<String> syncSleepData() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_SLEEP);
+  }
+
+
   Future<String> syncRateData() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_RATE);
@@ -124,7 +130,17 @@ class MobileSmartWatch {
 
   Future<String> syncBloodPressure() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
-    return await _methodChannel.invokeMethod(SmartWatchConstants.SYNC_BP);
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_BP);
+  }
+
+  Future<String> syncOxygenSaturation() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_OXYGEN);
+  }
+
+  Future<String> syncTemperature() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_TEMPERATURE);
   }
 
   Future<String> startBloodPressure() async{
@@ -136,6 +152,146 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.STOP_BP_TEST);
   }
 
+  Future<String> startHR() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.START_HR_TEST);
+  }
+  Future<String> stopHR() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.STOP_HR_TEST);
+  }
+
+  Future<String> startOxygenTest() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.START_OXYGEN_TEST);
+  }
+
+  Future<String> stopOxygenTest() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.STOP_OXYGEN_TEST);
+  }
+
+
+  Future<String> fetchStepsByDate(String dateTime) async{
+    // dateTime = "yyyyMMdd" // 20220212
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    var params = {
+      "dateTime":dateTime,  // dateTime is mandatory to pass
+    };
+    var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_STEPS_BY_DATE, params);
+    print("result_reaponse>> $result");
+    return "";
+  }
+
+  Future<Map<String, dynamic>> fetchSleepByDate(String dateTime) async{
+    // dateTime = "yyyyMMdd" // 20220103
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    // state // deep sleep: 0, Light sleep: 1,  awake: 2
+    var params = {
+      "dateTime":dateTime,  // dateTime is mandatory to pass
+    };
+    var _result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_SLEEP_BY_DATE, params);
+    print("sleep_reaponse>> $_result");
+    if (_result != null) {
+      Map<String, dynamic> response = jsonDecode(_result);
+      return response;
+    }else{
+      return {};
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchBPByDate(String dateTime) async{
+    // dateTime = "yyyyMMdd" // 20220103
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    // state // deep sleep: 0, Light sleep: 1,  awake: 2
+    var params = {
+      "dateTime":dateTime,  // dateTime is mandatory to pass
+    };
+    var _result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_BP_BY_DATE, params);
+    print("sleep_reaponse>> $_result");
+    if (_result != null) {
+      Map<String, dynamic> response = jsonDecode(_result);
+      return response;
+    }else{
+      return {};
+    }
+  }
+
+
+  Future<Map<String, dynamic>> fetchHeartRateByDate(String dateTime) async{
+    // dateTime = "yyyyMMdd" // 20220103
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    // state // deep sleep: 0, Light sleep: 1,  awake: 2
+    var params = {
+      "dateTime":dateTime,  // dateTime is mandatory to pass
+    };
+    var _result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_HR_BY_DATE, params);
+    print("hr_reaponse>> $_result");
+    if (_result != null) {
+      Map<String, dynamic> response = jsonDecode(_result);
+      return response;
+    }else{
+      return {};
+    }
+  }
+
+  Future<Map<String, dynamic>> fetch24HourHRByDate(String dateTime) async{
+    // dateTime = "yyyyMMdd" // 20220103
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    // state // deep sleep: 0, Light sleep: 1,  awake: 2
+    var params = {
+      "dateTime":dateTime,  // dateTime is mandatory to pass
+    };
+    var _result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_24_HOUR_HR_BY_DATE, params);
+    print("hr_reaponse>> $_result");
+    if (_result != null) {
+      Map<String, dynamic> response = jsonDecode(_result);
+      return response;
+    }else{
+      return {};
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchTemperatureByDate(String dateTime) async{
+    // dateTime = "yyyyMMdd" // 20220103
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    // state // deep sleep: 0, Light sleep: 1,  awake: 2
+    var params = {
+      "dateTime":dateTime,  // dateTime is mandatory to pass
+    };
+    var _result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_TEMP_BY_DATE, params);
+    print("temp_reaponse>> $_result");
+    if (_result != null) {
+      Map<String, dynamic> response = jsonDecode(_result);
+      return response;
+    }else{
+      return {};
+    }
+  }
+
+  Future<String> fetchAllStepsData() async{
+    var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_STEPS_DATA);
+    print("all_reaponse>> $result");
+    return "";
+  }
+
+  Future<String> fetchAllSleepData() async{
+    var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_SLEEP_DATA);
+    print("all_reaponse>> $result");
+    return "";
+  }
+
+  Future<String> fetchAllBPData() async{
+    var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_BP_DATA);
+    print("all_reaponse>> $result");
+    return "";
+  }
+
+  Future<String> fetchAllTemperatureData() async{
+    var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_TEMP_DATA);
+    print("all_reaponse>> $result");
+    return "";
+  }
 
 
   Future<String> testTempData() async{

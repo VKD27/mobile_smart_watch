@@ -59,11 +59,33 @@ class SmartWatchConstants {
   // daily activities & operations
   static const String GET_SYNC_STEPS = "syncAllStepsData";
   static const String GET_SYNC_RATE = "syncRateData";
-  static const String START_TEST_TEMP = "startTestTemp";
+  static const String GET_SYNC_SLEEP = "syncSleepData";
+  static const String GET_SYNC_BP = "syncBP";
+  static const String GET_SYNC_OXYGEN = "syncOxygen";
+  static const String GET_SYNC_TEMPERATURE = "syncTemperature";
 
+  static const String START_TEST_TEMP = "startTestTemp";
   static const String START_BP_TEST = "startBPTest";
   static const String STOP_BP_TEST = "stopBPTest";
-  static const String SYNC_BP = "syncBP";
+
+  static const String START_HR_TEST = "startHRTest";
+  static const String STOP_HR_TEST = "stopHRTest";
+
+  static const String START_OXYGEN_TEST = "startOxygenTest";
+  static const String STOP_OXYGEN_TEST = "stopOxygenTest";
+
+  static const String FETCH_STEPS_BY_DATE = "fetchStepsByDate";
+  static const String FETCH_SLEEP_BY_DATE = "fetchSleepByDate";
+  static const String FETCH_BP_BY_DATE = "fetchBPByDate";
+  static const String FETCH_HR_BY_DATE = "fetchHRByDate";
+  static const String FETCH_24_HOUR_HR_BY_DATE = "fetch24HourHRDateByDate";
+  static const String FETCH_TEMP_BY_DATE = "fetchTemperatureByDate";
+
+
+  static const String FETCH_ALL_STEPS_DATA = "fetchAllStepsData";
+  static const String FETCH_ALL_SLEEP_DATA = "fetchAllSleepData";
+  static const String FETCH_ALL_BP_DATA = "fetchAllBPData";
+  static const String FETCH_ALL_TEMP_DATA = "fetchAllTempData";
 
   //method channel
   static const String SMART_METHOD_CHANNEL = "mobile_smart_watch";
@@ -87,32 +109,12 @@ class SmartWatchConstants {
   static const String STEPS_REAL_TIME = "stepsRealTime";
   static const String HR_REAL_TIME = "heartRateRT";
   static const String BP_RESULT = "bpResult";
+  static const String TEMP_RESULT = "tempResult";
 
   static const String CALLBACK_EXCEPTION = "callbackException";
 
   static const String SMART_EVENTS = "smartEvents";
 
-  static const String DC_SUCCESS = "success";
-  static const String DC_FAILURE = "failure";
-  static const String DC_COMPLETE = "complete";
-
-  //device init methods calls
-  /*static const String SPIRO_INITIALIZE = "initializeSDK";
-  static const String SPIRO_START_SEARCH = "startDeviceSearch";
-  static const String SPIRO_STOP_SEARCH = "stopDeviceSearch";
-  static const String SPIRO_SET_USER_DATA = "setUserParams";
-  static const String SPIRO_CONNECT_DEVICE = "connectWithDevice";
-  static const String SPIRO_DISCONNECT_DEVICE = "disconnectDevice";
-  static const String SPIRO_DELETE_DATA = "deleteData";
-  static const String SPIRO_GET_DATA = "getDeviceData";
-  static const String SPIRO_DISPOSE_ALL = "disposeAll";*/
-
-  //DEVICE_STATUS
-  // static const  String CONNECT_UNSUPPORT_DEVICETYPE = "unSupportedDevice";
-  // static const  String CONNECT_UNSUPPORT_BLUETOOTHTYPE = "unSupportedBluetooth";
-  // static const  String CONNECT_CONNECTING = "connecting";
-  // static const  String CONNECT_CONNECTED = "connected";
-  // static const  String CONNECT_DISCONNECTED = "disconnected";
 
   //requires only for IOS
   static const String DC_APP_Id = "dcAppId";
