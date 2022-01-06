@@ -131,7 +131,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     };
 
     //sdk return results
-    private Result flutterInitResultBlu;
+   //private Result flutterInitResultBlu;
+   private Result flutterResultBluConnect;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -407,7 +408,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void initDeviceConnection(Result result) {
-        this.flutterInitResultBlu = result;
+        //this.flutterInitResultBlu = result;
         if (mobileConnect != null) {
             boolean enable = mobileConnect.isBleEnabled();
             boolean blu4 = mobileConnect.checkBlu4();
@@ -505,6 +506,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void connectBluDevice(MethodCall call, Result result) {
+        this.flutterResultBluConnect = result;
         String index = (String) call.argument("index");
         String name = (String) call.argument("name");
         String alias = (String) call.argument("alias");
@@ -515,12 +517,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         boolean status = mobileConnect.connectDevice(address);
         this.mBluetoothLeService = this.mobileConnect.getBluetoothLeService();
         if (this.mBluetoothLeService != null) {
-            initBlueServices();
+            initBlueServices(status);
         }
-        result.success(status);
+        //result.success(status);
     }
 
-    private void initBlueServices() {
+    private void initBlueServices(boolean connectionStatus) {
         Log.e("mBluetoothLeService::", "initBlueServices");
         mBluetoothLeService.setICallback(new ICallback() {
             @Override
@@ -579,6 +581,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         case ICallbackStatus.CONNECTED_STATUS: // 20
                             // connected successfully
                             //runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
+                            flutterResultBluConnect.success(connectionStatus);
                             runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
