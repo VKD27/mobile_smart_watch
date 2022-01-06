@@ -1,7 +1,7 @@
 part of mobile_smart_watch;
 
 class SmartDeviceModel {
-  final String index;
+  //final String index;
   final String name;
   final String rssi;
   final String address;
@@ -11,7 +11,7 @@ class SmartDeviceModel {
 
 
   const SmartDeviceModel({
-    required this.index,
+    //required this.index,
     required this.name,
     required this.rssi,
     required this.alias,
@@ -22,7 +22,7 @@ class SmartDeviceModel {
   });
 
   factory SmartDeviceModel.fromJson(Map<String, dynamic> data) => SmartDeviceModel(
-    index: data['index'].toString(),
+   // index: data['index'].toString(),
     name: data['name'].toString(),
     rssi: data['rssi'].toString(),
     alias: data['alias'].toString(),
@@ -33,7 +33,7 @@ class SmartDeviceModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> formData = new Map<String, dynamic>();
-    formData['index'] = this.index;
+   // formData['index'] = this.index;
     formData['name'] = this.name;
     formData['alias'] = this.alias;
     formData['address'] = this.address;

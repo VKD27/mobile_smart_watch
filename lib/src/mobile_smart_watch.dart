@@ -72,7 +72,7 @@ class MobileSmartWatch {
 
   Future<bool> connectDevice(SmartDeviceModel deviceModel) async{
     var deviceParams = {
-      'index': deviceModel.index,
+     // 'index': deviceModel.index,
       'name': deviceModel.name,
       'address': deviceModel.address,
       'rssi': deviceModel.rssi,

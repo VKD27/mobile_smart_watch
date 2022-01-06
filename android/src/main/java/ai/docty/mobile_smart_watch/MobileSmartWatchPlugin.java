@@ -507,7 +507,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void connectBluDevice(MethodCall call, Result result) {
         this.flutterResultBluConnect = result;
-        String index = (String) call.argument("index");
+        //String index = (String) call.argument("index");
         String name = (String) call.argument("name");
         String alias = (String) call.argument("alias");
         String address = (String) call.argument("address");
