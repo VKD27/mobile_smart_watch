@@ -25,6 +25,7 @@ public class WatchConstants {
     public static final String SET_USER_PARAMS = "setUserDetails";
 
     // daily activities & operations
+    public static final String SYNC_ALL_JUDGE = "fetchAllJudgement";
     public static final String GET_SYNC_STEPS = "syncAllStepsData";
     public static final String GET_SYNC_RATE = "syncRateData";
     public static final String GET_SYNC_SLEEP = "syncSleepData";

@@ -321,6 +321,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 break;
 
                 // sync all the data,from watch to the local (android SDK)
+            case WatchConstants.SYNC_ALL_JUDGE:
+                fetchAllJudgement(call, result);
+                break;
+
             case WatchConstants.GET_SYNC_STEPS:
                 syncAllStepsData(result);
                 break;
@@ -765,6 +769,73 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     // sync the activities
+    private void fetchAllJudgement(MethodCall call, Result result) {
+
+        boolean bluConnect = SPUtil.getInstance(mContext).getBleConnectStatus();
+        Log.e("bluConnect: ", "" + bluConnect);
+        JSONObject judgeJson = new JSONObject();
+        if (bluConnect) {
+
+            boolean rkPlatform = SPUtil.getInstance(mContext).getRKPlatform();
+            boolean isSupportNewParams = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
+            boolean isBandLostFunction = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_BAND_LOST_FUNCTION);
+            boolean isSwitchBraceletLang = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_SWITCH_BRACELET_LANGUAGE);
+            boolean isSupportTempUnitSwitch = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_UNIT_SWITCH);
+            boolean isMinHRAlarm = GetFunctionList.isSupportFunction_Fourth(mContext, GlobalVariable.IS_SUPPORT_MIN_HEAR_RATE_ALARM);
+
+            boolean isSupportHorVer = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_HOR_VER);
+
+            boolean isSupport24HrRate = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
+            boolean isTemperatureTest = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST);
+            boolean isTemperatureCalibration = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_CALIBRATION);
+            boolean isSupportOxygen = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
+
+            try{
+
+                //judgeJson.put("status", WatchConstants.SC_SUCCESS);
+                judgeJson.put("rkPlatform", rkPlatform);
+                judgeJson.put("isSupportNewParams", isSupportNewParams);
+                judgeJson.put("isBandLostFunction", isBandLostFunction);
+                judgeJson.put("isBraceletLangSwitch", isSwitchBraceletLang);
+                judgeJson.put("isTempUnitSwitch", isSupportTempUnitSwitch);
+                judgeJson.put("isMinHRAlarm", isMinHRAlarm);
+                judgeJson.put("isTempTest", isTemperatureTest);
+                judgeJson.put("isTempCalibration", isTemperatureCalibration);
+                judgeJson.put("isSupportHorVer", isSupportHorVer);
+                judgeJson.put("isSupport24HrRate", isSupport24HrRate);
+                judgeJson.put("isSupportOxygen", isSupportOxygen);
+
+               /* if (mWriteCommand != null) {
+                    mWriteCommand.syncAllStepData();
+                    mWriteCommand.syncAllSleepData();
+                    mWriteCommand.syncRateData();
+                    *//*mWriteCommand.syncAllRateData();
+                    if (isSupport24HrRate) {
+                        mWriteCommand.sync24HourRate();
+                    }*//*
+                    mWriteCommand.syncAllBloodPressureData();
+                    mWriteCommand.syncAllTemperatureData();
+                    if (isSupportOxygen){
+                        mWriteCommand.syncOxygenData();
+                    }
+                    result.success(WatchConstants.SC_INIT);
+
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
+                }*/
+                result.success(judgeJson.toString());
+                //result.success(WatchConstants.SC_FAILURE);
+            }catch (Exception exp){
+                Log.e("syncAllJSONExp: ", "" + exp.getMessage());
+                result.success(WatchConstants.SC_FAILURE);
+                //result.success(judgeJson.toString());
+            }
+
+        } else {
+            //device disconnected
+            result.success(WatchConstants.SC_DISCONNECTED);
+        }
+    }
 
     private void syncAllStepsData(Result result) {
         Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());

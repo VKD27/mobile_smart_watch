@@ -57,6 +57,7 @@ class SmartWatchConstants {
   static const String SET_USER_PARAMS = "setUserDetails";
 
   // daily activities & operations
+  static const String SYNC_ALL_JUDGE = "fetchAllJudgement";
   static const String GET_SYNC_STEPS = "syncAllStepsData";
   static const String GET_SYNC_RATE = "syncRateData";
   static const String GET_SYNC_SLEEP = "syncSleepData";

@@ -285,8 +285,9 @@ class HomePageState extends State<HomePage> {
                ),
                TextButton(
                  onPressed: () async {
-                   await fetchBatteryNVersion();
-                 }, child:  Text('GET BATTERY STATUS',
+                  // await fetchBatteryNVersion();
+                   await fetchAllJudgement();
+                 }, child:  Text('GET BATTERY STATUS /Sync',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
              ],
@@ -733,6 +734,22 @@ class HomePageState extends State<HomePage> {
      String stepsStatus = await _mobileSmartWatch.syncStepsData();
      print('syncStepsStatus>> $stepsStatus');
    }
+
+   Future<void> fetchAllJudgement() async{
+     Map<String, dynamic> resultJudgeData = await _mobileSmartWatch.fetchAllJudgement();
+     String status = resultJudgeData['status'].toString();
+     if (status == SmartWatchConstants.SC_SUCCESS) {
+       Map<String, dynamic> data = resultJudgeData['data'];
+
+     }else if (status == SmartWatchConstants.SC_DISCONNECTED) {
+       // device got diconnected.
+
+     }else if (status == SmartWatchConstants.SC_FAILURE){
+       // someting went wrong
+     }
+     print('resultJudgeData>> $resultJudgeData');
+   }
+
    Future<void> fetchSyncSleepData() async{
      String stepsStatus = await _mobileSmartWatch.syncSleepData();
      print('syncSleepStatus>> $stepsStatus');

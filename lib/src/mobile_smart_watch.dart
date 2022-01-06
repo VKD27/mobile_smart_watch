@@ -117,6 +117,39 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_STEPS);
   }
 
+  Future<Map<String, dynamic>> fetchAllJudgement() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    var result =  await _methodChannel.invokeMethod(SmartWatchConstants.SYNC_ALL_JUDGE);
+    print("judgement_reaponse>> $result");
+    var returnResponse;
+    if (result != null) {
+      if(result.toString().isNotEmpty){
+        if (result.toString() == SmartWatchConstants.SC_FAILURE) {
+          returnResponse ={
+            "status": SmartWatchConstants.SC_FAILURE,
+            "data":""
+          };
+        }else if (result.toString() == SmartWatchConstants.SC_DISCONNECTED) {
+          returnResponse ={
+            "status": SmartWatchConstants.SC_DISCONNECTED,
+            "data":""
+          };
+        }else{
+          Map<String, dynamic> response = jsonDecode(result);
+          returnResponse ={
+            "status": SmartWatchConstants.SC_SUCCESS,
+            "data":response
+          };
+        }
+        return returnResponse;
+      }else {
+        return returnResponse;
+      }
+    }else{
+      return returnResponse;
+    }
+  }
+
   Future<String> syncSleepData() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_SLEEP);
