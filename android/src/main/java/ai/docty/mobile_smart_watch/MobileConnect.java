@@ -126,8 +126,11 @@ public class MobileConnect {
     }
 
     public boolean disconnectDevice() {
-        this.mBLEServiceOperate.disConnect();
-        return true;
+        if (mBLEServiceOperate != null) {
+            this.mBLEServiceOperate.disConnect();
+            return true;
+        }
+        return false;
     }
     
 
