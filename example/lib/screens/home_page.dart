@@ -724,8 +724,8 @@ class HomePageState extends State<HomePage> {
   }
 
    Future<void> fetchBatteryNVersion() async {
-     String batteryStatus = await _mobileSmartWatch.getBatteryStatus();
-     String deviceVersion = await _mobileSmartWatch.getDeviceVersion();
+     Map<String, dynamic> batteryStatus = await _mobileSmartWatch.getBatteryStatus();
+     Map<String, dynamic> deviceVersion = await _mobileSmartWatch.getDeviceVersion();
      print('batteryStatus>> $batteryStatus');
      print('deviceVersion>> $deviceVersion');
    }
@@ -790,10 +790,6 @@ class HomePageState extends State<HomePage> {
      print('stopHR>> $stopBPStatus');
    }
 
-
-
-
-
    Future<void> fetchStepsByDate() async{
      var tempStatus = await _mobileSmartWatch.fetchStepsByDate("20220105");
 
@@ -812,8 +808,6 @@ class HomePageState extends State<HomePage> {
      var tempStatus = await _mobileSmartWatch.fetchTemperatureByDate("20220105");
 
    }
-
-
 
   Future<void> fetchSleepByDate() async {
     Map<String, dynamic> resultData = await _mobileSmartWatch.fetchSleepByDate("20220105");
@@ -838,21 +832,15 @@ class HomePageState extends State<HomePage> {
 
   Future<void> fetchAllStepsData() async{
      var tempStatus = await _mobileSmartWatch.fetchAllStepsData();
-
    }
 
    Future<void> fetchAllSleepData() async{
      var tempStatus = await _mobileSmartWatch.fetchAllSleepData();
-
    }
 
    Future<void> fetchAllTemperatureData() async{
      var tempStatus = await _mobileSmartWatch.fetchAllTemperatureData();
-
    }
-
-
-
 
    Future<void> startTempTest() async{
      String tempStatus = await _mobileSmartWatch.testTempData();
