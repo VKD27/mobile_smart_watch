@@ -145,16 +145,25 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         mCallbackChannel.setMethodCallHandler(callbacksHandler);
 
         mobileConnect = new MobileConnect(applicationContext.getApplicationContext(), activity);
-        mWriteCommand = WriteCommandToBLE.getInstance(applicationContext.getApplicationContext());
-        mDataProcessing = DataProcessing.getInstance(applicationContext.getApplicationContext());
-        mUTESQLOperate = UTESQLOperate.getInstance(applicationContext.getApplicationContext());
 
-        mDataProcessing.setOnStepChangeListener(mOnStepChangeListener);
-        mDataProcessing.setOnSleepChangeListener(mOnSleepChangeListener);
-        mDataProcessing.setOnRateListener(mOnRateListener);
-        mDataProcessing.setOnRateOf24HourListenerRate(mOnRateOf24HourListener);
-        mDataProcessing.setOnBloodPressureListener(mOnBloodPressureListener);
+        try {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mWriteCommand = WriteCommandToBLE.getInstance(applicationContext.getApplicationContext());
+                    mDataProcessing = DataProcessing.getInstance(applicationContext.getApplicationContext());
+                    mUTESQLOperate = UTESQLOperate.getInstance(applicationContext.getApplicationContext());
 
+                    mDataProcessing.setOnStepChangeListener(mOnStepChangeListener);
+                    mDataProcessing.setOnSleepChangeListener(mOnSleepChangeListener);
+                    mDataProcessing.setOnRateListener(mOnRateListener);
+                    mDataProcessing.setOnRateOf24HourListenerRate(mOnRateOf24HourListener);
+                    mDataProcessing.setOnBloodPressureListener(mOnBloodPressureListener);
+                }
+            });
+        }catch (Exception exp){
+            Log.e("setUpEngineExp:", exp.getMessage());
+        }
     }
 
     private final OxygenRealListener oxygenRealListener = new OxygenRealListener() {
@@ -169,9 +178,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         public void onTestResult(TemperatureInfo temperatureInfo) {
 
             Log.e("temperatureListener", "temperature: " + temperatureInfo.getBodyTemperature() + ", type: " + temperatureInfo.getType());
-
             try {
-                JSONObject jsonObject = new JSONObject();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = new JSONObject();
 //                jsonObject.put("calender", "" + temperatureInfo.getCalendar());
 //                jsonObject.put("type", "" + temperatureInfo.getType());
 //                jsonObject.put("bodyTemp", "" + temperatureInfo.getBodyTemperature());
@@ -180,16 +191,25 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                jsonObject.put("startDate", "" + temperatureInfo.getStartDate());
 //                jsonObject.put("time", "" + temperatureInfo.getSecondTime());
 
-                jsonObject.put("calender", temperatureInfo.getCalendar());
-                jsonObject.put("type", "" + temperatureInfo.getType());
-                jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
-                jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
-                jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
-                jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+                        try {
+                            jsonObject.put("calender", temperatureInfo.getCalendar());
+                            jsonObject.put("type", "" + temperatureInfo.getType());
+                            jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                            jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+                            jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                            jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
 
-                Log.e("onTestResult", "object: " + jsonObject.toString());
+                            Log.e("onTestResult", "object: " + jsonObject.toString());
 
-                runOnUIThread(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                        } catch (Exception e) {
+                           // e.printStackTrace();
+                            Log.e("onTestResultJSONExp:", e.getMessage());
+                        }
+
+                        runOnUIThread(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                    }
+                });
+
             } catch (Exception exp) {
                 Log.e("onTestResultExp:", exp.getMessage());
             }
@@ -207,9 +227,19 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         public void onRateChange(int rate, int status) {
             Log.e("onRateListener", "rate: " + rate + ", status: " + status);
             try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("hr", "" + rate);
-                runOnUIThread(WatchConstants.HR_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("hr", "" + rate);
+                        } catch (Exception e) {
+                           // e.printStackTrace();
+                            Log.e("onRateJSONExp: ", e.getMessage());
+                        }
+                        runOnUIThread(WatchConstants.HR_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                    }
+                });
             } catch (Exception exp) {
                 Log.e("onRateExp: ", exp.getMessage());
             }
@@ -228,16 +258,26 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private final SleepChangeListener mOnSleepChangeListener = new SleepChangeListener() {
         @Override
         public void onSleepChange() {
-            Log.e("onSleepChangeCalender", CalendarUtils.getCalendar(0));
-            SleepTimeInfo sleepTimeInfo = UTESQLOperate.getInstance(mContext).querySleepInfo(CalendarUtils.getCalendar(0));
-            int deepTime, lightTime, awakeCount, sleepTotalTime;
-            if (sleepTimeInfo != null) {
-                deepTime = sleepTimeInfo.getDeepTime();
-                lightTime = sleepTimeInfo.getLightTime();
-                awakeCount = sleepTimeInfo.getAwakeCount();
-                sleepTotalTime = sleepTimeInfo.getSleepTotalTime();
-                Log.e("sleepTimeInfo", "deepTime: " + deepTime + ", lightTime: " + lightTime + ", awakeCount=" + awakeCount + ", sleepTotalTime=" + sleepTotalTime);
+            try{
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("onSleepChangeCalender", CalendarUtils.getCalendar(0));
+                        SleepTimeInfo sleepTimeInfo = UTESQLOperate.getInstance(mContext).querySleepInfo(CalendarUtils.getCalendar(0));
+                        int deepTime, lightTime, awakeCount, sleepTotalTime;
+                        if (sleepTimeInfo != null) {
+                            deepTime = sleepTimeInfo.getDeepTime();
+                            lightTime = sleepTimeInfo.getLightTime();
+                            awakeCount = sleepTimeInfo.getAwakeCount();
+                            sleepTotalTime = sleepTimeInfo.getSleepTotalTime();
+                            Log.e("sleepTimeInfo", "deepTime: " + deepTime + ", lightTime: " + lightTime + ", awakeCount=" + awakeCount + ", sleepTotalTime=" + sleepTotalTime);
+                        }
+                    }
+                });
+            }catch (Exception exp){
+                Log.e("onSleepChangeExp::", exp.getMessage());
             }
+
         }
     };
 
@@ -247,11 +287,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         public void onBloodPressureChange(int highPressure, int lowPressure, int status) {
             Log.e("onBloodPressureChange", "highPressure: " + highPressure + ", lowPressure: " + lowPressure + ", status=" + status);
             try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("high", "" + highPressure);
-                jsonObject.put("low", "" + lowPressure);
-                jsonObject.put("status", "" + status);
-                runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("high", "" + highPressure);
+                            jsonObject.put("low", "" + lowPressure);
+                            jsonObject.put("status", "" + status);
+                            runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                        } catch (Exception e) {
+                            //e.printStackTrace();
+                            Log.e("bpChangeJSONExp::", e.getMessage());
+                        }
+                    }
+                });
+
             } catch (Exception exp) {
                 Log.e("bpChangeExp::", exp.getMessage());
             }
@@ -262,21 +313,34 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         @Override
         public void onStepChange(StepOneDayAllInfo info) {
             try {
-                if (info != null) {
-                    //Log.e("onStepChange1", "calendar: " + info.getCalendar());
-                    Log.e("onStepChange2", "mSteps: " + info.getStep() + ", mDistance: " + info.getDistance() + ", mCalories=" + info.getCalories());
-                    Log.e("onStepChange3", "mRunSteps: " + info.getRunSteps() + ", mRunDistance: " + info.getRunDistance() + ", mRunCalories=" + info.getRunCalories() + ", mRunDurationTime=" + info.getRunDurationTime());
-                    Log.e("onStepChange4", "mWalkSteps: " + info.getWalkSteps() + ", mWalkDistance: " + info.getWalkDistance() + ", mWalkCalories=" + info.getWalkCalories() + ", mWalkDurationTime=" + info.getWalkDurationTime());
-                    Log.e("onStepChange5", "getStepOneHourArrayInfo: " + info.getStepOneHourArrayInfo() + ", getStepRunHourArrayInfo: " + info.getStepRunHourArrayInfo() + ", getStepWalkHourArrayInfo=" + info.getStepWalkHourArrayInfo());
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (info != null) {
+                            //Log.e("onStepChange1", "calendar: " + info.getCalendar());
+                            Log.e("onStepChange2", "mSteps: " + info.getStep() + ", mDistance: " + info.getDistance() + ", mCalories=" + info.getCalories());
+                            Log.e("onStepChange3", "mRunSteps: " + info.getRunSteps() + ", mRunDistance: " + info.getRunDistance() + ", mRunCalories=" + info.getRunCalories() + ", mRunDurationTime=" + info.getRunDurationTime());
+                            Log.e("onStepChange4", "mWalkSteps: " + info.getWalkSteps() + ", mWalkDistance: " + info.getWalkDistance() + ", mWalkCalories=" + info.getWalkCalories() + ", mWalkDurationTime=" + info.getWalkDurationTime());
+                            Log.e("onStepChange5", "getStepOneHourArrayInfo: " + info.getStepOneHourArrayInfo() + ", getStepRunHourArrayInfo: " + info.getStepRunHourArrayInfo() + ", getStepWalkHourArrayInfo=" + info.getStepWalkHourArrayInfo());
 
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("steps", "" + info.getStep());
-//                    jsonObject.put("distance", ""+info.getDistance());
-//                    jsonObject.put("calories", ""+info.getCalories());
-                    jsonObject.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal(info.getDistance()));
-                    jsonObject.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal(info.getCalories()));
-                    runOnUIThread(WatchConstants.STEPS_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
-                }
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("steps", "" + info.getStep());
+                                //   jsonObject.put("distance", ""+info.getDistance());
+                                //  jsonObject.put("calories", ""+info.getCalories());
+                                jsonObject.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal(info.getDistance()));
+                                jsonObject.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal(info.getCalories()));
+                                runOnUIThread(WatchConstants.STEPS_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+
+                            } catch (Exception e) {
+                               // e.printStackTrace();
+                                Log.e("onStepJSONExp::", e.getMessage());
+                            }
+
+                        }
+                    }
+                });
+
             } catch (Exception exp) {
                 Log.e("onStepChangeExp::", exp.getMessage());
                 // runOnUIThread(WatchConstants.STEPS_REAL_TIME, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
