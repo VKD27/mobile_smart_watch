@@ -65,6 +65,9 @@ class SmartWatchConstants {
   static const String GET_SYNC_OXYGEN = "syncOxygen";
   static const String GET_SYNC_TEMPERATURE = "syncTemperature";
 
+
+
+
   static const String START_TEST_TEMP = "startTestTemp";
   static const String START_BP_TEST = "startBPTest";
   static const String STOP_BP_TEST = "stopBPTest";
@@ -75,6 +78,7 @@ class SmartWatchConstants {
   static const String START_OXYGEN_TEST = "startOxygenTest";
   static const String STOP_OXYGEN_TEST = "stopOxygenTest";
 
+  static const String FETCH_OVERALL_BY_DATE = "fetchOverAllByDate";
   static const String FETCH_STEPS_BY_DATE = "fetchStepsByDate";
   static const String FETCH_SLEEP_BY_DATE = "fetchSleepByDate";
   static const String FETCH_BP_BY_DATE = "fetchBPByDate";

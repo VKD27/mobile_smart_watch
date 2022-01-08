@@ -43,6 +43,7 @@ public class WatchConstants {
     public static final String START_OXYGEN_TEST = "startOxygenTest";
     public static final String STOP_OXYGEN_TEST = "stopOxygenTest";
 
+    public static final String FETCH_OVERALL_BY_DATE = "fetchOverAllByDate";
     public static final String FETCH_STEPS_BY_DATE = "fetchStepsByDate";
     public static final String FETCH_SLEEP_BY_DATE = "fetchSleepByDate";
     public static final String FETCH_BP_BY_DATE = "fetchBPByDate";
