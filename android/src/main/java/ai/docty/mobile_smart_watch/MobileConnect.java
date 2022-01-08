@@ -113,11 +113,15 @@ public class MobileConnect {
             }
         });*/
        boolean status = this.mBLEServiceOperate.connect(macAddress);
+       Log.e("ble_service_operate: ",""+status);
        if (status){
            this.mBluetoothLeService = this.mBLEServiceOperate.getBleService();
+           boolean bleServiceStatus = this.mBluetoothLeService.connect(macAddress);
+           Log.e("bleServiceStatus: ",""+bleServiceStatus);
        }else{
            if (mBLEServiceOperate!=null){
                mBLEServiceOperate.disConnect();
+               this.mBluetoothLeService.disconnect();
                connectDevice(macAddress);
            }
        }
@@ -128,6 +132,7 @@ public class MobileConnect {
     public boolean disconnectDevice() {
         if (mBLEServiceOperate != null) {
             this.mBLEServiceOperate.disConnect();
+            mBluetoothLeService.disconnect();
             return true;
         }
         return false;

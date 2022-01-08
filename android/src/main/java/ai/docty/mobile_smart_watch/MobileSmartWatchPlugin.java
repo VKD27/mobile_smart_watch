@@ -523,6 +523,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         String bondState = (String) call.argument("bondState");
         boolean status = mobileConnect.connectDevice(address);
         this.mBluetoothLeService = this.mobileConnect.getBluetoothLeService();
+
         if (this.mBluetoothLeService != null) {
             initBlueServices(status);
         }
@@ -595,6 +596,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
                             // disconnected successfully
+                           // mobileConnect.disconnectDevice();
                             runOnUIThread(WatchConstants.DEVICE_DISCONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             // runOnUIThread(new JSONObject(), WatchConstants.DEVICE_DISCONNECTED, WatchConstants.SC_SUCCESS);
                             break;
