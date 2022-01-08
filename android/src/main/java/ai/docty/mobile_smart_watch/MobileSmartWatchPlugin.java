@@ -1661,9 +1661,29 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void runOnUIThread(final String result, final JSONObject data, final String callbackName, final String status) {
         try {
+            this.activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("runOnUIThread", "Calling runOnUIThread with activity: " + data);
+
+                    try {
+                        JSONObject args = new JSONObject();
+                        args.put("id", callbackName);
+                        args.put("status", status);
+                        args.put("result", result);
+                        args.put("data", data);
+                        Log.e("mCallbackChannel:: ", ""+mCallbackChannel);
+                        mCallbackChannel.invokeMethod(WatchConstants.CALL_LISTENER, args.toString());
+
+                    } catch (Exception e) {
+                        // e.printStackTrace();
+                        Log.e("data_run_exp:", e.getMessage());
+                    }
+                }
+            });
             //  final String result
             // uiThreadHandler
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+           /* new Handler(Looper.getMainLooper()).post(new Runnable() {
                  @Override
                  public void run() {
                  Log.e("runOnUIThread", "Calling runOnUIThread with: " + data);
@@ -1683,7 +1703,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                    }
                 }
               }
-            );
+            );*/
         }catch (Exception exp){
             Log.e("onUIThreadPushExp: ", "" + exp.getMessage());
         }
