@@ -132,10 +132,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     };
 
     //sdk return results
-   //private Result flutterInitResultBlu;
-   private Result flutterResultBluConnect;
-   private Result deviceBatteryResult;
-   private Result deviceVersionIDResult;
+    //private Result flutterInitResultBlu;
+    private Result flutterResultBluConnect;
+    private Result deviceBatteryResult;
+    private Result deviceVersionIDResult;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -166,7 +166,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private final OxygenRealListener oxygenRealListener = new OxygenRealListener() {
         @Override
-        public void onTestResult(int  status, OxygenInfo oxygenInfo) {
+        public void onTestResult(int status, OxygenInfo oxygenInfo) {
             Log.e("oxygenRealListener", "value: " + oxygenInfo.getOxygenValue() + ", status: " + status);
         }
     };
@@ -187,7 +187,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                jsonObject.put("startDate", "" + temperatureInfo.getStartDate());
 //                jsonObject.put("time", "" + temperatureInfo.getSecondTime());
 
-                jsonObject.put("calender",  temperatureInfo.getCalendar());
+                jsonObject.put("calender", temperatureInfo.getCalendar());
                 jsonObject.put("type", "" + temperatureInfo.getType());
                 jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
                 jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
@@ -282,7 +282,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                    jsonObject.put("calories", ""+info.getCalories());
                     jsonObject.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal((double) info.getDistance()));
                     jsonObject.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal((double) info.getCalories()));
-
                     runOnUIThread(WatchConstants.STEPS_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                 }
             } catch (Exception exp) {
@@ -324,7 +323,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 getDeviceBatteryStatus(result);
                 break;
 
-                // sync all the data,from watch to the local (android SDK)
+            // sync all the data,from watch to the local (android SDK)
             case WatchConstants.SYNC_ALL_JUDGE:
                 fetchAllJudgement(call, result);
                 break;
@@ -347,7 +346,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             case WatchConstants.GET_SYNC_TEMPERATURE:
                 syncBodyTemperature(result);
                 break;
-                //start doing test here
+            //start doing test here
             case WatchConstants.START_BP_TEST:
                 startBloodPressure(result);
                 break;
@@ -371,7 +370,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 startTempTest(result);
                 break;
 
-                //fetch individual data
+            //fetch individual data
             case WatchConstants.FETCH_OVERALL_BY_DATE:
                 fetchOverAllBySelectedDate(call, result);
                 break;
@@ -395,9 +394,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 fetchTemperatureByDate(call, result);
                 break;
 
-                // fetch all the dats
+            // fetch all the dats
             case WatchConstants.FETCH_ALL_STEPS_DATA:
-                fetchAllStepsData( result);
+                fetchAllStepsData(result);
                 break;
             case WatchConstants.FETCH_ALL_SLEEP_DATA:
                 fetchAllSleepData(result);
@@ -596,7 +595,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
                             // disconnected successfully
-                           // mobileConnect.disconnectDevice();
+                            // mobileConnect.disconnectDevice();
                             runOnUIThread(WatchConstants.DEVICE_DISCONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             // runOnUIThread(new JSONObject(), WatchConstants.DEVICE_DISCONNECTED, WatchConstants.SC_SUCCESS);
                             break;
@@ -653,11 +652,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             }
         });
 
-        if(GetFunctionList.isSupportFunction_Fifth(mContext,GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST)){
+        if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST)) {
             mBluetoothLeService.setTemperatureListener(temperatureListener);
         }
 
-        if(GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN)){
+        if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN)) {
             mBluetoothLeService.setOxygenListener(oxygenRealListener);
         }
 
@@ -753,7 +752,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //        } else {
 //            result.success(WatchConstants.SC_NOT_SUPPORTED);
 //        }
-        }catch (Exception exp){
+        } catch (Exception exp) {
             Log.e("setUserParamsExp::", exp.getMessage());
             result.success(WatchConstants.SC_FAILURE);
         }
@@ -768,7 +767,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             } else {
                 result.success(WatchConstants.SC_FAILURE);
             }
-        }else {
+        } else {
             //device disconnected
             result.success(WatchConstants.SC_DISCONNECTED);
         }
@@ -780,7 +779,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
             if (mWriteCommand != null) {
                 mWriteCommand.sendToReadBLEBattery();
-               // result.success(WatchConstants.SC_INIT);
+                // result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
             }
@@ -812,7 +811,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             boolean isTemperatureCalibration = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_CALIBRATION);
             boolean isSupportOxygen = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
 
-            try{
+            try {
 
                 //judgeJson.put("status", WatchConstants.SC_SUCCESS);
                 judgeJson.put("rkPlatform", rkPlatform);
@@ -849,7 +848,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 }*/
                 result.success(judgeJson.toString());
                 //result.success(WatchConstants.SC_FAILURE);
-            }catch (Exception exp){
+            } catch (Exception exp) {
                 Log.e("syncAllJSONExp: ", "" + exp.getMessage());
                 result.success(WatchConstants.SC_FAILURE);
                 //result.success(judgeJson.toString());
@@ -892,7 +891,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void syncRateData(Result result) {
-        boolean support = GetFunctionList.isSupportFunction_Second(mContext,GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
+        boolean support = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
         Log.e("support", "" + support);
         Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
@@ -929,7 +928,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private void syncOxygenSaturation(Result result) {
         boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
         Log.e("syncOxygenSat", "isSupported: " + isSupported);
-        if (isSupported){
+        if (isSupported) {
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
                     mWriteCommand.syncOxygenData();
@@ -949,9 +948,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void syncBodyTemperature(Result result) {
-        boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext,GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST);
+        boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST);
         Log.e("syncBodyTemp", "isSupported: " + isSupported);
-        if (isSupported){
+        if (isSupported) {
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
                     mWriteCommand.syncAllTemperatureData();
@@ -980,10 +979,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 // stepByDate
                 StepOneDayAllInfo stepOneDayAllInfo = mUTESQLOperate.queryRunWalkInfo(dateTime);
                 List<RateOneDayInfo> rateOneDayInfoList = mUTESQLOperate.queryRateOneDayDetailInfo(dateTime);
-                List<Rate24HourDayInfo> rate24HourDayInfoList =  mUTESQLOperate.query24HourRateDayInfo(dateTime);
+                List<Rate24HourDayInfo> rate24HourDayInfoList = mUTESQLOperate.query24HourRateDayInfo(dateTime);
                 List<BPVOneDayInfo> bpvOneDayInfoList = mUTESQLOperate.queryBloodPressureOneDayInfo(dateTime);
                 SleepTimeInfo sleepTimeInfo = mUTESQLOperate.querySleepInfo(dateTime);
-                List<TemperatureInfo> temperatureInfoList =  mUTESQLOperate.queryTemperatureDate(dateTime);
+                List<TemperatureInfo> temperatureInfoList = mUTESQLOperate.queryTemperatureDate(dateTime);
                 //steps data
                 stepsJsonData.put("steps", stepOneDayAllInfo.getStep());
                 stepsJsonData.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal((double) stepOneDayAllInfo.getDistance()));
@@ -1002,10 +1001,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 JSONArray hrArray = new JSONArray();
                 for (RateOneDayInfo rateOneDayInfo : rateOneDayInfoList) {
                     JSONObject object = new JSONObject();
-                    object.put("calender",  rateOneDayInfo.getCalendar());
-                    object.put("time",  GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
+                    object.put("calender", rateOneDayInfo.getCalendar());
+                    object.put("time", GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
                     //object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
-                    object.put("rate",  rateOneDayInfo.getRate());
+                    object.put("rate", rateOneDayInfo.getRate());
                     //object.put("currentRate",  rateOneDayInfo.getCurrentRate());
                     //object.put("high",  rateOneDayInfo.getHighestRate());
                     //object.put("low",  rateOneDayInfo.getLowestRate());
@@ -1017,9 +1016,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 JSONArray hr24Array = new JSONArray();
                 for (Rate24HourDayInfo rate24HourDayInfo : rate24HourDayInfoList) {
                     JSONObject object = new JSONObject();
-                    object.put("calender",  rate24HourDayInfo.getCalendar());
-                    object.put("time",  GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
-                    object.put("rate",  rate24HourDayInfo.getRate());
+                    object.put("calender", rate24HourDayInfo.getCalendar());
+                    object.put("time", GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
+                    object.put("rate", rate24HourDayInfo.getRate());
                     //Log.e("jsonObject", "object: " + object.toString());
                     hr24Array.put(object);
                 }
@@ -1027,10 +1026,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 JSONArray bpArray = new JSONArray();
                 for (BPVOneDayInfo bpvOneDayInfo : bpvOneDayInfoList) {
                     JSONObject object = new JSONObject();
-                    object.put("calender",  bpvOneDayInfo.getCalendar());
-                    object.put("time",  GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
-                    object.put("high",  bpvOneDayInfo.getHightBloodPressure());
-                    object.put("low",  bpvOneDayInfo.getLowBloodPressure());
+                    object.put("calender", bpvOneDayInfo.getCalendar());
+                    object.put("time", GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+                    object.put("high", bpvOneDayInfo.getHightBloodPressure());
+                    object.put("low", bpvOneDayInfo.getLowBloodPressure());
                     //Log.e("bpObject", "object: " + object.toString());
                     bpArray.put(object);
                 }
@@ -1041,7 +1040,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 sleepJsonData.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
                 sleepJsonData.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
                 sleepJsonData.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
-                List<SleepInfo>  sleepInfoList  = sleepTimeInfo.getSleepInfoList();
+                List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
                 JSONArray sleepArray = new JSONArray();
                 for (SleepInfo sleepInfo : sleepInfoList) {
                     JSONObject object = new JSONObject();
@@ -1056,7 +1055,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 JSONArray temperatureArray = new JSONArray();
                 for (TemperatureInfo temperatureInfo : temperatureInfoList) {
                     JSONObject tempObj = new JSONObject();
-                    tempObj.put("calender",  temperatureInfo.getCalendar());
+                    tempObj.put("calender", temperatureInfo.getCalendar());
                     tempObj.put("type", "" + temperatureInfo.getType());
                     tempObj.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
                     tempObj.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
@@ -1075,11 +1074,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 overAllJson.put("temperature", temperatureArray);
 
                 result.success(overAllJson.toString());
-            }else{
+            } else {
                 result.success(overAllJson.toString());
             }
 
-        }catch (Exception exp) {
+        } catch (Exception exp) {
             Log.e("fetchOverAllExp::", exp.getMessage());
             result.success(WatchConstants.SC_FAILURE);
         }
@@ -1122,7 +1121,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
                 List<StepOneDayAllInfo> list = mUTESQLOperate.queryRunWalkAllDay();
                 Log.e("list", "list: " + list.size());
-                for(StepOneDayAllInfo info: list){
+                for (StepOneDayAllInfo info : list) {
                     Log.e("list_info:", "calender: " + info.getCalendar());
                     Log.e("list_info:", "step: " + info.getStep());
                     Log.e("list_info:", "cal: " + info.getCalories());
@@ -1130,12 +1129,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 }
 
                 result.success(jsonObject.toString());
-            }else{
+            } else {
                 result.success(jsonObject.toString());
             }
         } catch (Exception exp) {
             Log.e("fetchStepExp::", exp.getMessage());
-          //  result.success(WatchConstants.SC_FAILURE);
+            //  result.success(WatchConstants.SC_FAILURE);
         }
     }
 
@@ -1166,7 +1165,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                Log.e("sleepTimeInfo111", "getSleepTotalTime: " + GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
 
                 // fetch the particular day sleep along state records
-                List<SleepInfo>  sleepInfoList  = sleepTimeInfo.getSleepInfoList();
+                List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
                 Log.e("sleepInfoList", "sleepInfoList: " + sleepInfoList.size());
                 JSONArray jsonArray = new JSONArray();
                 for (SleepInfo sleepInfo : sleepInfoList) {
@@ -1178,20 +1177,20 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
                     Log.e("sleepInfoList", "getColorIndex: " + sleepInfo.getColorIndex());
                     Log.e("sleepInfoList", "getDiffTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
-                    Log.e("sleepInfoList", "getStartTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime())+ " -- " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
-                   // Log.e("sleepInfoList", );
+                    Log.e("sleepInfoList", "getStartTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()) + " -- " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
+                    // Log.e("sleepInfoList", );
                     jsonArray.put(object);
                 }
 
                 resultJson.put("data", jsonArray);
 
                 result.success(resultJson.toString());
-            }else{
+            } else {
                 result.success(resultJson.toString());
             }
         } catch (Exception exp) {
             Log.e("fetchStepExp::", exp.getMessage());
-           // result.success(WatchConstants.SC_FAILURE);
+            // result.success(WatchConstants.SC_FAILURE);
         }
     }
 
@@ -1210,17 +1209,17 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 JSONArray jsonArray = new JSONArray();
                 for (BPVOneDayInfo bpvOneDayInfo : bpvOneDayInfoList) {
                     JSONObject object = new JSONObject();
-                    object.put("calender",  bpvOneDayInfo.getCalendar());
-                    object.put("time",  GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
-                    object.put("high",  bpvOneDayInfo.getHightBloodPressure());
-                    object.put("low",  bpvOneDayInfo.getLowBloodPressure());
+                    object.put("calender", bpvOneDayInfo.getCalendar());
+                    object.put("time", GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+                    object.put("high", bpvOneDayInfo.getHightBloodPressure());
+                    object.put("low", bpvOneDayInfo.getLowBloodPressure());
                     Log.e("bpObject", "object: " + object.toString());
                     jsonArray.put(object);
                 }
 
                 resultJson.put("data", jsonArray);
                 result.success(resultJson.toString());
-            }else{
+            } else {
                 result.success(resultJson.toString());
             }
         } catch (Exception exp) {
@@ -1238,7 +1237,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (mUTESQLOperate != null) {
 
                 List<RateOneDayInfo> rateOneDayInfoList = mUTESQLOperate.queryRateOneDayDetailInfo(dateTime);
-               // List<RateOneDayInfo> rateOneDayInfoList = mUTESQLOperate.queryRateAllInfo(); // list for the current date //size 5
+                // List<RateOneDayInfo> rateOneDayInfoList = mUTESQLOperate.queryRateAllInfo(); // list for the current date //size 5
 //                RateOneDayInfo rateOneDay = mUTESQLOperate.queryRateOneDayMainInfo(dateTime);
 //                Log.e("rateOneDay", "getRate: " +  rateOneDay.getRate());
 //                Log.e("rateOneDay", "getTime: " +  GlobalMethods.getTimeByIntegerMin(rateOneDay.getTime()));
@@ -1250,21 +1249,21 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 JSONArray jsonArray = new JSONArray();
                 for (RateOneDayInfo rateOneDayInfo : rateOneDayInfoList) {
                     JSONObject object = new JSONObject();
-                    object.put("calender",  rateOneDayInfo.getCalendar());
-                    object.put("time",  GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
+                    object.put("calender", rateOneDayInfo.getCalendar());
+                    object.put("time", GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
                     //object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
-                    object.put("rate",  rateOneDayInfo.getRate());
+                    object.put("rate", rateOneDayInfo.getRate());
                     //object.put("currentRate",  rateOneDayInfo.getCurrentRate());
                     //object.put("high",  rateOneDayInfo.getHighestRate());
                     //object.put("low",  rateOneDayInfo.getLowestRate());
-                   // object.put("average",  rateOneDayInfo.getVerageRate());
+                    // object.put("average",  rateOneDayInfo.getVerageRate());
                     Log.e("jsonObject", "object: " + object.toString());
                     jsonArray.put(object);
                 }
 
                 resultJson.put("data", jsonArray);
                 result.success(resultJson.toString());
-            }else{
+            } else {
                 result.success(resultJson.toString());
             }
         } catch (Exception exp) {
@@ -1279,17 +1278,17 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             JSONObject resultJson = new JSONObject();
             if (mUTESQLOperate != null) {
 
-              //  List<Rate24HourDayInfo> rate24HourDayInfoList =  mUTESQLOperate.query24HourRateAllInfo(); // provides overall available 24 hrs data from storage
-                List<Rate24HourDayInfo> rate24HourDayInfoList =  mUTESQLOperate.query24HourRateDayInfo(dateTime);
+                //  List<Rate24HourDayInfo> rate24HourDayInfoList =  mUTESQLOperate.query24HourRateAllInfo(); // provides overall available 24 hrs data from storage
+                List<Rate24HourDayInfo> rate24HourDayInfoList = mUTESQLOperate.query24HourRateDayInfo(dateTime);
                 Log.e("rateOneDayInfoList", "rateOneDayInfoList: " + rate24HourDayInfoList.size());
 
                 resultJson.put("status", WatchConstants.SC_SUCCESS);
                 JSONArray jsonArray = new JSONArray();
                 for (Rate24HourDayInfo rate24HourDayInfo : rate24HourDayInfoList) {
                     JSONObject object = new JSONObject();
-                    object.put("calender",  rate24HourDayInfo.getCalendar());
-                    object.put("time",  GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
-                    object.put("rate",  rate24HourDayInfo.getRate());
+                    object.put("calender", rate24HourDayInfo.getCalendar());
+                    object.put("time", GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
+                    object.put("rate", rate24HourDayInfo.getRate());
                     Log.e("jsonObject", "object: " + object.toString());
                     jsonArray.put(object);
                 }
@@ -1297,7 +1296,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 resultJson.put("data", jsonArray);
 
                 result.success(resultJson.toString());
-            }else{
+            } else {
                 result.success(resultJson.toString());
             }
         } catch (Exception exp) {
@@ -1312,14 +1311,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             JSONObject resultJson = new JSONObject();
             if (mUTESQLOperate != null) {
 
-                List<TemperatureInfo> temperatureInfoList =  mUTESQLOperate.queryTemperatureDate(dateTime);
+                List<TemperatureInfo> temperatureInfoList = mUTESQLOperate.queryTemperatureDate(dateTime);
                 Log.e("temperatureInfoList", "temperatureInfoList: " + temperatureInfoList.size());
 
                 resultJson.put("status", WatchConstants.SC_SUCCESS);
                 JSONArray jsonArray = new JSONArray();
                 for (TemperatureInfo temperatureInfo : temperatureInfoList) {
                     JSONObject object = new JSONObject();
-                    object.put("calender",  temperatureInfo.getCalendar());
+                    object.put("calender", temperatureInfo.getCalendar());
 
                     object.put("type", "" + temperatureInfo.getType());
                     object.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
@@ -1335,7 +1334,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 resultJson.put("data", jsonArray);
 
                 result.success(resultJson.toString());
-            }else{
+            } else {
                 result.success(resultJson.toString());
             }
         } catch (Exception exp) {
@@ -1356,7 +1355,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 resultObject.put("status", WatchConstants.SC_SUCCESS);
 
                 JSONArray jsonArray = new JSONArray();
-                for(StepOneDayAllInfo info: list){
+                for (StepOneDayAllInfo info : list) {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("calender", info.getCalendar());
                     jsonObject.put("steps", info.getStep());
@@ -1380,7 +1379,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
                     jsonArray.put(jsonObject);
                 }
-                resultObject.put("data",jsonArray);
+                resultObject.put("data", jsonArray);
             }
             result.success(resultObject.toString());
         } catch (Exception exp) {
@@ -1389,7 +1388,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private void fetchAllSleepData( Result result) {
+    private void fetchAllSleepData(Result result) {
         // providing proper list of the data on basis of the result.
         try {
             JSONObject resultObject = new JSONObject();
@@ -1401,7 +1400,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 resultObject.put("status", WatchConstants.SC_SUCCESS);
 
                 JSONArray jsonArray = new JSONArray();
-                for(SleepTimeInfo sleepTimeInfo: sleepTimeInfoList){
+                for (SleepTimeInfo sleepTimeInfo : sleepTimeInfoList) {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("calender", sleepTimeInfo.getCalendar());
                     jsonObject.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
@@ -1411,9 +1410,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     jsonObject.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
                     jsonObject.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
 
-                    List<SleepInfo>  sleepInfoList  = sleepTimeInfo.getSleepInfoList();
+                    List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
                     Log.e("sleepInfoList", "sleepInfoList: " + sleepInfoList.size());
-                    
+
                     JSONArray sleepDataArray = new JSONArray();
                     for (SleepInfo sleepInfo : sleepInfoList) {
                         JSONObject object = new JSONObject();
@@ -1423,12 +1422,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
                         sleepDataArray.put(object);
                     }
-                    
+
                     jsonObject.put("sleepData", sleepDataArray);
 
                     jsonArray.put(jsonObject);
                 }
-                resultObject.put("data",jsonArray);
+                resultObject.put("data", jsonArray);
             }
             result.success(resultObject.toString());
         } catch (Exception exp) {
@@ -1437,7 +1436,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private void fetchAllBPData( Result result) {
+    private void fetchAllBPData(Result result) {
         // providing proper list of the data on basis of the result.
         try {
             JSONObject resultObject = new JSONObject();
@@ -1446,15 +1445,15 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 Log.e("list", "list: " + bpvOneDayInfoList.size());
                 resultObject.put("status", WatchConstants.SC_SUCCESS);
                 JSONArray jsonArray = new JSONArray();
-                for(BPVOneDayInfo bpvOneDayInfo: bpvOneDayInfoList){
+                for (BPVOneDayInfo bpvOneDayInfo : bpvOneDayInfoList) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("calender",  bpvOneDayInfo.getCalendar());
-                    jsonObject.put("time",  GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
-                    jsonObject.put("high",  bpvOneDayInfo.getHightBloodPressure());
-                    jsonObject.put("low",  bpvOneDayInfo.getLowBloodPressure());
+                    jsonObject.put("calender", bpvOneDayInfo.getCalendar());
+                    jsonObject.put("time", GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+                    jsonObject.put("high", bpvOneDayInfo.getHightBloodPressure());
+                    jsonObject.put("low", bpvOneDayInfo.getLowBloodPressure());
                     jsonArray.put(jsonObject);
                 }
-                resultObject.put("data",jsonArray);
+                resultObject.put("data", jsonArray);
             }
             result.success(resultObject.toString());
         } catch (Exception exp) {
@@ -1463,7 +1462,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private void fetchAllTemperatureData( Result result) {
+    private void fetchAllTemperatureData(Result result) {
         // providing proper list of the data on basis of the result.
         try {
             JSONObject resultObject = new JSONObject();
@@ -1472,7 +1471,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 Log.e("list", "list: " + temperatureInfoList.size());
                 resultObject.put("status", WatchConstants.SC_SUCCESS);
                 JSONArray jsonArray = new JSONArray();
-                for(TemperatureInfo temperatureInfo: temperatureInfoList){
+                for (TemperatureInfo temperatureInfo : temperatureInfoList) {
                     JSONObject jsonObject = new JSONObject();
 //                    jsonObject.put("calender",  temperatureInfo.getCalendar());
 //                    jsonObject.put("bodyTemp",  temperatureInfo.getBodyTemperature());
@@ -1481,7 +1480,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                    jsonObject.put("low",  bpvOneDayInfo.getLowBloodPressure());
 
 
-                    jsonObject.put("calender",  temperatureInfo.getCalendar());
+                    jsonObject.put("calender", temperatureInfo.getCalendar());
                     jsonObject.put("type", "" + temperatureInfo.getType());
                     jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
                     jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
@@ -1489,7 +1488,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
                     jsonArray.put(jsonObject);
                 }
-                resultObject.put("data",jsonArray);
+                resultObject.put("data", jsonArray);
             }
             result.success(resultObject.toString());
         } catch (Exception exp) {
@@ -1501,7 +1500,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     // start -stop test
     private void startOxygenSaturation(Result result) {
         boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
-        if (isSupported){
+        if (isSupported) {
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
                     mWriteCommand.startOxygenTest();
@@ -1519,7 +1518,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void stopOxygenSaturation(Result result) {
         boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
-        if (isSupported){
+        if (isSupported) {
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
                     mWriteCommand.stopOxygenTest();
@@ -1656,28 +1655,31 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void runOnUIThread(final String result, final JSONObject data, final String callbackName, final String status) {
-        //  final String result
-        uiThreadHandler.post(new Runnable() {
-          @Override
-           public void run() {
-            Log.d("runOnUIThread", "Calling runOnUIThread with: " + data);
+        try {
+            //  final String result
+            uiThreadHandler.post(new Runnable() {
+                 @Override
+                 public void run() {
+                 Log.e("runOnUIThread", "Calling runOnUIThread with: " + data);
 
-            try {
-             JSONObject args = new JSONObject();
-             args.put("id", callbackName);
-             args.put("status", status);
-             args.put("result", result);
-             args.put("data", data);
-             mCallbackChannel.invokeMethod(WatchConstants.CALL_LISTENER, args.toString());
+                  try {
+                                             JSONObject args = new JSONObject();
+                                             args.put("id", callbackName);
+                                             args.put("status", status);
+                                             args.put("result", result);
+                                             args.put("data", data);
+                                             mCallbackChannel.invokeMethod(WatchConstants.CALL_LISTENER, args.toString());
 
-            } catch (Exception e) {
-             // e.printStackTrace();
-            Log.e("data_run_exp:", e.getMessage());
-            }
-
-           }
-          }
-        );
+                                         } catch (Exception e) {
+                                             // e.printStackTrace();
+                                             Log.e("data_run_exp:", e.getMessage());
+                                         }
+                                     }
+                                 }
+            );
+        }catch (Exception exp){
+            Log.e("onUIThreadPushExp: ", "" + exp.getMessage());
+        }
     }
 
    /* private class AsyncExecuteUpdate extends AsyncTask<String, String, String> {
