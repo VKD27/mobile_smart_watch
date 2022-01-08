@@ -141,20 +141,21 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         methodChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_METHOD_CHANNEL); // "mobile_smart_watch"
         methodChannel.setMethodCallHandler(mobileSmartWatchPlugin);
 
+        mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
+        mCallbackChannel.setMethodCallHandler(callbacksHandler);
+
+        mobileConnect = new MobileConnect(applicationContext.getApplicationContext(), activity);
+
+        mWriteCommand = WriteCommandToBLE.getInstance(applicationContext.getApplicationContext());
+        mDataProcessing = DataProcessing.getInstance(applicationContext.getApplicationContext());
+        mUTESQLOperate = UTESQLOperate.getInstance(applicationContext.getApplicationContext());
+
         try {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
-                    mCallbackChannel.setMethodCallHandler(callbacksHandler);
-
-                    mobileConnect = new MobileConnect(applicationContext.getApplicationContext(), activity);
 
                     //sdk commands execution
-                    mWriteCommand = WriteCommandToBLE.getInstance(applicationContext.getApplicationContext());
-                    mDataProcessing = DataProcessing.getInstance(applicationContext.getApplicationContext());
-                    mUTESQLOperate = UTESQLOperate.getInstance(applicationContext.getApplicationContext());
-
                     mDataProcessing.setOnStepChangeListener(mOnStepChangeListener);
                     mDataProcessing.setOnSleepChangeListener(mOnSleepChangeListener);
                     mDataProcessing.setOnRateListener(mOnRateListener);
