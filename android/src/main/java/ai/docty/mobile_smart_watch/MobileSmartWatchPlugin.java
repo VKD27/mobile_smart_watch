@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -133,6 +134,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     //sdk return results
    //private Result flutterInitResultBlu;
    private Result flutterResultBluConnect;
+   private Result deviceBatteryResult;
+   private Result deviceVersionIDResult;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -535,16 +538,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             String deviceVersion = SPUtil.getInstance(mContext).getImgLocalVersion();
                             Log.e("deviceVersion::", deviceVersion);
                             jsonObject.put("deviceVersion", deviceVersion);
+                            deviceVersionIDResult.success(jsonObject.toString());
                             // runOnUIThread(new JSONObject(), WatchConstants.DEVICE_VERSION, WatchConstants.SC_SUCCESS);
                             runOnUIThread(WatchConstants.DEVICE_VERSION, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             break;
                         case ICallbackStatus.GET_BLE_BATTERY_OK:
-                            String deviceVer = SPUtil.getInstance(mContext).getImgLocalVersion();
+                            //String deviceVer = SPUtil.getInstance(mContext).getImgLocalVersion();
                             String batteryStatus = "" + SPUtil.getInstance(mContext).getBleBatteryValue();
                             Log.e("batteryStatus::", batteryStatus);
-                            jsonObject.put("deviceVersion", deviceVer);
+                            //jsonObject.put("deviceVersion", deviceVer);
                             jsonObject.put("batteryStatus", batteryStatus);
                             // runOnUIThread(jsonObject, WatchConstants.BATTERY_VERSION, WatchConstants.SC_SUCCESS);
+                            deviceBatteryResult.success(jsonObject.toString());
                             runOnUIThread(WatchConstants.BATTERY_STATUS, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             break;
                         // while connecting a device
@@ -749,19 +754,27 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void getDeviceVersion(Result result) {
-        if (mWriteCommand != null) {
-            mWriteCommand.sendToReadBLEVersion();
-            result.success(WatchConstants.SC_INIT);
-        } else {
-            result.success(WatchConstants.SC_FAILURE);
+        deviceVersionIDResult = result;
+        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+            if (mWriteCommand != null) {
+                mWriteCommand.sendToReadBLEVersion();
+                // result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        }else {
+            //device disconnected
+            result.success(WatchConstants.SC_DISCONNECTED);
         }
+
     }
 
     private void getDeviceBatteryStatus(Result result) {
+        deviceBatteryResult = result;
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
             if (mWriteCommand != null) {
                 mWriteCommand.sendToReadBLEBattery();
-                result.success(WatchConstants.SC_INIT);
+               // result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
             }
@@ -808,6 +821,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 judgeJson.put("isSupport24HrRate", isSupport24HrRate);
                 judgeJson.put("isSupportOxygen", isSupportOxygen);
 
+//                AsyncExecuteUpdate asyncTask=new AsyncExecuteUpdate();
+//                asyncTask.execute("");
                /* if (mWriteCommand != null) {
                     mWriteCommand.syncAllStepData();
                     mWriteCommand.syncAllSleepData();
@@ -1451,7 +1466,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-
     private void startTempTest(Result result) {
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
             if (mWriteCommand != null) {
@@ -1545,6 +1559,48 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         );
     }
 
+   /* private class AsyncExecuteUpdate extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            p = new ProgressDialog(MainActivity.this);
+//            p.setMessage("Please wait...It is downloading");
+//            p.setIndeterminate(false);
+//            p.setCancelable(false);
+//            p.show();
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncAllStepData();
+                    mWriteCommand.syncAllSleepData();
+                    mWriteCommand.syncRateData();
+                   *//*mWriteCommand.syncAllRateData();
+                    if (isSupport24HrRate) {
+                        mWriteCommand.sync24HourRate();
+                    }*//*
+                    mWriteCommand.syncAllBloodPressureData();
+                    mWriteCommand.syncAllTemperatureData();
+                    if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN)){
+                        mWriteCommand.syncOxygenData();
+                    }
+                    return WatchConstants.SC_SUCCESS;
+                }else{
+                    return WatchConstants.SC_FAILURE;
+                }
+               // return WatchConstants.SC_SUCCESS;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return WatchConstants.SC_FAILURE;
+            }
+        }
+        @Override
+        protected void onPostExecute(String bitmap) {
+            super.onPostExecute(bitmap);
+
+        }
+    }*/
 /*    @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.e("act_resultCode", "" + resultCode);
