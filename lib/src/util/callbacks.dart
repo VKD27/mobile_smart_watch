@@ -18,7 +18,8 @@ Future<void> _methodCallHandler(MethodCall call) async {
       _callbacksById[callMap["id"]]!(callMap);
       break;
     default:
-      print('Ignoring invoke from native. This normally shouldn\'t happen.');
+      print('_methodCallHandlerExp: Ignoring invoke from native. This normally shouldn\'t happen.');
+      break;
   }
 }
 

@@ -422,7 +422,7 @@ class MobileSmartWatch {
   }
 
   void onDeviceCallbackData(Function callback) async {
-    startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
+    await startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
   }
 
   void onCancelCallbackData() async {
