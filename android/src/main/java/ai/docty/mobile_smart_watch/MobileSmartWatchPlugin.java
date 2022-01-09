@@ -193,6 +193,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void startListeningDataProcessing() {
+
         mDataProcessing.setOnStepChangeListener(new StepChangeListener() {
             @Override
             public void onStepChange(StepOneDayAllInfo info) {
@@ -224,7 +225,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             @Override
             public void onRateChange(int rate, int status) {
                 Log.e("onRateListener", "rate: " + rate + ", status: " + status);
-                try {
+                updateContinuousHeartRate(rate, status);
+                /*try {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -240,7 +242,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     });
                 } catch (Exception exp) {
                     Log.e("onRateExp: ", exp.getMessage());
-                }
+                }*/
             }
         });
         mDataProcessing.setOnSleepChangeListener(new SleepChangeListener() {
@@ -290,6 +292,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 Log.e("onRateOf24Hour", "maxHeartRateValue: " + maxHeartRateValue + ", minHeartRateValue: " + minHeartRateValue + ", averageHeartRateValue=" + averageHeartRateValue + ", isRealTimeValue=" + isRealTimeValue);
             }
         });
+    }
+
+    private void updateContinuousHeartRate(int rate, int status) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("hr", "" + rate);
+            } catch (Exception e) {
+                // e.printStackTrace();
+                Log.e("onRateJSONExp: ", e.getMessage());
+            }
+            runOnUIThread(WatchConstants.HR_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+
+        } catch (Exception exp) {
+            Log.e("onRateExp: ", exp.getMessage());
+        }
     }
 
     private void startListeningCallback(boolean initial){
