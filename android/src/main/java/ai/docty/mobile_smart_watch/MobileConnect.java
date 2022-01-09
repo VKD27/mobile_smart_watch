@@ -11,6 +11,8 @@ import android.util.Log;
 import com.yc.pedometer.sdk.BLEServiceOperate;
 import com.yc.pedometer.sdk.BluetoothLeService;
 import com.yc.pedometer.sdk.DeviceScanInterfacer;
+import com.yc.pedometer.sdk.ICallbackStatus;
+import com.yc.pedometer.sdk.ServiceStatusCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,27 @@ public class MobileConnect {
         this.context = context;
         this.activity = activity;
         this.mBLEServiceOperate =  BLEServiceOperate.getInstance(context);
+        /*mBLEServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
+            @Override
+            public void OnServiceStatuslt(int i) {
+                if (i == ICallbackStatus.BLE_SERVICE_START_OK) {
+                    Log.e("inside_service_result", ""+mBluetoothLeService);
+                    //Service startup is complete, get the service object
+                    mBluetoothLeService = mBLEServiceOperate.getBleService();
+                }
+            }
+        });*/
+        //if (mBLEServiceOperate!=null){
+         //   this.mBluetoothLeService = mBLEServiceOperate.getBleService();
+       // }
+    }
+
+    public BLEServiceOperate getBLEServiceOperate(){
+        return this.mBLEServiceOperate;
+    }
+
+    public void setBluetoothLeService(BluetoothLeService mBluetoothLeService) {
+        this.mBluetoothLeService = mBluetoothLeService;
     }
 
     public BluetoothLeService getBluetoothLeService(){
@@ -55,6 +78,15 @@ public class MobileConnect {
     }
 
     public String startListeners() {
+       /* this.mBLEServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
+            @Override
+            public void OnServiceStatuslt(int i) {
+                if (i == ICallbackStatus.BLE_SERVICE_START_OK) {
+                    //Service startup is complete, get the service object
+                    mBluetoothLeService = mBLEServiceOperate.getBleService();
+                }
+            }
+        });*/
         
         this.mBLEServiceOperate.setDeviceScanListener(new DeviceScanInterfacer() {
             @Override
@@ -115,9 +147,12 @@ public class MobileConnect {
        boolean status = this.mBLEServiceOperate.connect(macAddress);
        Log.e("ble_service_operate: ",""+status);
        //if (status){
-           this.mBluetoothLeService = this.mBLEServiceOperate.getBleService();
-           boolean bleServiceStatus = this.mBluetoothLeService.connect(macAddress);
-           Log.e("bleServiceStatus: ",""+bleServiceStatus);
+        if (mBluetoothLeService!=null)
+        {
+            boolean bleServiceStatus = this.mBluetoothLeService.connect(macAddress);
+            Log.e("bleServiceStatus: ",""+bleServiceStatus);
+        }
+
 //       }else{
 //           if (this.mBLEServiceOperate!=null){
 //               this.mBLEServiceOperate.disConnect();
@@ -138,8 +173,9 @@ public class MobileConnect {
                 this.mBluetoothLeService.disconnect();
             }
             return true;
+        }else{
+            return false;
         }
-        return false;
     }
     
 
@@ -177,6 +213,8 @@ public class MobileConnect {
         }
 
     }
+
+
 
      /* public String initBlueConnect() {
         mBLEServiceOperate = BLEServiceOperate.getInstance(context);

@@ -12,6 +12,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.yc.pedometer.info.BPVOneDayInfo;
+import com.yc.pedometer.info.BreatheInfo;
 import com.yc.pedometer.info.CustomTestStatusInfo;
 import com.yc.pedometer.info.DeviceParametersInfo;
 import com.yc.pedometer.info.HeartRateHeadsetSportModeInfo;
@@ -24,8 +25,12 @@ import com.yc.pedometer.info.SportsModesInfo;
 import com.yc.pedometer.info.StepOneDayAllInfo;
 import com.yc.pedometer.info.StepOneHourInfo;
 import com.yc.pedometer.info.TemperatureInfo;
+import com.yc.pedometer.listener.BreatheRealListener;
 import com.yc.pedometer.listener.OxygenRealListener;
+import com.yc.pedometer.listener.RateCalibrationListener;
 import com.yc.pedometer.listener.TemperatureListener;
+import com.yc.pedometer.listener.TurnWristCalibrationListener;
+import com.yc.pedometer.sdk.BLEServiceOperate;
 import com.yc.pedometer.sdk.BloodPressureChangeListener;
 import com.yc.pedometer.sdk.BluetoothLeService;
 import com.yc.pedometer.sdk.DataProcessing;
@@ -33,6 +38,7 @@ import com.yc.pedometer.sdk.ICallback;
 import com.yc.pedometer.sdk.ICallbackStatus;
 import com.yc.pedometer.sdk.RateChangeListener;
 import com.yc.pedometer.sdk.RateOf24HourRealTimeListener;
+import com.yc.pedometer.sdk.ServiceStatusCallback;
 import com.yc.pedometer.sdk.SleepChangeListener;
 import com.yc.pedometer.sdk.StepChangeListener;
 import com.yc.pedometer.sdk.UTESQLOperate;
@@ -43,7 +49,6 @@ import com.yc.pedometer.utils.GlobalVariable;
 import com.yc.pedometer.utils.SPUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -54,7 +59,6 @@ import java.util.Map;
 import ai.docty.mobile_smart_watch.model.BleDevices;
 import ai.docty.mobile_smart_watch.util.GlobalMethods;
 import ai.docty.mobile_smart_watch.util.WatchConstants;
-import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -70,6 +74,8 @@ import io.flutter.plugin.common.MethodChannel.Result;
  */
 public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
 
+   // ServiceStatusCallback, ICallback,
+    // RateCalibrationListener, TurnWristCalibrationListener, TemperatureListener, OxygenRealListener, BreatheRealListener
     /// PluginRegistry.ActivityResultListener
     ///FlutterPluginRegistry
 
@@ -143,39 +149,388 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
         mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
         mCallbackChannel.setMethodCallHandler(callbacksHandler);
+        try {
+        mUTESQLOperate = UTESQLOperate.getInstance(applicationContext.getApplicationContext());
 
         mobileConnect = new MobileConnect(applicationContext.getApplicationContext(), activity);
+        BLEServiceOperate bleServiceOperate = mobileConnect.getBLEServiceOperate();
+        bleServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
+            @Override
+            public void OnServiceStatuslt(int status) {
+                if (status == ICallbackStatus.BLE_SERVICE_START_OK) {
+                    Log.e("inside_service_result", ""+mBluetoothLeService);
+                    if (mBluetoothLeService == null) {
+                        startListeningCallback(true);
+                    }
+                }
+            }
+        });
+
+        mBluetoothLeService = bleServiceOperate.getBleService();
+        if (mBluetoothLeService != null) {
+            startListeningCallback(false);
+        }
 
         mWriteCommand = WriteCommandToBLE.getInstance(applicationContext.getApplicationContext());
         mDataProcessing = DataProcessing.getInstance(applicationContext.getApplicationContext());
-        mUTESQLOperate = UTESQLOperate.getInstance(applicationContext.getApplicationContext());
 
-        try {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+        startListeningDataProcessing();
 
+//            activity.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
                     //sdk commands execution
-                    mDataProcessing.setOnStepChangeListener(mOnStepChangeListener);
-                    mDataProcessing.setOnSleepChangeListener(mOnSleepChangeListener);
-                    mDataProcessing.setOnRateListener(mOnRateListener);
-                    mDataProcessing.setOnRateOf24HourListenerRate(mOnRateOf24HourListener);
-                    mDataProcessing.setOnBloodPressureListener(mOnBloodPressureListener);
-                }
-            });
+//                    mDataProcessing.setOnStepChangeListener(mOnStepChangeListener);
+//                    mDataProcessing.setOnSleepChangeListener(mOnSleepChangeListener);
+//                    mDataProcessing.setOnRateListener(mOnRateListener);
+//                    mDataProcessing.setOnRateOf24HourListenerRate(mOnRateOf24HourListener);
+//                    mDataProcessing.setOnBloodPressureListener(mOnBloodPressureListener);
+//                }
+//            });
         }catch (Exception exp){
             Log.e("setUpEngineExp:", exp.getMessage());
         }
     }
 
-    private final OxygenRealListener oxygenRealListener = new OxygenRealListener() {
+    private void startListeningDataProcessing() {
+        mDataProcessing.setOnStepChangeListener(new StepChangeListener() {
+            @Override
+            public void onStepChange(StepOneDayAllInfo info) {
+                if (info != null) {
+                    //Log.e("onStepChange1", "calendar: " + info.getCalendar());
+                    Log.e("onStepChange2", "mSteps: " + info.getStep() + ", mDistance: " + info.getDistance() + ", mCalories=" + info.getCalories());
+                    Log.e("onStepChange3", "mRunSteps: " + info.getRunSteps() + ", mRunDistance: " + info.getRunDistance() + ", mRunCalories=" + info.getRunCalories() + ", mRunDurationTime=" + info.getRunDurationTime());
+                    Log.e("onStepChange4", "mWalkSteps: " + info.getWalkSteps() + ", mWalkDistance: " + info.getWalkDistance() + ", mWalkCalories=" + info.getWalkCalories() + ", mWalkDurationTime=" + info.getWalkDurationTime());
+                    Log.e("onStepChange5", "getStepOneHourArrayInfo: " + info.getStepOneHourArrayInfo() + ", getStepRunHourArrayInfo: " + info.getStepRunHourArrayInfo() + ", getStepWalkHourArrayInfo=" + info.getStepWalkHourArrayInfo());
+
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("steps", "" + info.getStep());
+                        //   jsonObject.put("distance", ""+info.getDistance());
+                        //  jsonObject.put("calories", ""+info.getCalories());
+                        jsonObject.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal(info.getDistance()));
+                        jsonObject.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal(info.getCalories()));
+                        runOnUIThread(WatchConstants.STEPS_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+
+                    } catch (Exception e) {
+                        // e.printStackTrace();
+                        Log.e("onStepJSONExp::", e.getMessage());
+                    }
+
+                }
+            }
+        });
+        mDataProcessing.setOnRateListener(new RateChangeListener() {
+            @Override
+            public void onRateChange(int rate, int status) {
+                Log.e("onRateListener", "rate: " + rate + ", status: " + status);
+                try {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("hr", "" + rate);
+                            } catch (Exception e) {
+                                // e.printStackTrace();
+                                Log.e("onRateJSONExp: ", e.getMessage());
+                            }
+                            runOnUIThread(WatchConstants.HR_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                        }
+                    });
+                } catch (Exception exp) {
+                    Log.e("onRateExp: ", exp.getMessage());
+                }
+            }
+        });
+        mDataProcessing.setOnSleepChangeListener(new SleepChangeListener() {
+            @Override
+            public void onSleepChange() {
+                Log.e("onSleepChangeCalender", CalendarUtils.getCalendar(0));
+                SleepTimeInfo sleepTimeInfo = UTESQLOperate.getInstance(mContext).querySleepInfo(CalendarUtils.getCalendar(0));
+                int deepTime, lightTime, awakeCount, sleepTotalTime;
+                if (sleepTimeInfo != null) {
+                    deepTime = sleepTimeInfo.getDeepTime();
+                    lightTime = sleepTimeInfo.getLightTime();
+                    awakeCount = sleepTimeInfo.getAwakeCount();
+                    sleepTotalTime = sleepTimeInfo.getSleepTotalTime();
+                    Log.e("sleepTimeInfo", "deepTime: " + deepTime + ", lightTime: " + lightTime + ", awakeCount=" + awakeCount + ", sleepTotalTime=" + sleepTotalTime);
+                }
+            }
+        });
+        mDataProcessing.setOnBloodPressureListener(new BloodPressureChangeListener() {
+            @Override
+            public void onBloodPressureChange(int highPressure, int lowPressure, int status) {
+                Log.e("onBloodPressureChange", "highPressure: " + highPressure + ", lowPressure: " + lowPressure + ", status=" + status);
+                try {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("high", "" + highPressure);
+                                jsonObject.put("low", "" + lowPressure);
+                                jsonObject.put("status", "" + status);
+                                runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            } catch (Exception e) {
+                                //e.printStackTrace();
+                                Log.e("bpChangeJSONExp::", e.getMessage());
+                            }
+                        }
+                    });
+
+                } catch (Exception exp) {
+                    Log.e("bpChangeExp::", exp.getMessage());
+                }
+            }
+        });
+        mDataProcessing.setOnRateOf24HourListenerRate(new RateOf24HourRealTimeListener() {
+            @Override
+            public void onRateOf24HourChange(int maxHeartRateValue, int minHeartRateValue, int averageHeartRateValue, boolean isRealTimeValue) {
+                Log.e("onRateOf24Hour", "maxHeartRateValue: " + maxHeartRateValue + ", minHeartRateValue: " + minHeartRateValue + ", averageHeartRateValue=" + averageHeartRateValue + ", isRealTimeValue=" + isRealTimeValue);
+            }
+        });
+    }
+
+    private void startListeningCallback(boolean initial){
+        if (initial){
+            mBluetoothLeService = mobileConnect.getBLEServiceOperate().getBleService();
+        }
+        mobileConnect.setBluetoothLeService(mBluetoothLeService);
+        mBluetoothLeService.setICallback(new ICallback() {
+            @Override
+            public void OnResult(boolean status, int result) {
+                Log.e("onResult:", "status>> " + status + " resultValue>> " + result);
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    switch (result) {
+                        case ICallbackStatus.GET_BLE_VERSION_OK:
+                            String deviceVersion = SPUtil.getInstance(mContext).getImgLocalVersion();
+                            Log.e("deviceVersion::", deviceVersion);
+                            jsonObject.put("deviceVersion", deviceVersion);
+                            // deviceVersionIDResult.success(jsonObject.toString());
+                            // runOnUIThread(new JSONObject(), WatchConstants.DEVICE_VERSION, WatchConstants.SC_SUCCESS);
+                            runOnUIThread(WatchConstants.DEVICE_VERSION, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.GET_BLE_BATTERY_OK:
+                            //String deviceVer = SPUtil.getInstance(mContext).getImgLocalVersion();
+                            String batteryStatus = "" + SPUtil.getInstance(mContext).getBleBatteryValue();
+                            Log.e("batteryStatus::", batteryStatus);
+                            //jsonObject.put("deviceVersion", deviceVer);
+                            jsonObject.put("batteryStatus", batteryStatus);
+                            // runOnUIThread(jsonObject, WatchConstants.BATTERY_VERSION, WatchConstants.SC_SUCCESS);
+                            //deviceBatteryResult.success(jsonObject.toString());
+                            runOnUIThread(WatchConstants.BATTERY_STATUS, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+                        // while connecting a device
+                        case ICallbackStatus.READ_CHAR_SUCCESS: // 137
+                            break;
+                        case ICallbackStatus.WRITE_COMMAND_TO_BLE_SUCCESS: // 148
+                            break;
+                        case ICallbackStatus.SYNC_TIME_OK: // 6
+                            //sync time ok
+                            break;
+
+                        case ICallbackStatus.SET_STEPLEN_WEIGHT_OK: // 8
+                            runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.OFFLINE_BLOOD_PRESSURE_SYNCING: // 46
+                            // runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.OFFLINE_BLOOD_PRESSURE_SYNC_OK: // 47
+                            //runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.BLOOD_PRESSURE_TEST_START: // 50
+                            //runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+
+
+                        case ICallbackStatus.RATE_TEST_START: // 79
+                            // runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.RATE_TEST_STOP: // 80
+                            // runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.CONNECTED_STATUS: // 20
+                            // connected successfully
+                            //runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
+                            //flutterResultBluConnect.success(connectionStatus);
+                            runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.DISCONNECT_STATUS: // 19
+                            // disconnected successfully
+                            // mobileConnect.disconnectDevice();
+                            runOnUIThread(WatchConstants.DEVICE_DISCONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            // runOnUIThread(new JSONObject(), WatchConstants.DEVICE_DISCONNECTED, WatchConstants.SC_SUCCESS);
+                            break;
+                    }
+                } catch (Exception exp) {
+                    Log.e("ble_service_exp:", exp.getMessage());
+                    runOnUIThread(WatchConstants.CALLBACK_EXCEPTION, new JSONObject(), WatchConstants.SERVICE_LISTENING, WatchConstants.SC_FAILURE);
+                }
+            }
+
+            @Override
+            public void OnDataResult(boolean status, int i, byte[] bytes) {
+                Log.e("OnDataResult:", "status>> " + status + "resultValue>> " + i);
+            }
+
+            @Override
+            public void onCharacteristicWriteCallback(int i) {
+                Log.e("onCharWriteCallback:", "status>> " + i);
+            }
+
+            @Override
+            public void onIbeaconWriteCallback(boolean b, int i, int i1, String s) {
+
+            }
+
+            @Override
+            public void onQueryDialModeCallback(boolean b, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onControlDialCallback(boolean b, int i, int i1) {
+
+            }
+
+            @Override
+            public void onSportsTimeCallback(boolean b, String s, int i, int i1) {
+
+            }
+
+            @Override
+            public void OnResultSportsModes(boolean b, int i, int i1, int i2, SportsModesInfo sportsModesInfo) {
+
+            }
+
+            @Override
+            public void OnResultHeartRateHeadset(boolean b, int i, int i1, int i2, HeartRateHeadsetSportModeInfo heartRateHeadsetSportModeInfo) {
+
+            }
+
+            @Override
+            public void OnResultCustomTestStatus(boolean b, int i, CustomTestStatusInfo customTestStatusInfo) {
+
+            }
+        });
+        mBluetoothLeService.setTemperatureListener(new TemperatureListener() {
+            @Override
+            public void onTestResult(TemperatureInfo temperatureInfo) {
+                Log.e("temperatureListener", "temperature: " + temperatureInfo.getBodyTemperature() + ", type: " + temperatureInfo.getType());
+                try {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("calender", "" + temperatureInfo.getCalendar());
+//                jsonObject.put("type", "" + temperatureInfo.getType());
+//                jsonObject.put("bodyTemp", "" + temperatureInfo.getBodyTemperature());
+//                jsonObject.put("ambientTemp", "" + temperatureInfo.getAmbientTemperature());
+//                jsonObject.put("surfaceTemp", "" + temperatureInfo.getBodySurfaceTemperature());
+//                jsonObject.put("startDate", "" + temperatureInfo.getStartDate());
+//                jsonObject.put("time", "" + temperatureInfo.getSecondTime());
+                            try {
+                                jsonObject.put("calender", temperatureInfo.getCalendar());
+                                jsonObject.put("type", "" + temperatureInfo.getType());
+                                jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                                jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+                                jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                                jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+
+                                Log.e("onTestResult", "object: " + jsonObject.toString());
+
+                            } catch (Exception e) {
+                                // e.printStackTrace();
+                                Log.e("onTestResultJSONExp:", e.getMessage());
+                            }
+
+                            runOnUIThread(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                        }
+                    });
+
+                } catch (Exception exp) {
+                    Log.e("onTestResultExp:", exp.getMessage());
+                }
+            }
+
+            @Override
+            public void onSamplingResult(TemperatureInfo temperatureInfo) {
+
+            }
+        });//Setting up a temperature test，Sampling data callback
+
+        mBluetoothLeService.setRateCalibrationListener(new RateCalibrationListener() {
+            @Override
+            public void onRateCalibrationStatus(int i) {
+
+            }
+        });//Set up heart rate calibration monitor
+        mBluetoothLeService.setTurnWristCalibrationListener(new TurnWristCalibrationListener() {
+            @Override
+            public void onTurnWristCalibrationStatus(int i) {
+
+            }
+        });//Set up wrist watch calibration
+
+        mBluetoothLeService.setOxygenListener(new OxygenRealListener() {
+            @Override
+            public void onTestResult(int status, OxygenInfo oxygenInfo) {
+                Log.e("oxygenRealListener", "value: " + oxygenInfo.getOxygenValue() + ", status: " + status);
+            }
+        });//Oxygen Listener
+                /*if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST)) {
+                    mBluetoothLeService.setTemperatureListener(this);
+                }
+                if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN)) {
+                    mBluetoothLeService.setOxygenListener(this);
+                }*/
+        mBluetoothLeService.setBreatheRealListener(new BreatheRealListener() {
+            @Override
+            public void onBreatheResult(int status, BreatheInfo breatheInfo) {
+                Log.e("setBreatheRealListener", "value: " + breatheInfo.getBreatheValue() + ", status: " + status);
+            }
+        });//Breathe Listener
+
+        Log.e("inside_service_result", "listeners"+mBluetoothLeService);
+    }
+
+   /* @Override
+    public void OnServiceStatuslt(int status) {
+        if (status == ICallbackStatus.BLE_SERVICE_START_OK) {
+            Log.e("inside_service_result", ""+mBluetoothLeService);
+           // LogUtils.d(TAG, "OnServiceStatuslt mBluetoothLeService11 ="+mBluetoothLeService);
+            if (mBluetoothLeService == null) {
+                mBluetoothLeService = mobileConnect.getBLEServiceOperate().getBleService();
+                mobileConnect.setBluetoothLeService(mBluetoothLeService);
+                mBluetoothLeService.setICallback(this);
+                mBluetoothLeService.setRateCalibrationListener(this);
+                mBluetoothLeService.setTurnWristCalibrationListener(this);
+                mBluetoothLeService.setTemperatureListener(this);
+                mBluetoothLeService.setOxygenListener(this);
+                *//*if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST)) {
+                    mBluetoothLeService.setTemperatureListener(this);
+                }
+                if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN)) {
+                    mBluetoothLeService.setOxygenListener(this);
+                }*//*
+                mBluetoothLeService.setBreatheRealListener(this);
+                Log.e("inside_service_result", "listeners"+mBluetoothLeService);
+            }
+        }
+    }*/
+
+   /* private final OxygenRealListener oxygenRealListener = new OxygenRealListener() {
         @Override
         public void onTestResult(int status, OxygenInfo oxygenInfo) {
             Log.e("oxygenRealListener", "value: " + oxygenInfo.getOxygenValue() + ", status: " + status);
         }
-    };
+    };*/
 
-    private final TemperatureListener temperatureListener = new TemperatureListener() {
+   /* private final TemperatureListener temperatureListener = new TemperatureListener() {
         @Override
         public void onTestResult(TemperatureInfo temperatureInfo) {
 
@@ -222,9 +577,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         public void onSamplingResult(TemperatureInfo temperatureInfo) {
 
         }
-    };
+    };*/
 
-    private final RateChangeListener mOnRateListener = new RateChangeListener() {
+   /* private final RateChangeListener mOnRateListener = new RateChangeListener() {
         @Override
         public void onRateChange(int rate, int status) {
             Log.e("onRateListener", "rate: " + rate + ", status: " + status);
@@ -246,18 +601,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 Log.e("onRateExp: ", exp.getMessage());
             }
         }
-    };
+    };*/
 
-    private final RateOf24HourRealTimeListener mOnRateOf24HourListener = new RateOf24HourRealTimeListener() {
+    /*private final RateOf24HourRealTimeListener mOnRateOf24HourListener = new RateOf24HourRealTimeListener() {
         @Override
         public void onRateOf24HourChange(int maxHeartRateValue, int minHeartRateValue, int averageHeartRateValue, boolean isRealTimeValue) {
             //Monitor the maximum, minimum, and average values of the 24-hour heart rate bracelet.
             // Need to enter the heart rate test interface on the wristband (or call the synchronization method) to get the value
             Log.e("onRateOf24Hour", "maxHeartRateValue: " + maxHeartRateValue + ", minHeartRateValue: " + minHeartRateValue + ", averageHeartRateValue=" + averageHeartRateValue + ", isRealTimeValue=" + isRealTimeValue);
         }
-    };
+    };*/
 
-    private final SleepChangeListener mOnSleepChangeListener = new SleepChangeListener() {
+   /* private final SleepChangeListener mOnSleepChangeListener = new SleepChangeListener() {
         @Override
         public void onSleepChange() {
             try{
@@ -348,7 +703,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 // runOnUIThread(WatchConstants.STEPS_REAL_TIME, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
             }
         }
-    };
+    };*/
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
@@ -484,38 +839,34 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private void initDeviceConnection(Result result) {
         //this.flutterInitResultBlu = result;
         try {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mobileConnect != null) {
-                        boolean enable = mobileConnect.isBleEnabled();
-                        boolean blu4 = mobileConnect.checkBlu4();
-                        String resultStatus = mobileConnect.startListeners();
-                        Log.e("device_enable:", "" + enable);
-                        Log.e("device_blu4e:", "" + blu4);
+            if (mobileConnect != null) {
+                boolean enable = mobileConnect.isBleEnabled();
+                boolean blu4 = mobileConnect.checkBlu4();
+                String resultStatus = mobileConnect.startListeners();
+                Log.e("device_enable:", "" + enable);
+                Log.e("device_blu4e:", "" + blu4);
 
-                        if (enable) {
-                            if (blu4) {
-                                //String resultStatus = mobileConnect.startListeners();
-                                Log.e("init_res_status", "" + resultStatus);
-                                result.success(resultStatus);
-                            } else {
-                                result.success(WatchConstants.BLE_NOT_SUPPORTED);
-                            }
-                        } else {
-
-                            //String resultStatus = mobileConnect.startListeners();
-                            Log.e("else_res_status", "" + resultStatus);
-                            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                            activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                            result.success(resultStatus);
-                        }
-
+                if (enable) {
+                    if (blu4) {
+                        //String resultStatus = mobileConnect.startListeners();
+                        Log.e("init_res_status", "" + resultStatus);
+                        result.success(resultStatus);
                     } else {
-                        Log.e("device_connect_err:", "device_connect not initiated..");
+                        result.success(WatchConstants.BLE_NOT_SUPPORTED);
                     }
+                } else {
+
+                    //String resultStatus = mobileConnect.startListeners();
+                    Log.e("else_res_status", "" + resultStatus);
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    result.success(resultStatus);
                 }
-            });
+
+            } else {
+                Log.e("device_connect_err:", "device_connect not initiated..");
+            }
+
         } catch (Exception exp) {
             Log.e("initDeviceExp::", "" + exp.getMessage());
         }
@@ -523,73 +874,74 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void searchForBTDevices(Result result) {
         try {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject jsonObject = new JSONObject();
-                    if (mobileConnect != null) {
-                        new Handler().postDelayed(() -> {
-                            String resultStat = mobileConnect.stopDevicesScan();
-                            Log.e("resultStat ", "deviceScanStop::" + resultStat);
-                            ArrayList<BleDevices> bleDeviceList = mobileConnect.getDevicesList();
-                            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            if (mobileConnect != null) {
+                /*mBluetoothLeService = mobileConnect.getBluetoothLeService();
+                if (mBluetoothLeService != null) {
+                    //initBlueServices(status);
+                    initBlueServices();
+                }*/
 
-                            for (BleDevices device : bleDeviceList) {
-                                Log.e("device_for ", "device::" + device.getName());
+                new Handler().postDelayed(() -> {
+                    String resultStat = mobileConnect.stopDevicesScan();
+                    Log.e("resultStat ", "deviceScanStop::" + resultStat);
+                    ArrayList<BleDevices> bleDeviceList = mobileConnect.getDevicesList();
+                    JSONArray jsonArray = new JSONArray();
 
-                                try {
-                                    JSONObject jsonObj = new JSONObject();
-                                    jsonObj.put("name", device.getName());
-                                    jsonObj.put("address", device.getAddress());
-                                    jsonObj.put("rssi", device.getRssi());
-                                    jsonObj.put("deviceType", device.getDeviceType());
-                                    jsonObj.put("bondState", device.getBondState());
-                                    jsonObj.put("alias", device.getAlias());
-                                    jsonArray.put(jsonObj);
+                    for (BleDevices device : bleDeviceList) {
+                        Log.e("device_for ", "device::" + device.getName());
 
-                                } catch (Exception e) {
-                                    //  e.printStackTrace();
-                                    Log.e("jsonExp::", "jsonParse::" + e.getMessage());
-                                }
-                            }
-                            // mDevices = mLeDevices;
+                        try {
+                            JSONObject jsonObj = new JSONObject();
+                            jsonObj.put("name", device.getName());
+                            jsonObj.put("address", device.getAddress());
+                            jsonObj.put("rssi", device.getRssi());
+                            jsonObj.put("deviceType", device.getDeviceType());
+                            jsonObj.put("bondState", device.getBondState());
+                            jsonObj.put("alias", device.getAlias());
+                            jsonArray.put(jsonObj);
+
+                        } catch (Exception e) {
+                            //  e.printStackTrace();
+                            Log.e("jsonExp::", "jsonParse::" + e.getMessage());
+                        }
+                    }
+                    // mDevices = mLeDevices;
 //                    Type listType = new TypeToken<ArrayList<BleDevices>>() {
 //                    }.getType();
 //                    String jsonString = new Gson().toJson(bleDeviceList, listType);
 //                    JsonArray jsonArray2 = new Gson().toJsonTree(bleDeviceList, listType).getAsJsonArray();
-                            Log.e("jsonString ", "jsonString::" + jsonArray.toString());
+                    Log.e("jsonString ", "jsonString::" + jsonArray.toString());
 
-                            try {
-                                jsonObject.put("status", WatchConstants.SC_SUCCESS);
-                                jsonObject.put("data", jsonArray);
-                                Log.e("jsonStringList", jsonObject.toString());
-                                result.success(jsonObject.toString());
-                            } catch (Exception e) {
-                                //e.printStackTrace();
-                                Log.e("searchForBTExp2::", e.getMessage());
-                            }
+                    try {
+                        jsonObject.put("status", WatchConstants.SC_SUCCESS);
+                        jsonObject.put("data", jsonArray);
+                        Log.e("jsonStringList", jsonObject.toString());
+                        result.success(jsonObject.toString());
+                    } catch (Exception e) {
+                        //e.printStackTrace();
+                        Log.e("searchForBTExp2::", e.getMessage());
+                    }
 
 //       Gson gson = new Gson();
 //       String jsonOutput = "Your JSON String";
 //       Type listType = new TypeToken<List<Post>>(){}.getType();
 //       List<Post> posts = gson.fromJson(jsonOutput, listType);
-                            // convert into the json and send back as a response to flutter sdk
+                    // convert into the json and send back as a response to flutter sdk
 
-                        }, 8000);
-                        String resultStatus = mobileConnect.startDevicesScan();
-                        Log.e("startStatus", resultStatus);
-                    } else {
-                        try {
-                            jsonObject.put("status", WatchConstants.SC_CANCELED); // not connected
-                            jsonObject.put("data", "[]");
-                        } catch (Exception e) {
-                            //e.printStackTrace();
-                            Log.e("jsonExp123::", "jsonParse::" + e.getMessage());
-                        }
-                        result.success(jsonObject.toString());
-                    }
+                }, 8000);
+                String resultStatus = mobileConnect.startDevicesScan();
+                Log.e("startStatus", resultStatus);
+            } else {
+                try {
+                    jsonObject.put("status", WatchConstants.SC_CANCELED); // not connected
+                    jsonObject.put("data", "[]");
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                    Log.e("jsonExp123::", "jsonParse::" + e.getMessage());
                 }
-            });
+                result.success(jsonObject.toString());
+            }
 
         } catch (Exception exp) {
             Log.e("searchForBTExp1::", exp.getMessage());
@@ -611,12 +963,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                    // String rssi = call.argument("rssi");
                    // String bondState = call.argument("bondState");
                     boolean status = mobileConnect.connectDevice(address);
-                    mBluetoothLeService = mobileConnect.getBluetoothLeService();
-
-                    if (mBluetoothLeService != null) {
-                        initBlueServices(status);
-                    }
-                    //result.success(status);
+//                    mBluetoothLeService = mobileConnect.getBluetoothLeService();
+//
+//                    if (mBluetoothLeService != null) {
+//                        initBlueServices(status);
+//                    }
+                    result.success(status);
                 }
             });
 
@@ -626,7 +978,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     }
 
-    private void initBlueServices(boolean connectionStatus) {
+    /*private void initBlueServices() {
+        //boolean connectionStatus
         Log.e("mBluetoothLeService::", "initBlueServices");
         try{
             activity.runOnUiThread(new Runnable() {
@@ -691,8 +1044,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                     case ICallbackStatus.CONNECTED_STATUS: // 20
                                         // connected successfully
                                         //runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
-                                        flutterResultBluConnect.success(connectionStatus);
-                                        //runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                                        //flutterResultBluConnect.success(connectionStatus);
+                                        runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                                         break;
                                     case ICallbackStatus.DISCONNECT_STATUS: // 19
                                         // disconnected successfully
@@ -769,7 +1122,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
 
 
-    }
+    }*/
 
     private void disconnectBluDevice(Result result) {
         try{
@@ -1915,6 +2268,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             Log.e("onUIThreadPushExp: ", "" + exp.getMessage());
         }
     }
+
+
+
+
+
+
 
    /* private class AsyncExecuteUpdate extends AsyncTask<String, String, String> {
         @Override
