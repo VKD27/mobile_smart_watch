@@ -399,7 +399,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             //runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
                             //flutterResultBluConnect.success(connectionStatus);
                             updateConnectionStatus(true);
-                            runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            updateConnectionStatus2(true);
+                            //runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
                             // disconnected successfully
@@ -542,12 +543,33 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void updateConnectionStatus(boolean status) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        uiThreadHandler.post(new Runnable() {
             @Override
             public void run() {
                 flutterResultBluConnect.success(status);
             }
         });
+        //getMainExecutor().
+      /*  activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                flutterResultBluConnect.success(status);
+            }
+        });*/
+    }
+    private void updateConnectionStatus2(boolean status) {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                flutterResultBluConnect.success(status);
+            }
+        });
+        /*activity.getMainExecutor().post(new Runnable() {
+            @Override
+            public void run() {
+                flutterResultBluConnect.success(status);
+            }
+        });*/
       /*  activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1011,7 +1033,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void connectBluDevice(MethodCall call, Result result) {
         try{
-            flutterResultBluConnect = result;
+            this.flutterResultBluConnect = result;
             //String index = (String) call.argument("index");
             //String name = call.argument("name");
             //String alias = call.argument("alias");
