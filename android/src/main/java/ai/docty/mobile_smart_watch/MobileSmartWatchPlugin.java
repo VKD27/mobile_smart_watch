@@ -398,8 +398,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             // connected successfully
                             //runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
                             //flutterResultBluConnect.success(connectionStatus);
-                            updateConnectionStatus(true);
+                           // updateConnectionStatus(true);
                             updateConnectionStatus2(true);
+                            updateConnectionStatus3(true);
                             //runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
@@ -558,12 +559,16 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         });*/
     }
     private void updateConnectionStatus2(boolean status) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                flutterResultBluConnect.success(status);
-            }
-        });
+        try {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    flutterResultBluConnect.success(status);
+                }
+            });
+        }catch (Exception exp) {
+            Log.e("updateConnectionStatus2", exp.getMessage());
+        }
         /*activity.getMainExecutor().post(new Runnable() {
             @Override
             public void run() {
@@ -577,7 +582,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             }
         });*/
     }
-
+    private void updateConnectionStatus3(boolean status) {
+        try {
+            flutterResultBluConnect.success(status);
+        }catch (Exception exp) {
+            Log.e("updateConnectionStatus3", exp.getMessage());
+        }
+    }
    /* @Override
     public void OnServiceStatuslt(int status) {
         if (status == ICallbackStatus.BLE_SERVICE_START_OK) {
@@ -2208,25 +2219,21 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void startListening(Object arguments, Result rawResult) {
         try {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // Get callback id
-                    String callbackName = (String) arguments;
+            // Get callback id
+            String callbackName = (String) arguments;
 
-                    Log.e("callbackName", "start_listener " + callbackName);// smartCallbacks
+            Log.e("callbackName", "start_listener " + callbackName);// smartCallbacks
 
-                    if (callbackName.equals(WatchConstants.SMART_CALLBACK)) {
-                        validateDeviceListCallback = true;
-                    }
+            if (callbackName.equals(WatchConstants.SMART_CALLBACK)) {
+                validateDeviceListCallback = true;
+            }
 
-                    Map<String, Object> args = new HashMap<>();
-                    args.put("id", callbackName);
-                    mCallbacks.put(callbackName, args);
+            Map<String, Object> args = new HashMap<>();
+            args.put("id", callbackName);
+            mCallbacks.put(callbackName, args);
 
-                    rawResult.success(null);
-                }
-            });
+            rawResult.success(null);
+
         }catch (Exception exp){
             Log.e("startListeningExp:", exp.getMessage());
         }
