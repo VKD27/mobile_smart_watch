@@ -285,8 +285,9 @@ class HomePageState extends State<HomePage> {
                ),
                TextButton(
                  onPressed: () async {
-                  // await fetchBatteryNVersion();
-                   await fetchAllJudgement();
+                   await fetchBatteryNVersion();
+                  // await fetchAllJudgement();
+                   //await fetchOverAllByDate();
                  }, child:  Text('GET BATTERY STATUS /Sync',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
@@ -750,7 +751,43 @@ class HomePageState extends State<HomePage> {
      print('resultJudgeData>> $resultJudgeData');
    }
 
-   Future<void> fetchSyncSleepData() async{
+
+   Future<void> fetchOverAllByDate() async{
+     Map<String, dynamic> resultJudgeData = await _mobileSmartWatch.fetchOverAllByDate("20220110");
+     String status = resultJudgeData['status'].toString();
+     if (status == SmartWatchConstants.SC_SUCCESS) {
+       Map<String, dynamic> data = resultJudgeData['data'];
+       print('steps data>> ${data['steps']}');
+       print('sleep data>> ${data['sleep']}');
+       print('hr data>> ${data['hr']}');
+       print('hr24 data>> ${data['hr24']}');
+       print('bp data>> ${data['bp']}');
+       print('temperature data>> ${data['temperature']}');
+
+      // SmartStepsModel model  = new  SmartStepsModel.fromJson(data['steps']);
+       List<SmartStepsModel> smartList = convertDataToList(data['steps']['data']);
+       print('smartList data>> ${smartList}');
+
+     }else if (status == SmartWatchConstants.SC_DISCONNECTED) {
+       // device got diconnected.
+
+     }else if (status == SmartWatchConstants.SC_FAILURE){
+       // someting went wrong
+     }
+     print('resultOverAllDayData>> $resultJudgeData');
+   }
+
+   List<SmartStepsModel> convertDataToList(var json) {
+    List<SmartStepsModel> smartList = [];
+    if (json.length != 0) {
+      json.forEach((element) {
+        smartList.add(new SmartStepsModel.fromJson(element));
+      });
+    }
+    return smartList;
+  }
+
+  Future<void> fetchSyncSleepData() async{
      String stepsStatus = await _mobileSmartWatch.syncSleepData();
      print('syncSleepStatus>> $stepsStatus');
    }

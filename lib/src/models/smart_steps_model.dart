@@ -4,10 +4,7 @@ class SmartStepsModel {
   final String time;
   final String step;
 
-  const SmartStepsModel({
-    required this.step,
-    required this.time,
-  });
+  const SmartStepsModel({required this.step, required this.time});
 
   factory SmartStepsModel.fromJson(Map<String, dynamic> data) => SmartStepsModel(
     step: data['step'].toString(),

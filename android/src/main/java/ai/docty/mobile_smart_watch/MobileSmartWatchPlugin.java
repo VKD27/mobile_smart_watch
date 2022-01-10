@@ -110,25 +110,29 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         @Override
         public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
             try{
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final String method = call.method;
-                        Log.e("calling_method", "callbacksHandler++ " + method); // startListening
-                        //WatchConstants.START_LISTENING.equalsIgnoreCase(method)
-                        //if ("startListening".equals(method)) {
-                        if (WatchConstants.START_LISTENING.equalsIgnoreCase(method)) {
-                            startListening(call.arguments, result);
-                        } else {
-                            result.notImplemented();
-                        }
-                    }
-                });
+                updateCallBackHandler(call,result);
             }catch (Exception exp){
                 Log.e("callbacksHandlerExp:",""+exp.getMessage());
             }
         }
     };
+
+    private void updateCallBackHandler(MethodCall call, Result result) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final String method = call.method;
+                Log.e("calling_method", "callbacksHandler++ " + method); // startListening
+                //WatchConstants.START_LISTENING.equalsIgnoreCase(method)
+                //if ("startListening".equals(method)) {
+                if (WatchConstants.START_LISTENING.equalsIgnoreCase(method)) {
+                    startListening(call.arguments, result);
+                } else {
+                    result.notImplemented();
+                }
+            }
+        });
+    }
 
     //sdk return results
     //private Result flutterInitResultBlu;
@@ -176,6 +180,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
         startListeningDataProcessing();
 
+        setUpDataEngine(binaryMessenger);
+
 //            activity.runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
@@ -192,6 +198,23 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void setUpDataEngine( BinaryMessenger binaryMessenger){
+        try{
+            Log.e("inside_set_up_engine", "binaryMessenger");
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+//                Log.e("inside_set_up_engine", "");
+//                mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
+//                mCallbackChannel.setMethodCallHandler(callbacksHandler);
+                }
+            });
+        }catch (Exception exp){
+            Log.e("set_up_engine_exp", exp.getMessage());
+        }
+
+
+    }
     private void startListeningDataProcessing() {
 
         mDataProcessing.setOnStepChangeListener(new StepChangeListener() {
@@ -375,11 +398,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             // connected successfully
                             //runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
                             //flutterResultBluConnect.success(connectionStatus);
+                            updateConnectionStatus(true);
                             runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
                             // disconnected successfully
                             // mobileConnect.disconnectDevice();
+                            updateConnectionStatus(false);
                             runOnUIThread(WatchConstants.DEVICE_DISCONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             // runOnUIThread(new JSONObject(), WatchConstants.DEVICE_DISCONNECTED, WatchConstants.SC_SUCCESS);
                             break;
@@ -514,6 +539,15 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         });//Breathe Listener
 
         Log.e("inside_service_result", "listeners"+mBluetoothLeService);
+    }
+
+    private void updateConnectionStatus(boolean status) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                flutterResultBluConnect.success(status);
+            }
+        });
     }
 
    /* @Override
@@ -855,14 +889,16 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void initDeviceConnection(Result result) {
-        //this.flutterInitResultBlu = result;
+       // this.flutterInitResultBlu = result;
         try {
             if (mobileConnect != null) {
                 boolean enable = mobileConnect.isBleEnabled();
                 boolean blu4 = mobileConnect.checkBlu4();
+                boolean connectionStatus = SPUtil.getInstance(mContext).getBleConnectStatus();
                 String resultStatus = mobileConnect.startListeners();
                 Log.e("device_enable:", "" + enable);
                 Log.e("device_blu4e:", "" + blu4);
+                Log.e("connectionStatus:", "" + connectionStatus);
 
                 if (enable) {
                     if (blu4) {
@@ -969,31 +1005,24 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void connectBluDevice(MethodCall call, Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    flutterResultBluConnect = result;
-                    //String index = (String) call.argument("index");
-                    //String name = call.argument("name");
-                    //String alias = call.argument("alias");
-                    String address = call.argument("address");
-                    //String deviceType = call.argument("deviceType");
-                   // String rssi = call.argument("rssi");
-                   // String bondState = call.argument("bondState");
-                    boolean status = mobileConnect.connectDevice(address);
+            flutterResultBluConnect = result;
+            //String index = (String) call.argument("index");
+            //String name = call.argument("name");
+            //String alias = call.argument("alias");
+            String address = call.argument("address");
+            //String deviceType = call.argument("deviceType");
+            // String rssi = call.argument("rssi");
+            // String bondState = call.argument("bondState");
+            boolean status = mobileConnect.connectDevice(address);
 //                    mBluetoothLeService = mobileConnect.getBluetoothLeService();
 //
 //                    if (mBluetoothLeService != null) {
 //                        initBlueServices(status);
 //                    }
-                    result.success(status);
-                }
-            });
-
+            //result.success(status);
         }catch (Exception exp){
             Log.e("connectBluDeviceExp:", exp.getMessage());
         }
-
     }
 
     /*private void initBlueServices() {
@@ -1068,6 +1097,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                     case ICallbackStatus.DISCONNECT_STATUS: // 19
                                         // disconnected successfully
                                         // mobileConnect.disconnectDevice();
+
                                         runOnUIThread(WatchConstants.DEVICE_DISCONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                                         // runOnUIThread(new JSONObject(), WatchConstants.DEVICE_DISCONNECTED, WatchConstants.SC_SUCCESS);
                                         break;
@@ -1144,13 +1174,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void disconnectBluDevice(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean status = mobileConnect.disconnectDevice();
-                    result.success(status);
-                }
-            });
+            boolean status = mobileConnect.disconnectDevice();
+            result.success(status);
         }catch (Exception exp){
             Log.e("disconnectBluDeviceExp:", exp.getMessage());
         }
@@ -1164,89 +1189,84 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void setUserParams(MethodCall call, Result result) {
         try {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    String age = call.argument("age");
-                    String height = call.argument("height");
-                    String weight = call.argument("weight");
-                    String gender = call.argument("gender");
-                    String steps = call.argument("steps");
-                    String isCel = call.argument("isCelsius");
-                    String screenOffTime = call.argument("screenOffTime");
-                    String isChineseLang = call.argument("isChineseLang");
-                    String raiseHandWakeUp = call.argument("raiseHandWakeUp");
+            String age = call.argument("age");
+            String height = call.argument("height");
+            String weight = call.argument("weight");
+            String gender = call.argument("gender");
+            String steps = call.argument("steps");
+            String isCel = call.argument("isCelsius");
+            String screenOffTime = call.argument("screenOffTime");
+            String isChineseLang = call.argument("isChineseLang");
+            String raiseHandWakeUp = call.argument("raiseHandWakeUp");
 
 
-                    assert age != null;
-                    int bodyAge = Integer.parseInt(age);
-                    assert height != null;
-                    int bodyHeight = Integer.parseInt(height);
-                    assert weight != null;
-                    int bodyWeight = Integer.parseInt(weight);
-                    assert steps != null;
-                    int bodySteps = Integer.parseInt(steps);
+            assert age != null;
+            int bodyAge = Integer.parseInt(age);
+            assert height != null;
+            int bodyHeight = Integer.parseInt(height);
+            assert weight != null;
+            int bodyWeight = Integer.parseInt(weight);
+            assert steps != null;
+            int bodySteps = Integer.parseInt(steps);
 
-                    assert screenOffTime != null;
-                    int setScreenOffTime = Integer.parseInt(screenOffTime);
+            assert screenOffTime != null;
+            int setScreenOffTime = Integer.parseInt(screenOffTime);
 
-                    boolean isMale = false;
-                    assert gender != null;
-                    if (gender.trim().equalsIgnoreCase("male")) {
-                        isMale = true;
-                    }
-                    boolean isCelsius = false;
-                    assert isCel != null;
-                    if (isCel.equalsIgnoreCase("true")) {
-                        isCelsius = true;
-                    }
+            boolean isMale = false;
+            assert gender != null;
+            if (gender.trim().equalsIgnoreCase("male")) {
+                isMale = true;
+            }
+            boolean isCelsius = false;
+            assert isCel != null;
+            if (isCel.equalsIgnoreCase("true")) {
+                isCelsius = true;
+            }
 
-                    boolean isChinese = false;
-                    assert isChineseLang != null;
-                    if (isChineseLang.equalsIgnoreCase("true")) {
-                        isChinese = true;
-                    }
+            boolean isChinese = false;
+            assert isChineseLang != null;
+            if (isChineseLang.equalsIgnoreCase("true")) {
+                isChinese = true;
+            }
 
-                    boolean isRaiseHandWakeUp = false;
-                    assert raiseHandWakeUp != null;
-                    if (raiseHandWakeUp.equalsIgnoreCase("true")) {
-                        isRaiseHandWakeUp = true;
-                    }
+            boolean isRaiseHandWakeUp = false;
+            assert raiseHandWakeUp != null;
+            if (raiseHandWakeUp.equalsIgnoreCase("true")) {
+                isRaiseHandWakeUp = true;
+            }
 
 
-                    boolean isSupported = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
-                    Log.e("isSupported::", "isSupported>>" + isSupported);
+            boolean isSupported = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
+            Log.e("isSupported::", "isSupported>>" + isSupported);
 
-                    boolean isSupp = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
-                    Log.e("isSupp::", "isSupp>>" + isSupp);
+            boolean isSupp = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
+            Log.e("isSupp::", "isSupp>>" + isSupp);
 
-                    //if (isSupported) {
-                    DeviceParametersInfo info = new DeviceParametersInfo();
-                    info.setBodyAge(bodyAge);
-                    info.setBodyHeight(bodyHeight);
-                    info.setBodyWeight(bodyWeight);
-                    info.setStepTask(bodySteps);
-                    info.setBodyGender(isMale ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
-                    info.setCelsiusFahrenheitValue(isCelsius ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
-                    info.setOffScreenTime(setScreenOffTime);
-                    info.setOnlySupportEnCn(isChinese ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // no for english, yes for chinese
-                    info.setRaisHandbrightScreenSwitch(isRaiseHandWakeUp ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // true if bright light turn on
+            //if (isSupported) {
+            DeviceParametersInfo info = new DeviceParametersInfo();
+            info.setBodyAge(bodyAge);
+            info.setBodyHeight(bodyHeight);
+            info.setBodyWeight(bodyWeight);
+            info.setStepTask(bodySteps);
+            info.setBodyGender(isMale ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
+            info.setCelsiusFahrenheitValue(isCelsius ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);
+            info.setOffScreenTime(setScreenOffTime);
+            info.setOnlySupportEnCn(isChinese ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // no for english, yes for chinese
+            info.setRaisHandbrightScreenSwitch(isRaiseHandWakeUp ? DeviceParametersInfo.switchStatusYes : DeviceParametersInfo.switchStatusNo);  // true if bright light turn on
 
 //    info.setRaisHandbrightScreenSwitch(DeviceParametersInfo.switchStatusYes);
 //    info.setHighestRateAndSwitch(141, DeviceParametersInfo.switchStatusYes);
 //     info.setDeviceLostSwitch(DeviceParametersInfo.switchStatusNo);
-                    if (mWriteCommand != null) {
-                        mWriteCommand.sendDeviceParametersInfoToBLE(info);
-                        result.success(WatchConstants.SC_INIT);
-                    } else {
-                        result.success(WatchConstants.SC_FAILURE);
-                    }
+            if (mWriteCommand != null) {
+                mWriteCommand.sendDeviceParametersInfoToBLE(info);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
 //        } else {
 //            result.success(WatchConstants.SC_NOT_SUPPORTED);
 //        }
-                }
-            });
+
         } catch (Exception exp) {
             Log.e("setUserParamsExp::", exp.getMessage());
             //result.success(WatchConstants.SC_FAILURE);
@@ -1255,23 +1275,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void getDeviceVersion(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    deviceVersionIDResult = result;
-                    if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
-                        if (mWriteCommand != null) {
-                            mWriteCommand.sendToReadBLEVersion();
-                             result.success(WatchConstants.SC_INIT);
-                        } else {
-                            result.success(WatchConstants.SC_FAILURE);
-                        }
-                    } else {
-                        //device disconnected
-                        result.success(WatchConstants.SC_DISCONNECTED);
-                    }
+            deviceVersionIDResult = result;
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.sendToReadBLEVersion();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
                 }
-            });
+            } else {
+                //device disconnected
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
         }catch (Exception exp){
             Log.e("getDeviceVersionExp:", exp.getMessage());
         }
@@ -1279,23 +1294,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void getDeviceBatteryStatus(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    deviceBatteryResult = result;
-                    if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
-                        if (mWriteCommand != null) {
-                            mWriteCommand.sendToReadBLEBattery();
-                            // result.success(WatchConstants.SC_INIT);
-                        } else {
-                            result.success(WatchConstants.SC_FAILURE);
-                        }
-                    } else {
-                        //device disconnected
-                        result.success(WatchConstants.SC_DISCONNECTED);
-                    }
+            deviceBatteryResult = result;
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.sendToReadBLEBattery();
+                    // result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
                 }
-            });
+            } else {
+                //device disconnected
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
         }catch (Exception exp){
             Log.e("getBatteryStatusExp:", exp.getMessage());
         }
@@ -1304,42 +1314,39 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     // sync the activities
     private void fetchAllJudgement(MethodCall call, Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean bluConnect = SPUtil.getInstance(mContext).getBleConnectStatus();
-                    Log.e("bluConnect: ", "" + bluConnect);
-                    JSONObject judgeJson = new JSONObject();
-                    if (bluConnect) {
+            boolean bluConnect = SPUtil.getInstance(mContext).getBleConnectStatus();
+            Log.e("bluConnect: ", "" + bluConnect);
+            JSONObject judgeJson = new JSONObject();
+            if (bluConnect) {
 
-                        boolean rkPlatform = SPUtil.getInstance(mContext).getRKPlatform();
-                        boolean isSupportNewParams = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
-                        boolean isBandLostFunction = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_BAND_LOST_FUNCTION);
-                        boolean isSwitchBraceletLang = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_SWITCH_BRACELET_LANGUAGE);
-                        boolean isSupportTempUnitSwitch = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_UNIT_SWITCH);
-                        boolean isMinHRAlarm = GetFunctionList.isSupportFunction_Fourth(mContext, GlobalVariable.IS_SUPPORT_MIN_HEAR_RATE_ALARM);
+                boolean rkPlatform = SPUtil.getInstance(mContext).getRKPlatform();
+                boolean isSupportNewParams = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_NEW_PARAMETER_SETTINGS_FUNCTION);
+                boolean isBandLostFunction = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_BAND_LOST_FUNCTION);
+                boolean isSwitchBraceletLang = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_SWITCH_BRACELET_LANGUAGE);
+                boolean isSupportTempUnitSwitch = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_UNIT_SWITCH);
+                boolean isMinHRAlarm = GetFunctionList.isSupportFunction_Fourth(mContext, GlobalVariable.IS_SUPPORT_MIN_HEAR_RATE_ALARM);
 
-                        boolean isSupportHorVer = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_HOR_VER);
+                boolean isSupportHorVer = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_HOR_VER);
 
-                        boolean isSupport24HrRate = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
-                        boolean isTemperatureTest = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST);
-                        boolean isTemperatureCalibration = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_CALIBRATION);
-                        boolean isSupportOxygen = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
+                boolean isSupport24HrRate = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
+                boolean isTemperatureTest = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST);
+                boolean isTemperatureCalibration = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_CALIBRATION);
+                boolean isSupportOxygen = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
 
-                        try {
+                try {
 
-                            //judgeJson.put("status", WatchConstants.SC_SUCCESS);
-                            judgeJson.put("rkPlatform", rkPlatform);
-                            judgeJson.put("isSupportNewParams", isSupportNewParams);
-                            judgeJson.put("isBandLostFunction", isBandLostFunction);
-                            judgeJson.put("isBraceletLangSwitch", isSwitchBraceletLang);
-                            judgeJson.put("isTempUnitSwitch", isSupportTempUnitSwitch);
-                            judgeJson.put("isMinHRAlarm", isMinHRAlarm);
-                            judgeJson.put("isTempTest", isTemperatureTest);
-                            judgeJson.put("isTempCalibration", isTemperatureCalibration);
-                            judgeJson.put("isSupportHorVer", isSupportHorVer);
-                            judgeJson.put("isSupport24HrRate", isSupport24HrRate);
-                            judgeJson.put("isSupportOxygen", isSupportOxygen);
+                    //judgeJson.put("status", WatchConstants.SC_SUCCESS);
+                    judgeJson.put("rkPlatform", rkPlatform);
+                    judgeJson.put("isSupportNewParams", isSupportNewParams);
+                    judgeJson.put("isBandLostFunction", isBandLostFunction);
+                    judgeJson.put("isBraceletLangSwitch", isSwitchBraceletLang);
+                    judgeJson.put("isTempUnitSwitch", isSupportTempUnitSwitch);
+                    judgeJson.put("isMinHRAlarm", isMinHRAlarm);
+                    judgeJson.put("isTempTest", isTemperatureTest);
+                    judgeJson.put("isTempCalibration", isTemperatureCalibration);
+                    judgeJson.put("isSupportHorVer", isSupportHorVer);
+                    judgeJson.put("isSupport24HrRate", isSupport24HrRate);
+                    judgeJson.put("isSupportOxygen", isSupportOxygen);
 
 //                AsyncExecuteUpdate asyncTask=new AsyncExecuteUpdate();
 //                asyncTask.execute("");
@@ -1361,21 +1368,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 } else {
                     result.success(WatchConstants.SC_FAILURE);
                 }*/
-                            result.success(judgeJson.toString());
-                            //result.success(WatchConstants.SC_FAILURE);
-                        } catch (Exception exp) {
-                            Log.e("syncAllJSONExp: ", "" + exp.getMessage());
-                            result.success(WatchConstants.SC_FAILURE);
-                            //result.success(judgeJson.toString());
-                        }
-
-                    } else {
-                        //device disconnected
-                        result.success(WatchConstants.SC_DISCONNECTED);
-                    }
+                    result.success(judgeJson.toString());
+                    //result.success(WatchConstants.SC_FAILURE);
+                } catch (Exception exp) {
+                    Log.e("syncAllJSONExp: ", "" + exp.getMessage());
+                    result.success(WatchConstants.SC_FAILURE);
+                    //result.success(judgeJson.toString());
                 }
-            });
 
+            } else {
+                //device disconnected
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
         }catch (Exception exp){
             Log.e("fetchAllJudgeExp:", exp.getMessage());
         }
@@ -1383,23 +1387,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void syncAllStepsData(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
-                    if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
-                        if (mWriteCommand != null) {
-                            mWriteCommand.syncAllStepData();
-                            result.success(WatchConstants.SC_INIT);
-                        } else {
-                            result.success(WatchConstants.SC_FAILURE);
-                        }
-                    } else {
-                        //device disconnected
-                        result.success(WatchConstants.SC_DISCONNECTED);
-                    }
+            Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncAllStepData();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
                 }
-            });
+            } else {
+                //device disconnected
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
         }catch (Exception exp){
             Log.e("syncAllStepsExp:", exp.getMessage());
         }
@@ -1407,23 +1406,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void syncAllSleepData(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.e("sleep_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
-                    if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
-                        if (mWriteCommand != null) {
-                            mWriteCommand.syncAllSleepData();
-                            result.success(WatchConstants.SC_INIT);
-                        } else {
-                            result.success(WatchConstants.SC_FAILURE);
-                        }
-                    } else {
-                        //device disconnected
-                        result.success(WatchConstants.SC_DISCONNECTED);
-                    }
+            Log.e("sleep_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncAllSleepData();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
                 }
-            });
+            } else {
+                //device disconnected
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
         }catch (Exception exp){
             Log.e("syncAllSleepExp:", exp.getMessage());
         }
@@ -1431,30 +1425,26 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void syncRateData(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean support = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
-                    Log.e("support", "" + support);
-                    Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
-                    if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
-                        if (mWriteCommand != null) {
-                            mWriteCommand.syncRateData();
+            boolean support = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
+            Log.e("support", "" + support);
+            Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncRateData();
                 /*mWriteCommand. syncAllRateData();
                 boolean support = GetFunctionList.isSupportFunction_Second(mContext,GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
                 if (support){
                     mWriteCommand.sync24HourRate();
                 }*/
-                            result.success(WatchConstants.SC_INIT);
-                        } else {
-                            result.success(WatchConstants.SC_FAILURE);
-                        }
-                    } else {
-                        //device disconnected
-                        result.success(WatchConstants.SC_DISCONNECTED);
-                    }
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
                 }
-            });
+            } else {
+                //device disconnected
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
+
         }catch (Exception exp){
             Log.e("syncRateDataExp:", exp.getMessage());
         }
@@ -1462,21 +1452,17 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void syncBloodPressure(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
-                        if (mWriteCommand != null) {
-                            mWriteCommand.syncAllBloodPressureData();
-                            result.success(WatchConstants.SC_INIT);
-                        } else {
-                            result.success(WatchConstants.SC_FAILURE);
-                        }
-                    } else {
-                        result.success(WatchConstants.SC_DISCONNECTED);
-                    }
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncAllBloodPressureData();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
                 }
-            });
+            } else {
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
+
         }catch (Exception exp){
             Log.e("syncBPExp:", exp.getMessage());
         }
@@ -1484,27 +1470,23 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void syncOxygenSaturation(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
-                    Log.e("syncOxygenSat", "isSupported: " + isSupported);
-                    if (isSupported) {
-                        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
-                            if (mWriteCommand != null) {
-                                mWriteCommand.syncOxygenData();
-                                result.success(WatchConstants.SC_INIT);
-                            } else {
-                                result.success(WatchConstants.SC_FAILURE);
-                            }
-                        } else {
-                            result.success(WatchConstants.SC_DISCONNECTED);
-                        }
+            boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
+            Log.e("syncOxygenSat", "isSupported: " + isSupported);
+            if (isSupported) {
+                if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                    if (mWriteCommand != null) {
+                        mWriteCommand.syncOxygenData();
+                        result.success(WatchConstants.SC_INIT);
                     } else {
-                        result.success(WatchConstants.SC_NOT_SUPPORTED);
+                        result.success(WatchConstants.SC_FAILURE);
                     }
+                } else {
+                    result.success(WatchConstants.SC_DISCONNECTED);
                 }
-            });
+            } else {
+                result.success(WatchConstants.SC_NOT_SUPPORTED);
+            }
+
         }catch (Exception exp){
             Log.e("syncOxygenExp:", exp.getMessage());
         }
@@ -1514,27 +1496,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void syncBodyTemperature(Result result) {
         try{
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST);
-                    Log.e("syncBodyTemp", "isSupported: " + isSupported);
-                    if (isSupported) {
-                        if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
-                            if (mWriteCommand != null) {
-                                mWriteCommand.syncAllTemperatureData();
-                                result.success(WatchConstants.SC_INIT);
-                            } else {
-                                result.success(WatchConstants.SC_FAILURE);
-                            }
-                        } else {
-                            result.success(WatchConstants.SC_DISCONNECTED);
-                        }
+            boolean isSupported = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST);
+            Log.e("syncBodyTemp", "isSupported: " + isSupported);
+            if (isSupported) {
+                if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+                    if (mWriteCommand != null) {
+                        mWriteCommand.syncAllTemperatureData();
+                        result.success(WatchConstants.SC_INIT);
                     } else {
-                        result.success(WatchConstants.SC_NOT_SUPPORTED);
+                        result.success(WatchConstants.SC_FAILURE);
                     }
+                } else {
+                    result.success(WatchConstants.SC_DISCONNECTED);
                 }
-            });
+            } else {
+                result.success(WatchConstants.SC_NOT_SUPPORTED);
+            }
         }catch (Exception exp){
             Log.e("syncBodyTempExp:", exp.getMessage());
         }
