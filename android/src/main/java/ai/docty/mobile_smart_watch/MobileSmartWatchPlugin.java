@@ -1561,11 +1561,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 stepsJsonData.put("steps", stepOneDayAllInfo.getStep());
                 stepsJsonData.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getDistance()));
                 stepsJsonData.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
+                stepsJsonData.put("calender", stepOneDayAllInfo.getCalendar());
                 ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = stepOneDayAllInfo.getStepOneHourArrayInfo();
                 JSONArray stepsArray = new JSONArray();
                 for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
                     JSONObject object = new JSONObject();
-                    object.put("stepValue", stepOneHourInfo.getStep());
+                    object.put("step", stepOneHourInfo.getStep());
                     object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
                     stepsArray.put(object);
                 }

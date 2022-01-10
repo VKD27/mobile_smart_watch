@@ -17,6 +17,7 @@ part 'src/models/smart_sleep_model.dart';
 part 'src/models/smart_hr_model.dart';
 part 'src/models/smart_bp_model.dart';
 part 'src/models/smart_temperature_model.dart';
+part 'src/models/smart_steps_model.dart';
 
 
 /*import 'dart:async';
