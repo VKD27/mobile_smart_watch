@@ -215,8 +215,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
 
     }
-    private void startListeningDataProcessing() {
 
+    private void startListeningDataProcessing() {
         mDataProcessing.setOnStepChangeListener(new StepChangeListener() {
             @Override
             public void onStepChange(StepOneDayAllInfo info) {
@@ -564,6 +564,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 @Override
                 public void run() {
                     flutterResultBluConnect.success(status);
+                    Log.e("updateConnectionStatus2", "return success");
                 }
             });
         }catch (Exception exp) {
@@ -584,7 +585,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
     private void updateConnectionStatus3(boolean status) {
         try {
-            flutterResultBluConnect.success(status);
+            this.flutterResultBluConnect.success(status);
+            Log.e("updateConnectionStatus3", "flutterResultBluConnectSuccess");
         }catch (Exception exp) {
             Log.e("updateConnectionStatus3", exp.getMessage());
         }
@@ -799,6 +801,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         try {
+            this.flutterResultBluConnect = result;
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1044,7 +1047,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void connectBluDevice(MethodCall call, Result result) {
         try{
-            this.flutterResultBluConnect = result;
+
             //String index = (String) call.argument("index");
             //String name = call.argument("name");
             //String alias = call.argument("alias");
