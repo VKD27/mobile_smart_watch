@@ -542,12 +542,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void updateConnectionStatus(boolean status) {
-        activity.runOnUiThread(new Runnable() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 flutterResultBluConnect.success(status);
             }
         });
+      /*  activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                flutterResultBluConnect.success(status);
+            }
+        });*/
     }
 
    /* @Override
