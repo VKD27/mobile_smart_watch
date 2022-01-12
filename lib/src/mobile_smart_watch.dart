@@ -6,6 +6,8 @@ class MobileSmartWatch {
   static MobileSmartWatch? _instance;
   Map? mapOptions;
 
+  late StreamSubscription<dynamic> eventChannelListener;
+
   factory MobileSmartWatch([options]) {
     if (_instance == null) {
       MethodChannel methodChannel = const MethodChannel(SmartWatchConstants.SMART_METHOD_CHANNEL);
@@ -431,6 +433,13 @@ class MobileSmartWatch {
 
   Stream<dynamic> registerEventCallBackListeners(){
     return _eventChannel.receiveBroadcastStream();
+  }
+
+  void receiveEventListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
+    eventChannelListener = _eventChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
+  }
+  void cancelEventListeners(){
+    eventChannelListener.cancel();
   }
   /*void registerCallBackListeners(Function callback) async{
     _eventChannel.receiveBroadcastStream().listen((data) {

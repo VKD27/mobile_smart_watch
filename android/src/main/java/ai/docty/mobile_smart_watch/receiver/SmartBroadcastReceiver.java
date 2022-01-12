@@ -8,12 +8,12 @@ import android.os.Looper;
 
 import io.flutter.plugin.common.EventChannel;
 
-public class MobileBroadcastReceiver extends android.content.BroadcastReceiver {
+public class SmartBroadcastReceiver extends android.content.BroadcastReceiver {
 
     private final EventChannel.EventSink mEventSink;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    public MobileBroadcastReceiver(EventChannel.EventSink eventSink){
+    public SmartBroadcastReceiver(EventChannel.EventSink eventSink){
         this.mEventSink = eventSink;
     }
 
