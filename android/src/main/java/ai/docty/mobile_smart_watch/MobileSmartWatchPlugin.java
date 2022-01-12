@@ -1045,7 +1045,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                    if (mBluetoothLeService != null) {
 //                        initBlueServices(status);
 //                    }
-            //result.success(status);
+            result.success(status);
         }catch (Exception exp){
             Log.e("connectBluDeviceExp:", exp.getMessage());
         }

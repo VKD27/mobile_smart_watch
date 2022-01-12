@@ -63,9 +63,9 @@ public class MobileConnect {
         this.mBluetoothLeService = mBluetoothLeService;
     }
 
-    public BluetoothLeService getBluetoothLeService(){
+    /*public BluetoothLeService getBluetoothLeService(){
         return this.mBluetoothLeService;
-    }
+    }*/
     
     public boolean isBleEnabled() {
        // this. mBLEServiceOperate = BLEServiceOperate.getInstance(context);
