@@ -58,7 +58,8 @@ public class WatchConstants {
 
 
     //method channel
-    public static final String SMART_METHOD_CHANNEL = "mobile_smart_watch";
+    public static final String SMART_METHOD_CHANNEL = "smartMethodChannel";
+    public static final String SMART_EVENT_CHANNEL = "smartEventChannel";
 
     //to listen for continuous call backs from the hardware device search
     public static final String SMART_CALLBACK = "smartCallbacks";
@@ -86,6 +87,6 @@ public class WatchConstants {
 
 
     // for streaming broadcast action event name
-    public static final String BROADCAST_ACTION_NAME = "ai.docty.smartcare";
+    public static final String BROADCAST_ACTION_NAME = "ai.docty.smart_watch";
 
 }

@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.yc.pedometer.info.BPVOneDayInfo;
 import com.yc.pedometer.info.BreatheInfo;
@@ -56,6 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ai.docty.mobile_smart_watch.handler.SmartStreamHandler;
 import ai.docty.mobile_smart_watch.model.BleDevices;
 import ai.docty.mobile_smart_watch.util.GlobalMethods;
 import ai.docty.mobile_smart_watch.util.WatchConstants;
@@ -63,6 +65,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -83,10 +86,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private ActivityPluginBinding activityPluginBinding;
 
     private MethodChannel methodChannel;
+    private EventChannel eventChannel;
     private MethodChannel mCallbackChannel;
 
     // Callbacks
-    final Handler uiThreadHandler = new Handler(Looper.getMainLooper());
+    private Handler uiThreadHandler = new Handler(Looper.getMainLooper());
     // private Map<String, Runnable> callbackById = new HashMap<>();
     Map<String, Map<String, Object>> mCallbacks = new HashMap<>();
 
@@ -118,20 +122,15 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     };
 
     private void updateCallBackHandler(MethodCall call, Result result) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                final String method = call.method;
-                Log.e("calling_method", "callbacksHandler++ " + method); // startListening
-                //WatchConstants.START_LISTENING.equalsIgnoreCase(method)
-                //if ("startListening".equals(method)) {
-                if (WatchConstants.START_LISTENING.equalsIgnoreCase(method)) {
-                    startListening(call.arguments, result);
-                } else {
-                    result.notImplemented();
-                }
-            }
-        });
+        final String method = call.method;
+        Log.e("calling_method", "callbacksHandler++ " + method); // startListening
+        //WatchConstants.START_LISTENING.equalsIgnoreCase(method)
+        //if ("startListening".equals(method)) {
+        if (WatchConstants.START_LISTENING.equalsIgnoreCase(method)) {
+            startListening(call.arguments, result);
+        } else {
+            result.notImplemented();
+        }
     }
 
     //sdk return results
@@ -151,8 +150,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         methodChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_METHOD_CHANNEL); // "mobile_smart_watch"
         methodChannel.setMethodCallHandler(mobileSmartWatchPlugin);
 
+        eventChannel = new EventChannel(binaryMessenger,  WatchConstants.SMART_EVENT_CHANNEL);
+
         mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
-        mCallbackChannel.setMethodCallHandler(callbacksHandler);
+       // mCallbackChannel.setMethodCallHandler(callbacksHandler);
+        mCallbackChannel.setMethodCallHandler(mobileSmartWatchPlugin);
+        eventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
+
         try {
         mUTESQLOperate = UTESQLOperate.getInstance(applicationContext.getApplicationContext());
 
@@ -180,25 +184,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
         startListeningDataProcessing();
 
-        setUpDataEngine(binaryMessenger);
 
-//            activity.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-                    //sdk commands execution
-//                    mDataProcessing.setOnStepChangeListener(mOnStepChangeListener);
-//                    mDataProcessing.setOnSleepChangeListener(mOnSleepChangeListener);
-//                    mDataProcessing.setOnRateListener(mOnRateListener);
-//                    mDataProcessing.setOnRateOf24HourListenerRate(mOnRateOf24HourListener);
-//                    mDataProcessing.setOnBloodPressureListener(mOnBloodPressureListener);
-//                }
-//            });
         }catch (Exception exp){
             Log.e("setUpEngineExp:", exp.getMessage());
         }
     }
 
-    private void setUpDataEngine( BinaryMessenger binaryMessenger){
+   /* private void setUpDataEngine( BinaryMessenger binaryMessenger){
         try{
             Log.e("inside_set_up_engine", "binaryMessenger");
             activity.runOnUiThread(new Runnable() {
@@ -212,9 +204,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }catch (Exception exp){
             Log.e("set_up_engine_exp", exp.getMessage());
         }
-
-
-    }
+    }*/
 
     private void startListeningDataProcessing() {
         mDataProcessing.setOnStepChangeListener(new StepChangeListener() {
@@ -288,21 +278,16 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             public void onBloodPressureChange(int highPressure, int lowPressure, int status) {
                 Log.e("onBloodPressureChange", "highPressure: " + highPressure + ", lowPressure: " + lowPressure + ", status=" + status);
                 try {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject.put("high", "" + highPressure);
-                                jsonObject.put("low", "" + lowPressure);
-                                jsonObject.put("status", "" + status);
-                                runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
-                            } catch (Exception e) {
-                                //e.printStackTrace();
-                                Log.e("bpChangeJSONExp::", e.getMessage());
-                            }
-                        }
-                    });
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("high", "" + highPressure);
+                        jsonObject.put("low", "" + lowPressure);
+                        jsonObject.put("status", "" + status);
+                        runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                    } catch (Exception e) {
+                        //e.printStackTrace();
+                        Log.e("bpChangeJSONExp::", e.getMessage());
+                    }
 
                 } catch (Exception exp) {
                     Log.e("bpChangeExp::", exp.getMessage());
@@ -326,7 +311,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 // e.printStackTrace();
                 Log.e("onRateJSONExp: ", e.getMessage());
             }
-            runOnUIThread(WatchConstants.HR_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+           // runOnUIThread(WatchConstants.HR_REAL_TIME, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+
+            sendEventToDart(jsonObject, WatchConstants.SMART_EVENT_CHANNEL);
 
         } catch (Exception exp) {
             Log.e("onRateExp: ", exp.getMessage());
@@ -399,14 +386,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             //runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
                             //flutterResultBluConnect.success(connectionStatus);
                            // updateConnectionStatus(true);
-                            updateConnectionStatus2(true);
-                            updateConnectionStatus3(true);
-                            //runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            //updateConnectionStatus2(true);
+                            //updateConnectionStatus3(true);
+                            runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
                             // disconnected successfully
                             // mobileConnect.disconnectDevice();
-                            updateConnectionStatus(false);
+                           // updateConnectionStatus(false);
                             runOnUIThread(WatchConstants.DEVICE_DISCONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             // runOnUIThread(new JSONObject(), WatchConstants.DEVICE_DISCONNECTED, WatchConstants.SC_SUCCESS);
                             break;
@@ -467,10 +454,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             public void onTestResult(TemperatureInfo temperatureInfo) {
                 Log.e("temperatureListener", "temperature: " + temperatureInfo.getBodyTemperature() + ", type: " + temperatureInfo.getType());
                 try {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            JSONObject jsonObject = new JSONObject();
+
+                    JSONObject jsonObject = new JSONObject();
 //                jsonObject.put("calender", "" + temperatureInfo.getCalendar());
 //                jsonObject.put("type", "" + temperatureInfo.getType());
 //                jsonObject.put("bodyTemp", "" + temperatureInfo.getBodyTemperature());
@@ -478,24 +463,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                jsonObject.put("surfaceTemp", "" + temperatureInfo.getBodySurfaceTemperature());
 //                jsonObject.put("startDate", "" + temperatureInfo.getStartDate());
 //                jsonObject.put("time", "" + temperatureInfo.getSecondTime());
-                            try {
-                                jsonObject.put("calender", temperatureInfo.getCalendar());
-                                jsonObject.put("type", "" + temperatureInfo.getType());
-                                jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
-                                jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
-                                jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
-                                jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+                    try {
+                        jsonObject.put("calender", temperatureInfo.getCalendar());
+                        jsonObject.put("type", "" + temperatureInfo.getType());
+                        jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                        jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+                        jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                        jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
 
-                                Log.e("onTestResult", "object: " + jsonObject.toString());
+                        Log.e("onTestResult", "object: " + jsonObject.toString());
 
-                            } catch (Exception e) {
-                                // e.printStackTrace();
-                                Log.e("onTestResultJSONExp:", e.getMessage());
-                            }
+                    } catch (Exception e) {
+                        // e.printStackTrace();
+                        Log.e("onTestResultJSONExp:", e.getMessage());
+                    }
 
-                            runOnUIThread(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
-                        }
-                    });
+                    runOnUIThread(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
 
                 } catch (Exception exp) {
                     Log.e("onTestResultExp:", exp.getMessage());
@@ -544,19 +527,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void updateConnectionStatus(boolean status) {
-        uiThreadHandler.post(new Runnable() {
+        uiThreadHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 flutterResultBluConnect.success(status);
             }
-        });
+        },200);
         //getMainExecutor().
-      /*  activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                flutterResultBluConnect.success(status);
-            }
-        });*/
     }
     private void updateConnectionStatus2(boolean status) {
         try {
@@ -801,132 +778,139 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         try {
-            this.flutterResultBluConnect = result;
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String method = call.method;
-                    switch (method) {
-                        case WatchConstants.DEVICE_INITIALIZE:
-                            initDeviceConnection(result);
-                            break;
-                        case WatchConstants.START_DEVICE_SEARCH:
-                            searchForBTDevices(result);
-                            break;
+            handleMethodCall(call, result);
+            //this.flutterResultBluConnect = result;
+        }catch (Exception exp){
+            Log.e("onMethodCallExp::", exp.getMessage());
+        }
+    }
+
+    private Context getApplicationContext(){
+        return this.mContext.getApplicationContext();
+    }
+
+    private void handleMethodCall(MethodCall call, Result result) {
+        String method = call.method;
+        switch (method) {
+            case WatchConstants.START_LISTENING:
+                //initDeviceConnection(result);
+                startListening(call.arguments, result);
+                break;
+            case WatchConstants.DEVICE_INITIALIZE:
+                initDeviceConnection(result);
+                break;
+            case WatchConstants.START_DEVICE_SEARCH:
+                searchForBTDevices(result);
+                break;
            /* case WatchConstants.STOP_DEVICE_SEARCH:
                 String resultStatus = mobileConnect.stopDevicesScan();
                 result.success(resultStatus);
                 break;*/
-                        case WatchConstants.BIND_DEVICE:
-                            connectBluDevice(call, result);
-                            break;
-                        case WatchConstants.UNBIND_DEVICE:
-                            disconnectBluDevice(result);
-                            break;
-                        case WatchConstants.SET_USER_PARAMS:
-                            setUserParams(call, result);
-                            break;
+            case WatchConstants.BIND_DEVICE:
+                connectBluDevice(call, result);
+                break;
+            case WatchConstants.UNBIND_DEVICE:
+                disconnectBluDevice(result);
+                break;
+            case WatchConstants.SET_USER_PARAMS:
+                setUserParams(call, result);
+                break;
 
-                        case WatchConstants.GET_DEVICE_VERSION:
-                            getDeviceVersion(result);
-                            break;
+            case WatchConstants.GET_DEVICE_VERSION:
+                getDeviceVersion(result);
+                break;
 
-                        case WatchConstants.GET_DEVICE_BATTERY_STATUS:
-                            getDeviceBatteryStatus(result);
-                            break;
+            case WatchConstants.GET_DEVICE_BATTERY_STATUS:
+                getDeviceBatteryStatus(result);
+                break;
 
-                        // sync all the data,from watch to the local (android SDK)
-                        case WatchConstants.SYNC_ALL_JUDGE:
-                            fetchAllJudgement(call, result);
-                            break;
+            // sync all the data,from watch to the local (android SDK)
+            case WatchConstants.SYNC_ALL_JUDGE:
+                fetchAllJudgement(call, result);
+                break;
 
-                        case WatchConstants.GET_SYNC_STEPS:
-                            syncAllStepsData(result);
-                            break;
-                        case WatchConstants.GET_SYNC_SLEEP:
-                            syncAllSleepData(result);
-                            break;
-                        case WatchConstants.GET_SYNC_RATE:
-                            syncRateData(result);
-                            break;
-                        case WatchConstants.GET_SYNC_BP:
-                            syncBloodPressure(result);
-                            break;
-                        case WatchConstants.GET_SYNC_OXYGEN:
-                            syncOxygenSaturation(result);
-                            break;
-                        case WatchConstants.GET_SYNC_TEMPERATURE:
-                            syncBodyTemperature(result);
-                            break;
-                        //start doing test here
-                        case WatchConstants.START_BP_TEST:
-                            startBloodPressure(result);
-                            break;
-                        case WatchConstants.STOP_BP_TEST:
-                            stopBloodPressure(result);
-                            break;
-                        case WatchConstants.START_HR_TEST:
-                            startHeartRate(result);
-                            break;
-                        case WatchConstants.STOP_HR_TEST:
-                            stopHeartRate(result);
-                            break;
-                        case WatchConstants.START_OXYGEN_TEST:
-                            startOxygenSaturation(result);
-                            break;
-                        case WatchConstants.STOP_OXYGEN_TEST:
-                            stopOxygenSaturation(result);
-                            break;
+            case WatchConstants.GET_SYNC_STEPS:
+                syncAllStepsData(result);
+                break;
+            case WatchConstants.GET_SYNC_SLEEP:
+                syncAllSleepData(result);
+                break;
+            case WatchConstants.GET_SYNC_RATE:
+                syncRateData(result);
+                break;
+            case WatchConstants.GET_SYNC_BP:
+                syncBloodPressure(result);
+                break;
+            case WatchConstants.GET_SYNC_OXYGEN:
+                syncOxygenSaturation(result);
+                break;
+            case WatchConstants.GET_SYNC_TEMPERATURE:
+                syncBodyTemperature(result);
+                break;
+            //start doing test here
+            case WatchConstants.START_BP_TEST:
+                startBloodPressure(result);
+                break;
+            case WatchConstants.STOP_BP_TEST:
+                stopBloodPressure(result);
+                break;
+            case WatchConstants.START_HR_TEST:
+                startHeartRate(result);
+                break;
+            case WatchConstants.STOP_HR_TEST:
+                stopHeartRate(result);
+                break;
+            case WatchConstants.START_OXYGEN_TEST:
+                startOxygenSaturation(result);
+                break;
+            case WatchConstants.STOP_OXYGEN_TEST:
+                stopOxygenSaturation(result);
+                break;
 
-                        case WatchConstants.START_TEST_TEMP:
-                            startTempTest(result);
-                            break;
+            case WatchConstants.START_TEST_TEMP:
+                startTempTest(result);
+                break;
 
-                        //fetch individual data
-                        case WatchConstants.FETCH_OVERALL_BY_DATE:
-                            fetchOverAllBySelectedDate(call, result);
-                            break;
+            //fetch individual data
+            case WatchConstants.FETCH_OVERALL_BY_DATE:
+                fetchOverAllBySelectedDate(call, result);
+                break;
 
-                        case WatchConstants.FETCH_STEPS_BY_DATE:
-                            fetchStepsBySelectedDate(call, result);
-                            break;
-                        case WatchConstants.FETCH_SLEEP_BY_DATE:
-                            fetchSleepByDate(call, result);
-                            break;
-                        case WatchConstants.FETCH_BP_BY_DATE:
-                            fetchBPByDate(call, result);
-                            break;
-                        case WatchConstants.FETCH_HR_BY_DATE:
-                            fetchHRByDate(call, result);
-                            break;
-                        case WatchConstants.FETCH_24_HOUR_HR_BY_DATE:
-                            fetch24HourHRDateByDate(call, result);
-                            break;
-                        case WatchConstants.FETCH_TEMP_BY_DATE:
-                            fetchTemperatureByDate(call, result);
-                            break;
+            case WatchConstants.FETCH_STEPS_BY_DATE:
+                fetchStepsBySelectedDate(call, result);
+                break;
+            case WatchConstants.FETCH_SLEEP_BY_DATE:
+                fetchSleepByDate(call, result);
+                break;
+            case WatchConstants.FETCH_BP_BY_DATE:
+                fetchBPByDate(call, result);
+                break;
+            case WatchConstants.FETCH_HR_BY_DATE:
+                fetchHRByDate(call, result);
+                break;
+            case WatchConstants.FETCH_24_HOUR_HR_BY_DATE:
+                fetch24HourHRDateByDate(call, result);
+                break;
+            case WatchConstants.FETCH_TEMP_BY_DATE:
+                fetchTemperatureByDate(call, result);
+                break;
 
-                        // fetch all the dats
-                        case WatchConstants.FETCH_ALL_STEPS_DATA:
-                            fetchAllStepsData(result);
-                            break;
-                        case WatchConstants.FETCH_ALL_SLEEP_DATA:
-                            fetchAllSleepData(result);
-                            break;
-                        case WatchConstants.FETCH_ALL_BP_DATA:
-                            fetchAllBPData(result);
-                            break;
-                        case WatchConstants.FETCH_ALL_TEMP_DATA:
-                            fetchAllTemperatureData(result);
-                            break;
-                        default:
-                            result.notImplemented();
-                            break;
-                    }
-                }
-            });
-        }catch (Exception exp){
-            Log.e("onMethodCallExp::", exp.getMessage());
+            // fetch all the dats
+            case WatchConstants.FETCH_ALL_STEPS_DATA:
+                fetchAllStepsData(result);
+                break;
+            case WatchConstants.FETCH_ALL_SLEEP_DATA:
+                fetchAllSleepData(result);
+                break;
+            case WatchConstants.FETCH_ALL_BP_DATA:
+                fetchAllBPData(result);
+                break;
+            case WatchConstants.FETCH_ALL_TEMP_DATA:
+                fetchAllTemperatureData(result);
+                break;
+            default:
+                result.notImplemented();
+                break;
         }
     }
 
@@ -2196,6 +2180,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         methodChannel.setMethodCallHandler(null);
+        eventChannel.setStreamHandler(null);
+        methodChannel = null;
+        eventChannel = null;
     }
 
     @Override
@@ -2218,6 +2205,15 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     @Override
     public void onDetachedFromActivity() {
         Log.e("onDetachedFromActivity", "onDetachedFromActivity");
+    }
+
+    private void sendEventToDart(final JSONObject params, String channel) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        intent.setAction(WatchConstants.BROADCAST_ACTION_NAME);
+        intent.putExtra("params", params.toString());
+        intent.putExtra("channel", channel);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 
     private void startListening(Object arguments, Result rawResult) {
@@ -2255,7 +2251,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void runOnUIThread(final String result, final JSONObject data, final String callbackName, final String status) {
         try {
-            activity.runOnUiThread(new Runnable() {
+            /*activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Log.e("runOnUIThread", "Calling runOnUIThread with activity: " + data);
@@ -2274,9 +2270,33 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         Log.e("data_run_exp:", e.getMessage());
                     }
                 }
+            });*/
+            uiThreadHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject args = new JSONObject();
+                        args.put("id", callbackName);
+                        args.put("status", status);
+                        args.put("result", result);
+                        args.put("data", data);
+                        Log.e("mCallbackChannel2:: ", ""+mCallbackChannel);
+                        mCallbackChannel.invokeMethod(WatchConstants.CALL_LISTENER, args.toString());
+
+                    } catch (Exception e) {
+                        // e.printStackTrace();
+                        Log.e("data_run_exp2:", e.getMessage());
+                    }
+                }
             });
             //  final String result
             // uiThreadHandler
+            /*new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            });*/
            /* new Handler(Looper.getMainLooper()).post(new Runnable() {
                  @Override
                  public void run() {

@@ -93,7 +93,9 @@ class SmartWatchConstants {
   static const String FETCH_ALL_TEMP_DATA = "fetchAllTempData";
 
   //method channel
-  static const String SMART_METHOD_CHANNEL = "mobile_smart_watch";
+  static const String SMART_METHOD_CHANNEL = "smartMethodChannel";
+  static const String SMART_EVENT_CHANNEL = "smartEventChannel";
+
 
   //for continuous call backs from the hardware device search
   static const String SMART_CALLBACK = "smartCallbacks";
@@ -118,9 +120,10 @@ class SmartWatchConstants {
 
   static const String CALLBACK_EXCEPTION = "callbackException";
 
-  static const String SMART_EVENTS = "smartEvents";
+ // static const String SMART_EVENTS = "smartEvents";
 
+  static const  String BROADCAST_ACTION_NAME = "ai.docty.smart_watch";
 
   //requires only for IOS
-  static const String DC_APP_Id = "dcAppId";
+//  static const String DC_APP_Id = "dcAppId";
 }

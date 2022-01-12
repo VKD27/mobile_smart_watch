@@ -10,7 +10,7 @@ class MobileSmartWatch {
     if (_instance == null) {
       MethodChannel methodChannel = const MethodChannel(SmartWatchConstants.SMART_METHOD_CHANNEL);
 
-      EventChannel eventChannel = EventChannel(SmartWatchConstants.SMART_EVENTS); // temporary for stream events
+      EventChannel eventChannel = EventChannel(SmartWatchConstants.SMART_EVENT_CHANNEL); // temporary for stream events
 
       //check if the option variable is AFOptions type or map type
       //assert(options is Map);
@@ -428,6 +428,19 @@ class MobileSmartWatch {
   void onCancelCallbackData() async {
    // stopListening(callback as void Function(), SmartWatchConstants.SMART_CALLBACK);
   }
+
+  Stream<dynamic> registerEventCallBackListeners(){
+    return _eventChannel.receiveBroadcastStream();
+  }
+  /*void registerCallBackListeners(Function callback) async{
+    _eventChannel.receiveBroadcastStream().listen((data) {
+      var decodedJSON = jsonDecode(data);
+
+      print('register_call_back: $decodedJSON');
+      return decodedJSON;
+     // String? status = decodedJSON['status'];
+    });
+  }*/
 
 /*static const MethodChannel _channel = const MethodChannel('mobile_smart_watch');
 

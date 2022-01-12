@@ -150,11 +150,27 @@ class HomePageState extends State<HomePage> {
 
           case SmartWatchConstants.CALLBACK_EXCEPTION:
             // something went wrong, which falls in the exception
+              print('callbackException occurred.');
             break;
           default:
             break;
         }
       }
+    });
+    /*_mobileSmartWatch.registerCallBackListeners((response){
+      print("registerCallBackListeners>>" + response.toString());
+
+    });*/
+
+    _mobileSmartWatch.registerEventCallBackListeners().listen((event) {
+      print("registerCallBackListeners>>" + event.toString());
+
+     /* String hr = jsonData['hr'].toString();
+      setState(() {
+        heartRate = hr; // always bpm
+      });*/
+    }, onError: (dynamic error){
+      print("registerCallBackError>> ${error}");
     });
   }
 

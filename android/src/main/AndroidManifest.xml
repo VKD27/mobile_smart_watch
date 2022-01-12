@@ -32,6 +32,9 @@
     <!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
 
     <application>
         <!--android:label="mobile_smart_watch_example"

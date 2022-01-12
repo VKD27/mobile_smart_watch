@@ -109,9 +109,9 @@ public class MobileConnect {
                         addDevice(mBleDevices);
                         //Log.e("afterAddDevice", "" + mLeDevices);
                     }
-                } else {
+                }/* else {
                     Log.e("ble_scan_exp: ", "LeScanCallback::" + rssi);
-                }
+                }*/
             }
         });
         //return "initiated";
