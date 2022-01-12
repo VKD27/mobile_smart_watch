@@ -138,8 +138,22 @@ class MobileSmartWatch {
       return returnResponse;
     }
   }
+  Future<String> getDeviceVersion() async{
+    return  await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_VERSION);
+  }
 
-  Future<Map<String, dynamic>> getDeviceVersion() async{
+  Future<Map<String, dynamic>> getBatteryStatus() async{
+    return  await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_STATUS);
+  }
+
+  Future<bool> checkConectionStatus() async{
+    return await _methodChannel.invokeMethod(SmartWatchConstants.CHECK_CONNECTION_STATUS);
+  }
+
+
+
+
+  /*Future<Map<String, dynamic>> getDeviceVersion() async{
     //returns result status == SC_INIT or SC_FAILURE
     var result = await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_VERSION);
     var returnResponse;
@@ -169,9 +183,9 @@ class MobileSmartWatch {
     }else{
       return returnResponse;
     }
-  }
+  }*/
 
-  Future<Map<String, dynamic>> getBatteryStatus() async{
+  /*Future<Map<String, dynamic>> getBatteryStatus() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
     var result = await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_STATUS);
     var returnResponse;
@@ -201,7 +215,7 @@ class MobileSmartWatch {
     }else{
       return returnResponse;
     }
-  }
+  }*/
 
   Future<String> syncStepsData() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)

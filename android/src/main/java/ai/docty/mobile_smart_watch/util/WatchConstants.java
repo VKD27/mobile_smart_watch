@@ -20,6 +20,7 @@ public class WatchConstants {
     public static final  String BLE_NOT_SUPPORTED = "bleNotSupported";
     
     //device data
+    public static final String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
     public static final String GET_DEVICE_VERSION = "fetchDeviceVersion";
     public static final String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
     public static final String SET_USER_PARAMS = "setUserDetails";

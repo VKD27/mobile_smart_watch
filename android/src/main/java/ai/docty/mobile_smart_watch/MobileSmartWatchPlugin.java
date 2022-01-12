@@ -583,6 +583,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 getDeviceBatteryStatus(result);
                 break;
 
+            case WatchConstants.CHECK_CONNECTION_STATUS:
+                getCheckConnectionStatus(result);
+                break;
+
             // sync all the data,from watch to the local (android SDK)
             case WatchConstants.SYNC_ALL_JUDGE:
                 fetchAllJudgement(call, result);
@@ -1064,7 +1068,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
                     mWriteCommand.sendToReadBLEVersion();
-                    result.success(WatchConstants.SC_INIT);
+                   // result.success(WatchConstants.SC_INIT);
                 } else {
                     result.success(WatchConstants.SC_FAILURE);
                 }
@@ -1083,7 +1087,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
                     mWriteCommand.sendToReadBLEBattery();
-                    // result.success(WatchConstants.SC_INIT);
+                    result.success(WatchConstants.SC_INIT);
                 } else {
                     result.success(WatchConstants.SC_FAILURE);
                 }
@@ -1093,6 +1097,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             }
         }catch (Exception exp){
             Log.e("getBatteryStatusExp:", exp.getMessage());
+        }
+    }
+
+    private void getCheckConnectionStatus(Result result) {
+        try{
+            result.success(SPUtil.getInstance(mContext).getBleConnectStatus());
+        }catch (Exception exp){
+            Log.e("getConnectionStatusExp:", exp.getMessage());
         }
     }
 
