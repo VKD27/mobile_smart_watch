@@ -142,7 +142,7 @@ class MobileSmartWatch {
     return  await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_VERSION);
   }
 
-  Future<Map<String, dynamic>> getBatteryStatus() async{
+  Future<String> getBatteryStatus() async{
     return  await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_STATUS);
   }
 
