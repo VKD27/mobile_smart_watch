@@ -110,7 +110,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private DataProcessing mDataProcessing;
 
 
-    MethodCallHandler callbacksHandler = new MethodCallHandler() {
+    /*MethodCallHandler callbacksHandler = new MethodCallHandler() {
         @Override
         public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
             try{
@@ -119,9 +119,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 Log.e("callbacksHandlerExp:",""+exp.getMessage());
             }
         }
-    };
+    };*/
 
-    private void updateCallBackHandler(MethodCall call, Result result) {
+    /*private void updateCallBackHandler(MethodCall call, Result result) {
         final String method = call.method;
         Log.e("calling_method", "callbacksHandler++ " + method); // startListening
         //WatchConstants.START_LISTENING.equalsIgnoreCase(method)
@@ -131,7 +131,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         } else {
             result.notImplemented();
         }
-    }
+    }*/
 
     //sdk return results
     //private Result flutterInitResultBlu;
@@ -299,6 +299,24 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             @Override
             public void onRateOf24HourChange(int maxHeartRateValue, int minHeartRateValue, int averageHeartRateValue, boolean isRealTimeValue) {
                 Log.e("onRateOf24Hour", "maxHeartRateValue: " + maxHeartRateValue + ", minHeartRateValue: " + minHeartRateValue + ", averageHeartRateValue=" + averageHeartRateValue + ", isRealTimeValue=" + isRealTimeValue);
+
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("maxHr", "" + maxHeartRateValue);
+                        jsonObject.put("minHr", "" + minHeartRateValue);
+                        jsonObject.put("avgHr", "" + averageHeartRateValue);
+                        jsonObject.put("rtValue",  isRealTimeValue);
+                        // runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                       // pushEventCallBack(WatchConstants.HR_24_REAL_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                    } catch (Exception e) {
+                        //e.printStackTrace();
+                        Log.e("onRateOf24JSONExp::", e.getMessage());
+                    }
+
+                } catch (Exception exp) {
+                    Log.e("onRate24HourExp::", exp.getMessage());
+                }
             }
         });
     }
@@ -361,6 +379,35 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             //sync time ok
                             break;
 
+                        case ICallbackStatus.OFFLINE_STEP_SYNC_OK: // 6
+                            //steps sync done
+                            pushEventCallBack(WatchConstants.SYNC_STEPS_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.OFFLINE_SLEEP_SYNC_OK: // 6
+                            //sleep sync done
+                            pushEventCallBack(WatchConstants.SYNC_SLEEP_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.OFFLINE_BLOOD_PRESSURE_SYNC_OK: // 47
+                            //bp sync done
+                            pushEventCallBack(WatchConstants.SYNC_BP_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.OFFLINE_RATE_SYNC_OK: // 23
+                            pushEventCallBack(WatchConstants.SYNC_RATE_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.OFFLINE_24_HOUR_RATE_SYNC_OK: // 82
+                            pushEventCallBack(WatchConstants.SYNC_24_HOUR_RATE_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.ECG_DATA_SYNC_OK: // 165
+                            pushEventCallBack(WatchConstants.SYNC_ECG_DATA_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
+
+
+
+
                         case ICallbackStatus.SET_STEPLEN_WEIGHT_OK: // 8
                             //runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             pushEventCallBack(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SC_SUCCESS);
@@ -368,20 +415,25 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         case ICallbackStatus.OFFLINE_BLOOD_PRESSURE_SYNCING: // 46
                             // runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             break;
-                        case ICallbackStatus.OFFLINE_BLOOD_PRESSURE_SYNC_OK: // 47
-                            //runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
-                            break;
+
 
                         case ICallbackStatus.BLOOD_PRESSURE_TEST_START: // 50
-                            //runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            //runOnUIThread(WatchConstants.BP_TEST_STARTED,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            pushEventCallBack(WatchConstants.BP_TEST_STARTED,  new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
+                        case ICallbackStatus.BLOOD_PRESSURE_TEST_END: // 91
+                            //runOnUIThread(WatchConstants.BP_TEST_FINISH,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            pushEventCallBack(WatchConstants.BP_TEST_FINISHED,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
 
                         case ICallbackStatus.RATE_TEST_START: // 79
                             // runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            pushEventCallBack(WatchConstants.HR_TEST_STARTED,  new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
                         case ICallbackStatus.RATE_TEST_STOP: // 80
                             // runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
+                            pushEventCallBack(WatchConstants.HR_TEST_FINISHED,  new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
                         case ICallbackStatus.CONNECTED_STATUS: // 20

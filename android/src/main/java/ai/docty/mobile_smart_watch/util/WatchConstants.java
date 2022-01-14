@@ -57,6 +57,18 @@ public class WatchConstants {
     public static final String FETCH_ALL_BP_DATA = "fetchAllBPData";
     public static final String FETCH_ALL_TEMP_DATA = "fetchAllTempData";
 
+    public static final String SYNC_STEPS_FINISH = "syncStepsFinish";
+    public static final String SYNC_SLEEP_FINISH = "syncSleepFinish";
+    public static final String SYNC_BP_FINISH = "syncBpFinish";
+    public static final String SYNC_RATE_FINISH = "syncRateFinish";
+    public static final String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
+    public static final String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
+
+    public static final String BP_TEST_STARTED = "bpTestStarted";
+    public static final String BP_TEST_FINISHED = "bpTestFinished";
+
+    public static final String HR_TEST_STARTED = "hrTestStarted";
+    public static final String HR_TEST_FINISHED = "hrTestFinished";
 
     //method channel
     public static final String SMART_METHOD_CHANNEL = "smartMethodChannel";
@@ -82,7 +94,7 @@ public class WatchConstants {
     public static final String HR_REAL_TIME = "heartRateRT";
     public static final String BP_RESULT = "bpResult";
     public static final String TEMP_RESULT = "tempResult";
-
+    public static final String HR_24_REAL_RESULT = "hr24RealResult";
 
     public static final String CALLBACK_EXCEPTION = "callbackException";
 

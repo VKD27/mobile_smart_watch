@@ -93,6 +93,19 @@ class SmartWatchConstants {
   static const String FETCH_ALL_BP_DATA = "fetchAllBPData";
   static const String FETCH_ALL_TEMP_DATA = "fetchAllTempData";
 
+  static const String SYNC_STEPS_FINISH = "syncStepsFinish";
+  static const String SYNC_SLEEP_FINISH = "syncSleepFinish";
+  static const String SYNC_BP_FINISH = "syncBpFinish";
+  static const String SYNC_RATE_FINISH = "syncRateFinish";
+  static const String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
+  static const String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
+
+  static const String BP_TEST_STARTED = "bpTestStarted";
+  static const String BP_TEST_FINISHED = "bpTestFinished";
+
+  static const String HR_TEST_STARTED = "hrTestStarted";
+  static const String HR_TEST_FINISHED = "hrTestFinished";
+
   //method channel
   static const String SMART_METHOD_CHANNEL = "smartMethodChannel";
   static const String SMART_EVENT_CHANNEL = "smartEventChannel";
@@ -118,6 +131,7 @@ class SmartWatchConstants {
   static const String HR_REAL_TIME = "heartRateRT";
   static const String BP_RESULT = "bpResult";
   static const String TEMP_RESULT = "tempResult";
+  static const String HR_24_REAL_RESULT = "hr24RealResult";
 
   static const String CALLBACK_EXCEPTION = "callbackException";
 

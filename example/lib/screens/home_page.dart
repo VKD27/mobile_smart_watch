@@ -33,7 +33,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _mobileSmartWatch.onDeviceCallbackData((response) {
+    /*_mobileSmartWatch.onDeviceCallbackData((response) {
       print("onDeviceCallbackData1 res: " + response.toString());
       if (response['id'].toString() == SmartWatchConstants.SMART_CALLBACK) {
         // only 3 params, result is return resultant, status is success/failure, & data is json object of multiple data
@@ -156,21 +156,28 @@ class HomePageState extends State<HomePage> {
             break;
         }
       }
-    });
+    });*/
+
     /*_mobileSmartWatch.registerCallBackListeners((response){
       print("registerCallBackListeners>>" + response.toString());
-
     });*/
 
     _mobileSmartWatch.registerEventCallBackListeners().listen((event) {
       print("registerCallBackListeners>>" + event.toString());
-
      /* String hr = jsonData['hr'].toString();
       setState(() {
         heartRate = hr; // always bpm
       });*/
     }, onError: (dynamic error){
       print("registerCallBackError>> ${error}");
+    });
+
+    _mobileSmartWatch.receiveEventListeners(onData: (eventData) {
+      print("on onData eventData: $eventData");
+    },onError: (dynamic error){
+      print("on error occured: $error");
+    },onDone :() {
+
     });
   }
 
@@ -301,7 +308,8 @@ class HomePageState extends State<HomePage> {
                ),
                TextButton(
                  onPressed: () async {
-                   await fetchBatteryNVersion();
+                  // await fetchBatteryNVersion();
+                   await syncOverAll();
                   // await fetchAllJudgement();
                    //await fetchOverAllByDate();
                  }, child:  Text('GET BATTERY STATUS /Sync',
@@ -337,7 +345,7 @@ class HomePageState extends State<HomePage> {
                TextButton(
                  onPressed: () async {
                    await syncOxygen();
-                 }, child:  Text('S_BP',
+                 }, child:  Text('S_OXY',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
                TextButton(
@@ -740,9 +748,16 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+   Future<void> syncOverAll() async {
+     // String stepsStatus = await _mobileSmartWatch.syncStepsData();
+     // print('syncStepsStatus>> $stepsStatus');
+     String sleepStatus = await _mobileSmartWatch.syncSleepData();
+     print('syncSleepStatus>> $sleepStatus');
+   }
+
    Future<void> fetchBatteryNVersion() async {
-     Map<String, dynamic> batteryStatus = await _mobileSmartWatch.getBatteryStatus();
-     Map<String, dynamic> deviceVersion = await _mobileSmartWatch.getDeviceVersion();
+     String batteryStatus = await _mobileSmartWatch.getBatteryStatus();
+     String deviceVersion = await _mobileSmartWatch.getDeviceVersion();
      print('batteryStatus>> $batteryStatus');
      print('deviceVersion>> $deviceVersion');
    }
