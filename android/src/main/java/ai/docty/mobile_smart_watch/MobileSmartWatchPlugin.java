@@ -400,12 +400,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_24_HOUR_RATE_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
+                        case ICallbackStatus.SYNC_TEMPERATURE_COMMAND_OK: // 82
+                            pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
                         case ICallbackStatus.ECG_DATA_SYNC_OK: // 165
                             pushEventCallBack(WatchConstants.SYNC_ECG_DATA_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
-
-
-
 
 
                         case ICallbackStatus.SET_STEPLEN_WEIGHT_OK: // 8

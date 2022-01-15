@@ -61,6 +61,7 @@ public class WatchConstants {
     public static final String SYNC_SLEEP_FINISH = "syncSleepFinish";
     public static final String SYNC_BP_FINISH = "syncBpFinish";
     public static final String SYNC_RATE_FINISH = "syncRateFinish";
+    public static final String SYNC_TEMPERATURE_FINISH = "syncTempFinish";
     public static final String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
     public static final String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
 
