@@ -1551,13 +1551,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 SleepTimeInfo sleepTimeInfo = mUTESQLOperate.querySleepInfo(dateTime);
 
                 resultJson.put("status", WatchConstants.SC_SUCCESS);
+                resultJson.put("calender", sleepTimeInfo.getCalendar());
                 resultJson.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
                 resultJson.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
                 resultJson.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
                 resultJson.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
                 resultJson.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
                 resultJson.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
-
 
 //                Log.e("sleepTimeInfo111", "getBeginTime: " +  GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
 //                Log.e("sleepTimeInfo111", "getEndTime: " + GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
