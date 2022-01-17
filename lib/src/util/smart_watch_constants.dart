@@ -88,10 +88,12 @@ class SmartWatchConstants {
   static const String FETCH_TEMP_BY_DATE = "fetchTemperatureByDate";
 
 
+  static const String FETCH_OVERALL_DEVICE_DATA = "fetchOverAllDeviceData";
   static const String FETCH_ALL_STEPS_DATA = "fetchAllStepsData";
   static const String FETCH_ALL_SLEEP_DATA = "fetchAllSleepData";
   static const String FETCH_ALL_BP_DATA = "fetchAllBPData";
   static const String FETCH_ALL_TEMP_DATA = "fetchAllTempData";
+  static const String FETCH_ALL_HR_24_DATA = "fetchAllHr24Data";
 
   static const String SYNC_STEPS_FINISH = "syncStepsFinish";
   static const String SYNC_SLEEP_FINISH = "syncSleepFinish";

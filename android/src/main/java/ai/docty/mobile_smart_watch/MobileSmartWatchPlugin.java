@@ -711,7 +711,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 fetchTemperatureByDate(call, result);
                 break;
 
-            // fetch all the dats
+            // fetch all the data
+            case WatchConstants.FETCH_OVERALL_DEVICE_DATA:
+                fetchOverAllDeviceData(result);
+                break;
             case WatchConstants.FETCH_ALL_STEPS_DATA:
                 fetchAllStepsData(result);
                 break;
@@ -723,6 +726,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 break;
             case WatchConstants.FETCH_ALL_TEMP_DATA:
                 fetchAllTemperatureData(result);
+                break;
+            case WatchConstants.FETCH_ALL_HR_24_DATA:
+                fetchAllHeartRate24Data(result);
                 break;
             default:
                 result.notImplemented();
@@ -1450,6 +1456,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 }
                 //sleep data
                 if (sleepTimeInfo!=null){
+                    sleepJsonData.put("calender", sleepTimeInfo.getCalendar());
                     sleepJsonData.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
                     sleepJsonData.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
                     sleepJsonData.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
@@ -1488,15 +1495,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     }
                     overAllJson.put("temperature", temperatureArray);
                 }
-
-
-
-               // overAllJson.put("steps", stepsJsonData);
-               // overAllJson.put("sleep", sleepJsonData);
-               // overAllJson.put("hr", hrArray);
-              //  overAllJson.put("hr24", hr24Array);
-              //  overAllJson.put("bp", bpArray);
-               // overAllJson.put("temperature", temperatureArray);
 
                 result.success(overAllJson.toString());
             } else {
@@ -1768,43 +1766,45 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    //gathering individual data
     private void fetchAllStepsData(Result result) {
         // providing proper list of the data on basis of the result.
         try {
             JSONObject resultObject = new JSONObject();
             if (mUTESQLOperate != null) {
-
                 List<StepOneDayAllInfo> list = mUTESQLOperate.queryRunWalkAllDay();
                 Log.e("list", "list: " + list.size());
+                if (list !=null){
+                    resultObject.put("status", WatchConstants.SC_SUCCESS);
+                    JSONArray jsonArray = new JSONArray();
+                    for (StepOneDayAllInfo info : list) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("calender", info.getCalendar());
+                        jsonObject.put("steps", info.getStep());
+                        jsonObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(info.getCalories()));
+                        jsonObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(info.getDistance()));
 
-                resultObject.put("status", WatchConstants.SC_SUCCESS);
+                        Log.e("list_info:", "calender: " + info.getCalendar());
+                        Log.e("list_info:", "step: " + info.getStep());
+                        Log.e("list_info:", "cal: " + info.getCalories());
+                        Log.e("list_info:", "dis: " + info.getDistance());
 
-                JSONArray jsonArray = new JSONArray();
-                for (StepOneDayAllInfo info : list) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("calender", info.getCalendar());
-                    jsonObject.put("steps", info.getStep());
-                    jsonObject.put("cal", GlobalMethods.convertDoubleToStringWithDecimal(info.getCalories()));
-                    jsonObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(info.getDistance()));
+                        ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = info.getStepOneHourArrayInfo();
+                        JSONArray stepsArray = new JSONArray();
+                        for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
+                            JSONObject object = new JSONObject();
+                            object.put("step", stepOneHourInfo.getStep());
+                            object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
+                            stepsArray.put(object);
+                        }
+                        jsonObject.put("data", stepsArray);
 
-                    Log.e("list_info:", "calender: " + info.getCalendar());
-                    Log.e("list_info:", "step: " + info.getStep());
-                    Log.e("list_info:", "cal: " + info.getCalories());
-                    Log.e("list_info:", "dis: " + info.getDistance());
-
-                    ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = info.getStepOneHourArrayInfo();
-                    JSONArray stepsArray = new JSONArray();
-                    for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
-                        JSONObject object = new JSONObject();
-                        object.put("stepValue", stepOneHourInfo.getStep());
-                        object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
-                        stepsArray.put(object);
+                        jsonArray.put(jsonObject);
                     }
-                    jsonObject.put("stepsData", stepsArray);
-
-                    jsonArray.put(jsonObject);
+                    resultObject.put("data", jsonArray);
+                }else{
+                    resultObject.put("status", WatchConstants.SC_FAILURE);
                 }
-                resultObject.put("data", jsonArray);
             }
             result.success(resultObject.toString());
         } catch (Exception exp) {
@@ -1822,41 +1822,45 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 List<SleepTimeInfo> sleepTimeInfoList = mUTESQLOperate.queryAllSleepInfo();
                 Log.e("list", "list: " + sleepTimeInfoList.size());
 
-                resultObject.put("status", WatchConstants.SC_SUCCESS);
+                if (sleepTimeInfoList!=null){
 
-                JSONArray jsonArray = new JSONArray();
-                for (SleepTimeInfo sleepTimeInfo : sleepTimeInfoList) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("calender", sleepTimeInfo.getCalendar());
-                    jsonObject.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
-                    jsonObject.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
-                    jsonObject.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
-                    jsonObject.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
-                    jsonObject.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
-                    jsonObject.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
+                    resultObject.put("status", WatchConstants.SC_SUCCESS);
+                    JSONArray jsonArray = new JSONArray();
+                    for (SleepTimeInfo sleepTimeInfo : sleepTimeInfoList) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("calender", sleepTimeInfo.getCalendar());
+                        jsonObject.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
+                        jsonObject.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
+                        jsonObject.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
+                        jsonObject.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
+                        jsonObject.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
+                        jsonObject.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
 
-                    List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
-                    Log.e("sleepInfoList", "sleepInfoList: " + sleepInfoList.size());
+                        List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
+                        Log.e("sleepInfoList", "sleepInfoList: " + sleepInfoList.size());
 
-                    JSONArray sleepDataArray = new JSONArray();
-                    for (SleepInfo sleepInfo : sleepInfoList) {
-                        JSONObject object = new JSONObject();
-                        object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
-                        object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
-                        object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
-                        object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
-                        sleepDataArray.put(object);
+                        JSONArray sleepDataArray = new JSONArray();
+                        for (SleepInfo sleepInfo : sleepInfoList) {
+                            JSONObject object = new JSONObject();
+                            object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
+                            object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
+                            object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
+                            object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                            sleepDataArray.put(object);
+                        }
+
+                        jsonObject.put("data", sleepDataArray);
+
+                        jsonArray.put(jsonObject);
                     }
-
-                    jsonObject.put("sleepData", sleepDataArray);
-
-                    jsonArray.put(jsonObject);
+                    resultObject.put("data", jsonArray);
+                }else{
+                    resultObject.put("status", WatchConstants.SC_FAILURE);
                 }
-                resultObject.put("data", jsonArray);
             }
             result.success(resultObject.toString());
         } catch (Exception exp) {
-            Log.e("fetchAllStepExp::", exp.getMessage());
+            Log.e("fetchAllSleepExp::", exp.getMessage());
             // result.success(WatchConstants.SC_FAILURE);
         }
     }
@@ -1868,17 +1872,21 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (mUTESQLOperate != null) {
                 List<BPVOneDayInfo> bpvOneDayInfoList = mUTESQLOperate.queryAllBloodPressureInfo();
                 Log.e("list", "list: " + bpvOneDayInfoList.size());
-                resultObject.put("status", WatchConstants.SC_SUCCESS);
-                JSONArray jsonArray = new JSONArray();
-                for (BPVOneDayInfo bpvOneDayInfo : bpvOneDayInfoList) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("calender", bpvOneDayInfo.getCalendar());
-                    jsonObject.put("time", GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
-                    jsonObject.put("high", bpvOneDayInfo.getHightBloodPressure());
-                    jsonObject.put("low", bpvOneDayInfo.getLowBloodPressure());
-                    jsonArray.put(jsonObject);
+                if (bpvOneDayInfoList!=null){
+                    resultObject.put("status", WatchConstants.SC_SUCCESS);
+                    JSONArray jsonArray = new JSONArray();
+                    for (BPVOneDayInfo bpvOneDayInfo : bpvOneDayInfoList) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("calender", bpvOneDayInfo.getCalendar());
+                        jsonObject.put("time", GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+                        jsonObject.put("high", bpvOneDayInfo.getHightBloodPressure());
+                        jsonObject.put("low", bpvOneDayInfo.getLowBloodPressure());
+                        jsonArray.put(jsonObject);
+                    }
+                    resultObject.put("data", jsonArray);
+                }else{
+                    resultObject.put("status", WatchConstants.SC_FAILURE);
                 }
-                resultObject.put("data", jsonArray);
             }
             result.success(resultObject.toString());
         } catch (Exception exp) {
@@ -1894,33 +1902,178 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (mUTESQLOperate != null) {
                 List<TemperatureInfo> temperatureInfoList = mUTESQLOperate.queryTemperatureAll();
                 Log.e("list", "list: " + temperatureInfoList.size());
-                resultObject.put("status", WatchConstants.SC_SUCCESS);
-                JSONArray jsonArray = new JSONArray();
-                for (TemperatureInfo temperatureInfo : temperatureInfoList) {
-                    JSONObject jsonObject = new JSONObject();
-//                    jsonObject.put("calender",  temperatureInfo.getCalendar());
-//                    jsonObject.put("bodyTemp",  temperatureInfo.getBodyTemperature());
-//                    jsonObject.put("time",  GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
-//                    jsonObject.put("high",  bpvOneDayInfo.getHightBloodPressure());
-//                    jsonObject.put("low",  bpvOneDayInfo.getLowBloodPressure());
-
-
-                    jsonObject.put("calender", temperatureInfo.getCalendar());
-                    jsonObject.put("type", "" + temperatureInfo.getType());
-                    jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
-                    jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
-                    jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
-                    jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
-                    jsonArray.put(jsonObject);
+                if (temperatureInfoList!=null){
+                    resultObject.put("status", WatchConstants.SC_SUCCESS);
+                    JSONArray jsonArray = new JSONArray();
+                    for (TemperatureInfo temperatureInfo : temperatureInfoList) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("calender", temperatureInfo.getCalendar());
+                        jsonObject.put("type", "" + temperatureInfo.getType());
+                        jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                        jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+                        jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                        jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+                        jsonArray.put(jsonObject);
+                    }
+                    resultObject.put("data", jsonArray);
+                }else{
+                    resultObject.put("status", WatchConstants.SC_FAILURE);
                 }
-                resultObject.put("data", jsonArray);
             }
             result.success(resultObject.toString());
         } catch (Exception exp) {
-            Log.e("fetchAllBPExp::", exp.getMessage());
+            Log.e("fetchAllTempExp::", exp.getMessage());
             // result.success(WatchConstants.SC_FAILURE);
         }
     }
+
+    private void fetchAllHeartRate24Data(Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            JSONObject resultObject = new JSONObject();
+            if (mUTESQLOperate != null) {
+                List<Rate24HourDayInfo> rate24HourDayInfoList = mUTESQLOperate.query24HourRateAllInfo();
+                Log.e("hr24list", "list: " + rate24HourDayInfoList.size());
+                if (rate24HourDayInfoList!=null){
+                    resultObject.put("status", WatchConstants.SC_SUCCESS);
+                    JSONArray jsonArray = new JSONArray();
+                    for (Rate24HourDayInfo rate24HourDayInfo : rate24HourDayInfoList) {
+                        JSONObject object = new JSONObject();
+                        object.put("calender", rate24HourDayInfo.getCalendar());
+                        object.put("time", GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
+                        object.put("rate", rate24HourDayInfo.getRate());
+                        //Log.e("jsonObject", "object: " + object.toString());
+                        jsonArray.put(object);
+                    }
+                    resultObject.put("data", jsonArray);
+                }else{
+                    resultObject.put("status", WatchConstants.SC_FAILURE);
+                }
+            }
+            result.success(resultObject.toString());
+        } catch (Exception exp) {
+            Log.e("fetchAllHr24Exp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void fetchOverAllDeviceData(Result result) {
+        try {
+            JSONObject overAllJson = new JSONObject();
+            if (mUTESQLOperate != null) {
+                overAllJson.put("status", WatchConstants.SC_SUCCESS);
+
+                //steps data
+                List<StepOneDayAllInfo> stepsInfoList = mUTESQLOperate.queryRunWalkAllDay();
+                if (stepsInfoList!=null){
+                    JSONArray stepsJsonArray = new JSONArray();
+                    for (StepOneDayAllInfo info : stepsInfoList) {
+                        JSONObject stepsObject = new JSONObject();
+                        stepsObject.put("calender", info.getCalendar());
+                        stepsObject.put("steps", info.getStep());
+                        stepsObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(info.getCalories()));
+                        stepsObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(info.getDistance()));
+                        ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = info.getStepOneHourArrayInfo();
+                        JSONArray stepsArray = new JSONArray();
+                        for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
+                            JSONObject objStep = new JSONObject();
+                            objStep.put("step", stepOneHourInfo.getStep());
+                            objStep.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
+                            stepsArray.put(objStep);
+                        }
+                        stepsObject.put("data", stepsArray);
+                        stepsJsonArray.put(stepsObject);
+                    }
+                    overAllJson.put("steps", stepsJsonArray);
+                }
+
+
+                //sleep data
+                List<SleepTimeInfo> sleepInfoList = mUTESQLOperate.queryAllSleepInfo();
+                if (sleepInfoList!=null){
+                    JSONArray sleepJsonArray = new JSONArray();
+                    for (SleepTimeInfo sleepTimeInfo : sleepInfoList) {
+                        JSONObject sleepObject = new JSONObject();
+                        sleepObject.put("calender", sleepTimeInfo.getCalendar());
+                        sleepObject.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
+                        sleepObject.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
+                        sleepObject.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
+                        sleepObject.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
+                        sleepObject.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
+                        sleepObject.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
+                        List<SleepInfo> sleepDataList = sleepTimeInfo.getSleepInfoList();
+                        JSONArray sleepDataArray = new JSONArray();
+                        for (SleepInfo sleepInfo : sleepDataList) {
+                            JSONObject obj = new JSONObject();
+                            obj.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
+                            obj.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
+                            obj.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
+                            obj.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                            sleepDataArray.put(obj);
+                        }
+                        sleepObject.put("data", sleepDataArray);
+                        sleepJsonArray.put(sleepObject);
+                    }
+                    overAllJson.put("sleep", sleepJsonArray);
+                }
+
+                // bp data
+                List<BPVOneDayInfo> bpInfoList = mUTESQLOperate.queryAllBloodPressureInfo();
+                if(bpInfoList!=null){
+                    JSONArray bpArray = new JSONArray();
+                    for (BPVOneDayInfo bpvOneDayInfo : bpInfoList) {
+                        JSONObject bpObject = new JSONObject();
+                        bpObject.put("calender", bpvOneDayInfo.getCalendar());
+                        bpObject.put("time", GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+                        bpObject.put("high", bpvOneDayInfo.getHightBloodPressure());
+                        bpObject.put("low", bpvOneDayInfo.getLowBloodPressure());
+                        bpArray.put(bpObject);
+                    }
+                    overAllJson.put("bp", bpArray);
+                }
+
+                //temperature data
+                List<TemperatureInfo> temperatureInfoList = mUTESQLOperate.queryTemperatureAll();
+                if (temperatureInfoList!=null){
+                    JSONArray temperatureArray = new JSONArray();
+                    for (TemperatureInfo temperatureInfo : temperatureInfoList) {
+                        JSONObject temperatureObject = new JSONObject();
+                        temperatureObject.put("calender", temperatureInfo.getCalendar());
+                        temperatureObject.put("type", "" + temperatureInfo.getType());
+                        temperatureObject.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                        temperatureObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+                        temperatureObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                        temperatureObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+                        temperatureArray.put(temperatureObject);
+                    }
+                    overAllJson.put("temperature", temperatureArray);
+                }
+                //heart rate data
+                List<Rate24HourDayInfo> rate24InfoList = mUTESQLOperate.query24HourRateAllInfo();
+                if (rate24InfoList!=null){
+                    JSONArray rate24Array = new JSONArray();
+                    for (Rate24HourDayInfo rate24HourDayInfo : rate24InfoList) {
+                        JSONObject objectRate = new JSONObject();
+                        objectRate.put("calender", rate24HourDayInfo.getCalendar());
+                        objectRate.put("time", GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
+                        objectRate.put("rate", rate24HourDayInfo.getRate());
+                        //Log.e("jsonObject", "object: " + object.toString());
+                        rate24Array.put(objectRate);
+                    }
+                    overAllJson.put("hr24", rate24Array);
+                }
+
+                result.success(overAllJson.toString());
+            } else {
+                result.success(overAllJson.toString());
+            }
+
+        } catch (Exception exp) {
+            Log.e("fetchOverAllExp::", exp.getMessage());
+            result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
 
     // start -stop test
     private void startOxygenSaturation(Result result) {

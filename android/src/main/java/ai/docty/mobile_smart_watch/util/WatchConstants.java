@@ -52,10 +52,12 @@ public class WatchConstants {
     public static final String FETCH_24_HOUR_HR_BY_DATE = "fetch24HourHRDateByDate";
     public static final String FETCH_TEMP_BY_DATE = "fetchTemperatureByDate";
 
+    public static final String FETCH_OVERALL_DEVICE_DATA = "fetchOverAllDeviceData";
     public static final String FETCH_ALL_STEPS_DATA = "fetchAllStepsData";
     public static final String FETCH_ALL_SLEEP_DATA = "fetchAllSleepData";
     public static final String FETCH_ALL_BP_DATA = "fetchAllBPData";
     public static final String FETCH_ALL_TEMP_DATA = "fetchAllTempData";
+    public static final String FETCH_ALL_HR_24_DATA = "fetchAllHr24Data";
 
     public static final String SYNC_STEPS_FINISH = "syncStepsFinish";
     public static final String SYNC_SLEEP_FINISH = "syncSleepFinish";

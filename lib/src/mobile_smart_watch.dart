@@ -138,6 +138,40 @@ class MobileSmartWatch {
       return returnResponse;
     }
   }
+
+  Future<Map<String, dynamic>> fetchOverAllDeviceData() async{
+    //returns result status == SC_INIT or SC_FAILURE
+    var result = await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_OVERALL_DEVICE_DATA);
+    var returnResponse;
+    if (result != null) {
+      if(result.toString().isNotEmpty){
+        if (result.toString() == SmartWatchConstants.SC_FAILURE) {
+          returnResponse ={
+            "status": SmartWatchConstants.SC_FAILURE,
+            "data":""
+          };
+        }else if (result.toString() == SmartWatchConstants.SC_DISCONNECTED) {
+          returnResponse ={
+            "status": SmartWatchConstants.SC_DISCONNECTED,
+            "data":""
+          };
+        }else{
+          Map<String, dynamic> response = jsonDecode(result);
+          returnResponse ={
+            "status": SmartWatchConstants.SC_SUCCESS,
+            "data":response
+          };
+        }
+        return returnResponse;
+      }else {
+        return returnResponse;
+      }
+    }else{
+      return returnResponse;
+    }
+  }
+
+
   Future<String> getDeviceVersion() async{
     return  await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_VERSION);
   }
@@ -149,73 +183,6 @@ class MobileSmartWatch {
   Future<bool> checkConectionStatus() async{
     return await _methodChannel.invokeMethod(SmartWatchConstants.CHECK_CONNECTION_STATUS);
   }
-
-
-
-
-  /*Future<Map<String, dynamic>> getDeviceVersion() async{
-    //returns result status == SC_INIT or SC_FAILURE
-    var result = await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_VERSION);
-    var returnResponse;
-    if (result != null) {
-      if(result.toString().isNotEmpty){
-        if (result.toString() == SmartWatchConstants.SC_FAILURE) {
-          returnResponse ={
-            "status": SmartWatchConstants.SC_FAILURE,
-            "data":""
-          };
-        }else if (result.toString() == SmartWatchConstants.SC_DISCONNECTED) {
-          returnResponse ={
-            "status": SmartWatchConstants.SC_DISCONNECTED,
-            "data":""
-          };
-        }else{
-          Map<String, dynamic> response = jsonDecode(result);
-          returnResponse ={
-            "status": SmartWatchConstants.SC_SUCCESS,
-            "data":response
-          };
-        }
-        return returnResponse;
-      }else {
-        return returnResponse;
-      }
-    }else{
-      return returnResponse;
-    }
-  }*/
-
-  /*Future<Map<String, dynamic>> getBatteryStatus() async{
-    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
-    var result = await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_STATUS);
-    var returnResponse;
-    if (result != null) {
-      if(result.toString().isNotEmpty){
-        if (result.toString() == SmartWatchConstants.SC_FAILURE) {
-          returnResponse ={
-            "status": SmartWatchConstants.SC_FAILURE,
-            "data":""
-          };
-        }else if (result.toString() == SmartWatchConstants.SC_DISCONNECTED) {
-          returnResponse ={
-            "status": SmartWatchConstants.SC_DISCONNECTED,
-            "data":""
-          };
-        }else{
-          Map<String, dynamic> response = jsonDecode(result);
-          returnResponse ={
-            "status": SmartWatchConstants.SC_SUCCESS,
-            "data":response
-          };
-        }
-        return returnResponse;
-      }else {
-        return returnResponse;
-      }
-    }else{
-      return returnResponse;
-    }
-  }*/
 
   Future<String> syncStepsData() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
@@ -259,7 +226,6 @@ class MobileSmartWatch {
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_SLEEP);
   }
-
 
   Future<String> syncRateData() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
@@ -310,15 +276,20 @@ class MobileSmartWatch {
   }
 
 
-  Future<String> fetchStepsByDate(String dateTime) async{
+  Future<Map<String, dynamic>> fetchStepsByDate(String dateTime) async{
     // dateTime = "yyyyMMdd" // 20220212
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
     var params = {
       "dateTime":dateTime,  // dateTime is mandatory to pass
     };
-    var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_STEPS_BY_DATE, params);
-    print("result_reaponse>> $result");
-    return "";
+    var _result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_STEPS_BY_DATE, params);
+    print("result_response>> $_result");
+    if (_result != null) {
+      Map<String, dynamic> response = jsonDecode(_result);
+      return response;
+    }else{
+      return {};
+    }
   }
 
   Future<Map<String, dynamic>> fetchSleepByDate(String dateTime) async{
@@ -354,7 +325,6 @@ class MobileSmartWatch {
       return {};
     }
   }
-
 
   Future<Map<String, dynamic>> fetchHeartRateByDate(String dateTime) async{
     // dateTime = "yyyyMMdd" // 20220103
@@ -407,30 +377,60 @@ class MobileSmartWatch {
     }
   }
 
-  Future<String> fetchAllStepsData() async{
+  Future<Map<String, dynamic>> fetchAllStepsData() async{
     var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_STEPS_DATA);
     print("all_reaponse>> $result");
-    return "";
+    if (result != null) {
+      Map<String, dynamic> response = jsonDecode(result);
+      return response;
+    }else{
+      return {};
+    }
   }
 
-  Future<String> fetchAllSleepData() async{
+  Future<Map<String, dynamic>> fetchAllSleepData() async{
     var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_SLEEP_DATA);
-    print("all_reaponse>> $result");
-    return "";
+    print("sleep_reaponse>> $result");
+    if (result != null) {
+      Map<String, dynamic> response = jsonDecode(result);
+      return response;
+    }else{
+      return {};
+    }
   }
 
-  Future<String> fetchAllBPData() async{
+  Future<Map<String, dynamic>> fetchAllBPData() async{
     var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_BP_DATA);
-    print("all_reaponse>> $result");
-    return "";
+    print("bp_reaponse>> $result");
+    if (result != null) {
+      Map<String, dynamic> response = jsonDecode(result);
+      return response;
+    }else{
+      return {};
+    }
   }
 
-  Future<String> fetchAllTemperatureData() async{
+  Future< Map<String, dynamic>> fetchAllTemperatureData() async{
     var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_TEMP_DATA);
-    print("all_reaponse>> $result");
-    return "";
+    print("temp_reaponse>> $result");
+    if (result != null) {
+      Map<String, dynamic> response = jsonDecode(result);
+      return response;
+    }else{
+      return {};
+    }
   }
 
+  Future< Map<String, dynamic>> fetchAllHr24Data() async{
+    var result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_ALL_HR_24_DATA);
+    print("hr_reaponse>> $result");
+    if (result != null) {
+      Map<String, dynamic> response = jsonDecode(result);
+      return response;
+    }else{
+      return {};
+    }
+  }
 
   Future<String> testTempData() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
@@ -455,7 +455,76 @@ class MobileSmartWatch {
   void cancelEventListeners(){
     eventChannelListener.cancel();
   }
-  /*void registerCallBackListeners(Function callback) async{
+
+
+
+
+/*Future<Map<String, dynamic>> getDeviceVersion() async{
+    //returns result status == SC_INIT or SC_FAILURE
+    var result = await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_VERSION);
+    var returnResponse;
+    if (result != null) {
+      if(result.toString().isNotEmpty){
+        if (result.toString() == SmartWatchConstants.SC_FAILURE) {
+          returnResponse ={
+            "status": SmartWatchConstants.SC_FAILURE,
+            "data":""
+          };
+        }else if (result.toString() == SmartWatchConstants.SC_DISCONNECTED) {
+          returnResponse ={
+            "status": SmartWatchConstants.SC_DISCONNECTED,
+            "data":""
+          };
+        }else{
+          Map<String, dynamic> response = jsonDecode(result);
+          returnResponse ={
+            "status": SmartWatchConstants.SC_SUCCESS,
+            "data":response
+          };
+        }
+        return returnResponse;
+      }else {
+        return returnResponse;
+      }
+    }else{
+      return returnResponse;
+    }
+  }*/
+
+/*Future<Map<String, dynamic>> getBatteryStatus() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    var result = await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_BATTERY_STATUS);
+    var returnResponse;
+    if (result != null) {
+      if(result.toString().isNotEmpty){
+        if (result.toString() == SmartWatchConstants.SC_FAILURE) {
+          returnResponse ={
+            "status": SmartWatchConstants.SC_FAILURE,
+            "data":""
+          };
+        }else if (result.toString() == SmartWatchConstants.SC_DISCONNECTED) {
+          returnResponse ={
+            "status": SmartWatchConstants.SC_DISCONNECTED,
+            "data":""
+          };
+        }else{
+          Map<String, dynamic> response = jsonDecode(result);
+          returnResponse ={
+            "status": SmartWatchConstants.SC_SUCCESS,
+            "data":response
+          };
+        }
+        return returnResponse;
+      }else {
+        return returnResponse;
+      }
+    }else{
+      return returnResponse;
+    }
+  }*/
+
+
+/*void registerCallBackListeners(Function callback) async{
     _eventChannel.receiveBroadcastStream().listen((data) {
       var decodedJSON = jsonDecode(data);
 
