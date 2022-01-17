@@ -1385,95 +1385,118 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 SleepTimeInfo sleepTimeInfo = mUTESQLOperate.querySleepInfo(dateTime);
                 List<TemperatureInfo> temperatureInfoList = mUTESQLOperate.queryTemperatureDate(dateTime);
                 //steps data
-                stepsJsonData.put("steps", stepOneDayAllInfo.getStep());
-                stepsJsonData.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getDistance()));
-                stepsJsonData.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
-                stepsJsonData.put("calender", stepOneDayAllInfo.getCalendar());
-                ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = stepOneDayAllInfo.getStepOneHourArrayInfo();
-                JSONArray stepsArray = new JSONArray();
-                for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
-                    JSONObject object = new JSONObject();
-                    object.put("step", stepOneHourInfo.getStep());
-                    object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
-                    stepsArray.put(object);
+                if (stepOneDayAllInfo!=null){
+                    stepsJsonData.put("steps", stepOneDayAllInfo.getStep());
+                    stepsJsonData.put("distance", "" + GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getDistance()));
+                    stepsJsonData.put("calories", "" + GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
+                    stepsJsonData.put("calender", stepOneDayAllInfo.getCalendar());
+                    ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = stepOneDayAllInfo.getStepOneHourArrayInfo();
+                    JSONArray stepsArray = new JSONArray();
+                    for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
+                        JSONObject object = new JSONObject();
+                        object.put("step", stepOneHourInfo.getStep());
+                        object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
+                        stepsArray.put(object);
+                    }
+                    stepsJsonData.put("data", stepsArray);
+                    overAllJson.put("steps", stepsJsonData);
                 }
-                stepsJsonData.put("data", stepsArray);
 
                 //heart rate data
-                JSONArray hrArray = new JSONArray();
-                for (RateOneDayInfo rateOneDayInfo : rateOneDayInfoList) {
-                    JSONObject object = new JSONObject();
-                    object.put("calender", rateOneDayInfo.getCalendar());
-                    object.put("time", GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
-                    //object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
-                    object.put("rate", rateOneDayInfo.getRate());
-                    //object.put("currentRate",  rateOneDayInfo.getCurrentRate());
-                    //object.put("high",  rateOneDayInfo.getHighestRate());
-                    //object.put("low",  rateOneDayInfo.getLowestRate());
-                    // object.put("average",  rateOneDayInfo.getVerageRate());
-                    hrArray.put(object);
+                if (rateOneDayInfoList!=null){
+                    JSONArray hrArray = new JSONArray();
+                    for (RateOneDayInfo rateOneDayInfo : rateOneDayInfoList) {
+                        JSONObject object = new JSONObject();
+                        object.put("calender", rateOneDayInfo.getCalendar());
+                        object.put("time", GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
+                        //object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
+                        object.put("rate", rateOneDayInfo.getRate());
+                        //object.put("currentRate",  rateOneDayInfo.getCurrentRate());
+                        //object.put("high",  rateOneDayInfo.getHighestRate());
+                        //object.put("low",  rateOneDayInfo.getLowestRate());
+                        // object.put("average",  rateOneDayInfo.getVerageRate());
+                        hrArray.put(object);
+                    }
+                    overAllJson.put("hr", hrArray);
                 }
 
                 //HR 24 hours
-                JSONArray hr24Array = new JSONArray();
-                for (Rate24HourDayInfo rate24HourDayInfo : rate24HourDayInfoList) {
-                    JSONObject object = new JSONObject();
-                    object.put("calender", rate24HourDayInfo.getCalendar());
-                    object.put("time", GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
-                    object.put("rate", rate24HourDayInfo.getRate());
-                    //Log.e("jsonObject", "object: " + object.toString());
-                    hr24Array.put(object);
+                if (rate24HourDayInfoList!=null){
+                    JSONArray hr24Array = new JSONArray();
+                    for (Rate24HourDayInfo rate24HourDayInfo : rate24HourDayInfoList) {
+                        JSONObject object = new JSONObject();
+                        object.put("calender", rate24HourDayInfo.getCalendar());
+                        object.put("time", GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
+                        object.put("rate", rate24HourDayInfo.getRate());
+                        //Log.e("jsonObject", "object: " + object.toString());
+                        hr24Array.put(object);
+                    }
+                    overAllJson.put("hr24", hr24Array);
                 }
+
                 //BP
-                JSONArray bpArray = new JSONArray();
-                for (BPVOneDayInfo bpvOneDayInfo : bpvOneDayInfoList) {
-                    JSONObject object = new JSONObject();
-                    object.put("calender", bpvOneDayInfo.getCalendar());
-                    object.put("time", GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
-                    object.put("high", bpvOneDayInfo.getHightBloodPressure());
-                    object.put("low", bpvOneDayInfo.getLowBloodPressure());
-                    //Log.e("bpObject", "object: " + object.toString());
-                    bpArray.put(object);
+                if(bpvOneDayInfoList!=null){
+                    JSONArray bpArray = new JSONArray();
+                    for (BPVOneDayInfo bpvOneDayInfo : bpvOneDayInfoList) {
+                        JSONObject object = new JSONObject();
+                        object.put("calender", bpvOneDayInfo.getCalendar());
+                        object.put("time", GlobalMethods.getTimeByIntegerMin(bpvOneDayInfo.getBloodPressureTime()));
+                        object.put("high", bpvOneDayInfo.getHightBloodPressure());
+                        object.put("low", bpvOneDayInfo.getLowBloodPressure());
+                        //Log.e("bpObject", "object: " + object.toString());
+                        bpArray.put(object);
+                    }
+                    overAllJson.put("bp", bpArray);
                 }
                 //sleep data
-                sleepJsonData.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
-                sleepJsonData.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
-                sleepJsonData.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
-                sleepJsonData.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
-                sleepJsonData.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
-                sleepJsonData.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
-                List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
-                JSONArray sleepArray = new JSONArray();
-                for (SleepInfo sleepInfo : sleepInfoList) {
-                    JSONObject object = new JSONObject();
-                    object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
-                    object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
-                    object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
-                    object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
-                    sleepArray.put(object);
+                if (sleepTimeInfo!=null){
+                    sleepJsonData.put("total", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getSleepTotalTime()));
+                    sleepJsonData.put("light", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getLightTime()));
+                    sleepJsonData.put("deep", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
+                    sleepJsonData.put("awake", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getAwakeTime()));
+                    sleepJsonData.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
+                    sleepJsonData.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
+                    List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
+                    JSONArray sleepArray = new JSONArray();
+                    for (SleepInfo sleepInfo : sleepInfoList) {
+                        JSONObject object = new JSONObject();
+                        object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
+                        object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
+                        object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
+                        object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                        sleepArray.put(object);
+                    }
+                    sleepJsonData.put("data", sleepArray);
+
+                    overAllJson.put("sleep", sleepJsonData);
                 }
-                sleepJsonData.put("data", sleepArray);
+
+
                 //Temperature
-                JSONArray temperatureArray = new JSONArray();
-                for (TemperatureInfo temperatureInfo : temperatureInfoList) {
-                    JSONObject tempObj = new JSONObject();
-                    tempObj.put("calender", temperatureInfo.getCalendar());
-                    tempObj.put("type", "" + temperatureInfo.getType());
-                    tempObj.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
-                    tempObj.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
-                    tempObj.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
-                    tempObj.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
-                    Log.e("jsonObject", "object: " + tempObj.toString());
-                    temperatureArray.put(tempObj);
+                if (temperatureInfoList!=null){
+                    JSONArray temperatureArray = new JSONArray();
+                    for (TemperatureInfo temperatureInfo : temperatureInfoList) {
+                        JSONObject tempObj = new JSONObject();
+                        tempObj.put("calender", temperatureInfo.getCalendar());
+                        tempObj.put("type", "" + temperatureInfo.getType());
+                        tempObj.put("inCelsius", "" + GlobalMethods.convertDoubleToStringWithDecimal(temperatureInfo.getBodyTemperature()));
+                        tempObj.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
+                        tempObj.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                        tempObj.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+                        Log.e("jsonObject", "object: " + tempObj.toString());
+                        temperatureArray.put(tempObj);
+                    }
+                    overAllJson.put("temperature", temperatureArray);
                 }
 
 
-                overAllJson.put("steps", stepsJsonData);
-                overAllJson.put("sleep", sleepJsonData);
-                overAllJson.put("hr", hrArray);
-                overAllJson.put("hr24", hr24Array);
-                overAllJson.put("bp", bpArray);
-                overAllJson.put("temperature", temperatureArray);
+
+               // overAllJson.put("steps", stepsJsonData);
+               // overAllJson.put("sleep", sleepJsonData);
+               // overAllJson.put("hr", hrArray);
+              //  overAllJson.put("hr24", hr24Array);
+              //  overAllJson.put("bp", bpArray);
+               // overAllJson.put("temperature", temperatureArray);
 
                 result.success(overAllJson.toString());
             } else {
