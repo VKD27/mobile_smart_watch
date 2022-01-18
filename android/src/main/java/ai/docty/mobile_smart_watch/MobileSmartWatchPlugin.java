@@ -1287,11 +1287,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
                     boolean supportHr24 = GetFunctionList.isSupportFunction_Second(mContext,GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
-                    if (supportHr24){
-                        mWriteCommand.sync24HourRate();
-                    }else{
+//                    if (supportHr24){
+//                        mWriteCommand.sync24HourRate();
+//                    }else{
                         mWriteCommand.syncAllRateData();
-                    }
+                  //  }
                     //mWriteCommand.syncRateData();
                 /*mWriteCommand. syncAllRateData();
                 */
