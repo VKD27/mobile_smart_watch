@@ -78,6 +78,8 @@ public class WatchConstants {
     //method channel
     public static final String SMART_METHOD_CHANNEL = "smartMethodChannel";
     public static final String SMART_EVENT_CHANNEL = "smartEventChannel";
+    public static final String SMART_BP_TEST_CHANNEL = "smartBPTestChannel";
+    public static final String SMART_TEMP_TEST_CHANNEL = "smartTempTestChannel";
 
     //to listen for continuous call backs from the hardware device search
     public static final String SMART_CALLBACK = "smartCallbacks";

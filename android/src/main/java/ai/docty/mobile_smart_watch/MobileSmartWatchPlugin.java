@@ -86,7 +86,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private ActivityPluginBinding activityPluginBinding;
 
     private MethodChannel methodChannel;
-    private EventChannel eventChannel;
+    private EventChannel eventChannel, bpEventChannel, tempEventChannel;
     private MethodChannel mCallbackChannel;
 
     // Callbacks
@@ -151,11 +151,15 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         methodChannel.setMethodCallHandler(mobileSmartWatchPlugin);
 
         eventChannel = new EventChannel(binaryMessenger,  WatchConstants.SMART_EVENT_CHANNEL);
+        bpEventChannel = new EventChannel(binaryMessenger,  WatchConstants.SMART_BP_TEST_CHANNEL);
+        tempEventChannel = new EventChannel(binaryMessenger,  WatchConstants.SMART_TEMP_TEST_CHANNEL);
 
         mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
        // mCallbackChannel.setMethodCallHandler(callbacksHandler);
         mCallbackChannel.setMethodCallHandler(mobileSmartWatchPlugin);
         eventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
+        bpEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
+        tempEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
 
         try {
         mUTESQLOperate = UTESQLOperate.getInstance(applicationContext.getApplicationContext());
@@ -1315,7 +1319,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             Log.e("steps_status", "" + SPUtil.getInstance(mContext).getBleConnectStatus());
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
-                    boolean supportHr24 = GetFunctionList.isSupportFunction_Second(mContext,GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
+                    //boolean supportHr24 = GetFunctionList.isSupportFunction_Second(mContext,GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
                     //                    if (supportHr24){
 //                        mWriteCommand.sync24HourRate();
 //                    }else{
@@ -2044,6 +2048,21 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     overAllJson.put("sleep", sleepJsonArray);
                 }
 
+                //heart rate data
+                List<Rate24HourDayInfo> rate24InfoList = mUTESQLOperate.query24HourRateAllInfo();
+                if (rate24InfoList!=null){
+                    JSONArray rate24Array = new JSONArray();
+                    for (Rate24HourDayInfo rate24HourDayInfo : rate24InfoList) {
+                        JSONObject objectRate = new JSONObject();
+                        objectRate.put("calender", rate24HourDayInfo.getCalendar());
+                        objectRate.put("time", GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
+                        objectRate.put("rate", rate24HourDayInfo.getRate());
+                        //Log.e("jsonObject", "object: " + object.toString());
+                        rate24Array.put(objectRate);
+                    }
+                    overAllJson.put("hr24", rate24Array);
+                }
+
                 // bp data
                 List<BPVOneDayInfo> bpInfoList = mUTESQLOperate.queryAllBloodPressureInfo();
                 if(bpInfoList!=null){
@@ -2075,20 +2094,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     }
                     overAllJson.put("temperature", temperatureArray);
                 }
-                //heart rate data
-                List<Rate24HourDayInfo> rate24InfoList = mUTESQLOperate.query24HourRateAllInfo();
-                if (rate24InfoList!=null){
-                    JSONArray rate24Array = new JSONArray();
-                    for (Rate24HourDayInfo rate24HourDayInfo : rate24InfoList) {
-                        JSONObject objectRate = new JSONObject();
-                        objectRate.put("calender", rate24HourDayInfo.getCalendar());
-                        objectRate.put("time", GlobalMethods.getTimeByIntegerMin(rate24HourDayInfo.getTime()));
-                        objectRate.put("rate", rate24HourDayInfo.getRate());
-                        //Log.e("jsonObject", "object: " + object.toString());
-                        rate24Array.put(objectRate);
-                    }
-                    overAllJson.put("hr24", rate24Array);
-                }
+
 
                 result.success(overAllJson.toString());
             } else {
@@ -2208,8 +2214,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         methodChannel.setMethodCallHandler(null);
         eventChannel.setStreamHandler(null);
+        bpEventChannel.setStreamHandler(null);
+        tempEventChannel.setStreamHandler(null);
         methodChannel = null;
         eventChannel = null;
+        bpEventChannel = null;
+        tempEventChannel = null;
     }
 
     @Override

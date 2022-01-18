@@ -2,6 +2,8 @@ part of mobile_smart_watch;
 
 class MobileSmartWatch {
   late EventChannel _eventChannel;
+  late EventChannel _bpTestChannel;
+  late EventChannel _temperatureTestChannel;
   late MethodChannel _methodChannel;
   static MobileSmartWatch? _instance;
   Map? mapOptions;
@@ -14,17 +16,21 @@ class MobileSmartWatch {
 
       EventChannel eventChannel = EventChannel(SmartWatchConstants.SMART_EVENT_CHANNEL); // temporary for stream events
 
+      EventChannel bpTestChannel = EventChannel(SmartWatchConstants.SMART_BP_TEST_CHANNEL);
+
+      EventChannel temperatureTestChannel = EventChannel(SmartWatchConstants.SMART_TEMP_TEST_CHANNEL);
+
       //check if the option variable is AFOptions type or map type
       //assert(options is Map);
      // if (options is Map) {
-        _instance = MobileSmartWatch.private(methodChannel, eventChannel, mapOptions: options);
+        _instance = MobileSmartWatch.private(methodChannel, eventChannel,bpTestChannel,temperatureTestChannel,  mapOptions: options);
      // }
     }
     return _instance!;
   }
 
   @visibleForTesting
-  MobileSmartWatch.private(this._methodChannel, this._eventChannel, {this.mapOptions});
+  MobileSmartWatch.private(this._methodChannel, this._eventChannel, this._bpTestChannel, this._temperatureTestChannel, {this.mapOptions});
 
 
   Future<String> initializeDeviceConnection() async {

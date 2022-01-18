@@ -103,6 +103,7 @@ class SmartWatchConstants {
   static const String SYNC_TEMPERATURE_FINISH = "syncTempFinish";
   static const String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
   static const String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
+  static const String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
 
   static const String BP_TEST_STARTED = "bpTestStarted";
   static const String BP_TEST_FINISHED = "bpTestFinished";
@@ -113,6 +114,8 @@ class SmartWatchConstants {
   //method channel
   static const String SMART_METHOD_CHANNEL = "smartMethodChannel";
   static const String SMART_EVENT_CHANNEL = "smartEventChannel";
+  static const String SMART_BP_TEST_CHANNEL = "smartBPTestChannel";
+  static const String SMART_TEMP_TEST_CHANNEL = "smartTempTestChannel";
 
 
   //for continuous call backs from the hardware device search
