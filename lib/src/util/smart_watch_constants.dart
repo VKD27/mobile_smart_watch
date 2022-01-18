@@ -56,6 +56,7 @@ class SmartWatchConstants {
   static const String GET_DEVICE_VERSION = "fetchDeviceVersion";
   static const String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
   static const String SET_USER_PARAMS = "setUserDetails";
+  static const String SET_24_HEART_RATE = "set24HeartRate";
 
   // daily activities & operations
   static const String SYNC_ALL_JUDGE = "fetchAllJudgement";

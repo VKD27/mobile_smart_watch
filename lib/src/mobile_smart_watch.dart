@@ -104,6 +104,15 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_USER_PARAMS, userParams);
   }
 
+  Future<String> set24HeartRate(bool enable) async{
+    var params = {
+      "enable": enable?"true":"false", //true or false -- send true to enable the 24 hrs sync
+    };
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SET_24_HEART_RATE, params);
+  }
+
+
+
   Future<Map<String, dynamic>> fetchOverAllByDate(String dateTime) async{
     var params = {
       "dateTime":dateTime,  // dateTime is mandatory to pass

@@ -308,7 +308,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonObject.put("avgHr", "" + averageHeartRateValue);
                         jsonObject.put("rtValue",  isRealTimeValue);
                         // runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
-                       // pushEventCallBack(WatchConstants.HR_24_REAL_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                        pushEventCallBack(WatchConstants.HR_24_REAL_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                     } catch (Exception e) {
                         //e.printStackTrace();
                         Log.e("onRateOf24JSONExp::", e.getMessage());
@@ -379,7 +379,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             //sync time ok
                             break;
 
-                        case ICallbackStatus.OFFLINE_STEP_SYNC_OK: // 6
+                        case ICallbackStatus.SYNC_STATUS_24_HOUR_RATE_OPEN:  //89
+                            // sync 24 hrs heart rate status
+                            jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.SYNC_STATUS_24_HOUR_RATE_OPEN, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.OFFLINE_STEP_SYNC_OK: // 2
                             //steps sync done
                             pushEventCallBack(WatchConstants.SYNC_STEPS_FINISH,  new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
@@ -626,6 +632,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 break;
             case WatchConstants.SET_USER_PARAMS:
                 setUserParams(call, result);
+                break;
+            case WatchConstants.SET_24_HEART_RATE:
+                set24HeartRate(call, result);
                 break;
 
             case WatchConstants.GET_DEVICE_VERSION:
@@ -1121,6 +1130,26 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void set24HeartRate(MethodCall call, Result result) {
+        try {
+            String enable = call.argument("enable");
+            boolean isEnable = false;
+            assert enable != null;
+            if (enable.trim().toLowerCase().equalsIgnoreCase("true")) {
+                isEnable = true;
+            }
+            if (mWriteCommand != null) {
+                mWriteCommand.open24HourRate(isEnable);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("set24HeartRateExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
     private void getDeviceVersion(Result result) {
         try{
             deviceVersionIDResult = result;
@@ -1287,10 +1316,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
                 if (mWriteCommand != null) {
                     boolean supportHr24 = GetFunctionList.isSupportFunction_Second(mContext,GlobalVariable.IS_SUPPORT_24_HOUR_RATE_TEST);
-//                    if (supportHr24){
+                    //                    if (supportHr24){
 //                        mWriteCommand.sync24HourRate();
 //                    }else{
-                        mWriteCommand.syncAllRateData();
+                        mWriteCommand.syncRateData();
                   //  }
                     //mWriteCommand.syncRateData();
                 /*mWriteCommand. syncAllRateData();
@@ -1661,7 +1690,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             String dateTime = call.argument("dateTime"); // always in "yyyyMMdd";
             JSONObject resultJson = new JSONObject();
             if (mUTESQLOperate != null) {
-
                 List<RateOneDayInfo> rateOneDayInfoList = mUTESQLOperate.queryRateOneDayDetailInfo(dateTime);
                 // List<RateOneDayInfo> rateOneDayInfoList = mUTESQLOperate.queryRateAllInfo(); // list for the current date //size 5
 //                RateOneDayInfo rateOneDay = mUTESQLOperate.queryRateOneDayMainInfo(dateTime);
