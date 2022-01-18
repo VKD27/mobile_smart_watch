@@ -1415,12 +1415,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         JSONObject object = new JSONObject();
                         object.put("calender", rateOneDayInfo.getCalendar());
                         object.put("time", GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
-                        //object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
                         object.put("rate", rateOneDayInfo.getRate());
-                        //object.put("currentRate",  rateOneDayInfo.getCurrentRate());
-                        //object.put("high",  rateOneDayInfo.getHighestRate());
-                        //object.put("low",  rateOneDayInfo.getLowestRate());
-                        // object.put("average",  rateOneDayInfo.getVerageRate());
+                        object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
+                        object.put("currentRate",  rateOneDayInfo.getCurrentRate());
+                        object.put("high",  rateOneDayInfo.getHighestRate());
+                        object.put("low",  rateOneDayInfo.getLowestRate());
+                        object.put("average",  rateOneDayInfo.getVerageRate());
                         hrArray.put(object);
                     }
                     overAllJson.put("hr", hrArray);
@@ -1664,22 +1664,19 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                RateOneDayInfo rateOneDay = mUTESQLOperate.queryRateOneDayMainInfo(dateTime);
 //                Log.e("rateOneDay", "getRate: " +  rateOneDay.getRate());
 //                Log.e("rateOneDay", "getTime: " +  GlobalMethods.getTimeByIntegerMin(rateOneDay.getTime()));
-
-
                 Log.e("rateOneDayInfoList", "rateOneDayInfoList: " + rateOneDayInfoList.size());
-
                 resultJson.put("status", WatchConstants.SC_SUCCESS);
                 JSONArray jsonArray = new JSONArray();
                 for (RateOneDayInfo rateOneDayInfo : rateOneDayInfoList) {
                     JSONObject object = new JSONObject();
                     object.put("calender", rateOneDayInfo.getCalendar());
                     object.put("time", GlobalMethods.getTimeByIntegerMin(rateOneDayInfo.getTime()));
-                    //object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
                     object.put("rate", rateOneDayInfo.getRate());
-                    //object.put("currentRate",  rateOneDayInfo.getCurrentRate());
-                    //object.put("high",  rateOneDayInfo.getHighestRate());
-                    //object.put("low",  rateOneDayInfo.getLowestRate());
-                    // object.put("average",  rateOneDayInfo.getVerageRate());
+                    object.put("calenderTime",  rateOneDayInfo.getCalendarTime());
+                    object.put("currentRate",  rateOneDayInfo.getCurrentRate());
+                    object.put("high",  rateOneDayInfo.getHighestRate());
+                    object.put("low",  rateOneDayInfo.getLowestRate());
+                    object.put("average",  rateOneDayInfo.getVerageRate());
                     Log.e("jsonObject", "object: " + object.toString());
                     jsonArray.put(object);
                 }
@@ -1700,7 +1697,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             String dateTime = call.argument("dateTime"); // always in "yyyyMMdd";
             JSONObject resultJson = new JSONObject();
             if (mUTESQLOperate != null) {
-
                 //  List<Rate24HourDayInfo> rate24HourDayInfoList =  mUTESQLOperate.query24HourRateAllInfo(); // provides overall available 24 hrs data from storage
                 List<Rate24HourDayInfo> rate24HourDayInfoList = mUTESQLOperate.query24HourRateDayInfo(dateTime);
                 Log.e("rateOneDayInfoList", "rateOneDayInfoList: " + rate24HourDayInfoList.size());
