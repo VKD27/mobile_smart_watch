@@ -288,7 +288,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonObject.put("low", "" + lowPressure);
                         jsonObject.put("status", "" + status);
                         // runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
-                        pushEventCallBack(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                        //pushEventCallBack(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                         pushBPEventCallBack(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                     } catch (Exception e) {
                         //e.printStackTrace();
@@ -2284,9 +2284,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         result.success(null);
     }
 
-    private void runOnUIThread(final String result, final JSONObject data, final String callbackName, final String status) {
+    /*private void runOnUIThread(final String result, final JSONObject data, final String callbackName, final String status) {
         try {
-            /*activity.runOnUiThread(new Runnable() {
+            *//*activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Log.e("runOnUIThread", "Calling runOnUIThread with activity: " + data);
@@ -2305,7 +2305,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         Log.e("data_run_exp:", e.getMessage());
                     }
                 }
-            });*/
+            });*//*
             uiThreadHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -2326,13 +2326,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             });
             //  final String result
             // uiThreadHandler
-            /*new Handler(Looper.getMainLooper()).post(new Runnable() {
+            *//*new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
 
                 }
-            });*/
-           /* new Handler(Looper.getMainLooper()).post(new Runnable() {
+            });*//*
+           *//* new Handler(Looper.getMainLooper()).post(new Runnable() {
                  @Override
                  public void run() {
                  Log.e("runOnUIThread", "Calling runOnUIThread with: " + data);
@@ -2352,11 +2352,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                    }
                 }
               }
-            );*/
+            );*//*
         } catch (Exception exp) {
             Log.e("onUIThreadPushExp: ", "" + exp.getMessage());
         }
-    }
+    }*/
 
     private void pushEventCallBack(final String result, final JSONObject data, final String status) {
         uiThreadHandler.postDelayed(new Runnable() {
@@ -2377,7 +2377,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void pushBPEventCallBack(final String result, final JSONObject data, final String status) {
-        uiThreadHandler.postDelayed(new Runnable() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -2395,7 +2395,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     }
 
     private void pushTemperatureEventCallBack(final String result, final JSONObject data, final String status) {
-        uiThreadHandler.postDelayed(new Runnable() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
