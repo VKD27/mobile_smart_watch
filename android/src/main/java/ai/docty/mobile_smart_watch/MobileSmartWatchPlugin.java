@@ -289,6 +289,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonObject.put("status", "" + status);
                        // runOnUIThread(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                         pushEventCallBack(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                        pushBPEventCallBack(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                     } catch (Exception e) {
                         //e.printStackTrace();
                         Log.e("bpChangeJSONExp::", e.getMessage());
@@ -429,13 +430,19 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
 
                         case ICallbackStatus.BLOOD_PRESSURE_TEST_START: // 50
-                            //runOnUIThread(WatchConstants.BP_TEST_STARTED,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
-                            pushEventCallBack(WatchConstants.BP_TEST_STARTED,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            pushBPEventCallBack(WatchConstants.BP_TEST_STARTED,  new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
                         case ICallbackStatus.BLOOD_PRESSURE_TEST_END: // 91
-                            //runOnUIThread(WatchConstants.BP_TEST_FINISH,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
-                            pushEventCallBack(WatchConstants.BP_TEST_FINISHED,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            pushBPEventCallBack(WatchConstants.BP_TEST_FINISHED,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.BLOOD_PRESSURE_TEST_TIME_OUT: // 48
+                            pushBPEventCallBack(WatchConstants.BP_TEST_TIME_OUT,  new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.BLOOD_PRESSURE_TEST_ERROR: // 49
+                            pushBPEventCallBack(WatchConstants.BP_TEST_ERROR,  new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
                         case ICallbackStatus.RATE_TEST_START: // 79
@@ -2378,6 +2385,41 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }, 200);
     }
 
+    private void pushBPEventCallBack(final String result, final JSONObject data, final String status){
+        uiThreadHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject args = new JSONObject();
+                    args.put("status", status);
+                    args.put("result", result);
+                    args.put("data", data);
+                    sendEventToDart( args, WatchConstants.SMART_BP_TEST_CHANNEL);
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                    Log.e("sendEventExp:", e.getMessage());
+                }
+            }
+        }, 200);
+    }
+
+    private void pushTemperatureEventCallBack(final String result, final JSONObject data, final String status){
+        uiThreadHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject args = new JSONObject();
+                    args.put("status", status);
+                    args.put("result", result);
+                    args.put("data", data);
+                    sendEventToDart( args, WatchConstants.SMART_TEMP_TEST_CHANNEL);
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                    Log.e("sendEventExp:", e.getMessage());
+                }
+            }
+        }, 200);
+    }
 
 
   /* private void updateConnectionStatus(boolean status) {

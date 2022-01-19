@@ -9,6 +9,8 @@ class MobileSmartWatch {
   Map? mapOptions;
 
   late StreamSubscription<dynamic> eventChannelListener;
+  late StreamSubscription<dynamic> bpChannelListener;
+  late StreamSubscription<dynamic> temperatureChannelListener;
 
   factory MobileSmartWatch([options]) {
     if (_instance == null) {
@@ -467,10 +469,39 @@ class MobileSmartWatch {
   void receiveEventListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
     eventChannelListener = _eventChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
   }
+
+  void pauseEventListeners(){
+    eventChannelListener.pause();
+  }
+
+  bool resumeEventListeners(){
+    if (eventChannelListener.isPaused) {
+      eventChannelListener.resume();
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   void cancelEventListeners(){
     eventChannelListener.cancel();
   }
 
+  void receiveBPListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
+    bpChannelListener = _bpTestChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
+  }
+
+  void cancelBPListeners(){
+    bpChannelListener.cancel();
+  }
+
+  void receiveTemperatureListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
+    temperatureChannelListener = _temperatureTestChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
+  }
+
+  void cancelTemperatureListeners(){
+    temperatureChannelListener.cancel();
+  }
 
 
 
