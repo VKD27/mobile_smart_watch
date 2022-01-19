@@ -491,12 +491,38 @@ class MobileSmartWatch {
     bpChannelListener = _bpTestChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
   }
 
+  void pauseBPListeners(){
+    bpChannelListener.pause();
+  }
+
+  bool resumeBPListeners(){
+    if (bpChannelListener.isPaused) {
+      bpChannelListener.resume();
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   void cancelBPListeners(){
     bpChannelListener.cancel();
   }
 
   void receiveTemperatureListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
     temperatureChannelListener = _temperatureTestChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
+  }
+
+  void pauseTemperatureListeners(){
+    temperatureChannelListener.pause();
+  }
+
+  bool resumeTemperatureListeners(){
+    if (temperatureChannelListener.isPaused) {
+      temperatureChannelListener.resume();
+      return true;
+    }else{
+      return false;
+    }
   }
 
   void cancelTemperatureListeners(){
