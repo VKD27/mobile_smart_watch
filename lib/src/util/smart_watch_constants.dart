@@ -107,6 +107,11 @@ class SmartWatchConstants {
 
   static const String BP_TEST_STARTED = "bpTestStarted";
   static const String BP_TEST_FINISHED = "bpTestFinished";
+  static const String BP_TEST_TIME_OUT = "bpTestTimeOut";
+  static const String BP_TEST_ERROR = "bpTestError";
+
+  static const String TEMP_TEST_OK = "tempTestOK";
+  static const String TEMP_TEST_TIME_OUT = "tempTestTimeOut";
 
   static const String HR_TEST_STARTED = "hrTestStarted";
   static const String HR_TEST_FINISHED = "hrTestFinished";

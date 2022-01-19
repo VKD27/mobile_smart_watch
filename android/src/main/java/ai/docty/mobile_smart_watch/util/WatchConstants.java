@@ -74,6 +74,9 @@ public class WatchConstants {
     public static final String BP_TEST_TIME_OUT = "bpTestTimeOut";
     public static final String BP_TEST_ERROR = "bpTestError";
 
+    public static final String TEMP_TEST_OK = "tempTestOK";
+    public static final String TEMP_TEST_TIME_OUT = "tempTestTimeOut";
+
     public static final String HR_TEST_STARTED = "hrTestStarted";
     public static final String HR_TEST_FINISHED = "hrTestFinished";
 
