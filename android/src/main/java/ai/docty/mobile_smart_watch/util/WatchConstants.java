@@ -69,6 +69,9 @@ public class WatchConstants {
     public static final String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
     public static final String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
 
+    public static final String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
+    public static final String SYNC_TEMPERATURE_TIME_OUT = "syncTempTimeOut";
+
     public static final String BP_TEST_STARTED = "bpTestStarted";
     public static final String BP_TEST_FINISHED = "bpTestFinished";
     public static final String BP_TEST_TIME_OUT = "bpTestTimeOut";

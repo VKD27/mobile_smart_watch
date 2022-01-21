@@ -399,6 +399,15 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_SLEEP_FINISH, new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
+                        case ICallbackStatus.OFFLINE_SLEEP_SYNC_TIMEOUT: // 93
+                            //sleep sync done
+                            pushEventCallBack(WatchConstants.SYNC_SLEEP_TIME_OUT, new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.SYNC_TEMPERATURE_COMMAND_FINISH_CRC_FAIL:
+                            pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_TIME_OUT, new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
                         case ICallbackStatus.OFFLINE_BLOOD_PRESSURE_SYNC_OK: // 47
                             //bp sync done
                             pushEventCallBack(WatchConstants.SYNC_BP_FINISH, new JSONObject(), WatchConstants.SC_SUCCESS);
