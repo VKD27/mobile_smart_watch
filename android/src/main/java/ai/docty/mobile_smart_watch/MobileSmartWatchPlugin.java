@@ -553,6 +553,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
                         Log.e("onTestResult", "object: " + jsonObject.toString());
                         //pushEventCallBack(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                        if (mUTESQLOperate!=null){
+                            mUTESQLOperate.saveTemperature(temperatureInfo);
+                        }
                         pushTemperatureEventCallBack(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                     }else{
                         pushTemperatureEventCallBack(WatchConstants.TEMP_TEST_TIME_OUT, new JSONObject(), WatchConstants.SC_SUCCESS);
@@ -2131,6 +2134,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
                 //temperature data
                 List<TemperatureInfo> temperatureInfoList = mUTESQLOperate.queryTemperatureAll();
+                Log.e("temperatureInfoList::", ""+temperatureInfoList.size());
                 if (temperatureInfoList != null) {
                     JSONArray temperatureArray = new JSONArray();
                     for (TemperatureInfo temperatureInfo : temperatureInfoList) {
@@ -2251,8 +2255,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private void startTempTest(Result result) {
         if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
             if (mWriteCommand != null) {
-                mWriteCommand.queryCurrentTemperatureData();
-                result.success(WatchConstants.SC_INIT);
+                if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST)) {
+                    mWriteCommand.queryCurrentTemperatureData();
+                    result.success(WatchConstants.SC_INIT);
+                }else{
+                    result.success(WatchConstants.SC_NOT_SUPPORTED);
+                }
             } else {
                 result.success(WatchConstants.SC_FAILURE);
             }
