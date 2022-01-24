@@ -553,8 +553,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
                         Log.e("onTestResult", "object: " + jsonObject.toString());
                         //pushEventCallBack(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                        Log.e("onTestResult", "mUTESQLOperate: " + mUTESQLOperate.toString());
                         if (mUTESQLOperate!=null){
                             mUTESQLOperate.saveTemperature(temperatureInfo);
+                            Log.e("onTestResult", "mUTESQLOperate: After save saveTemperature");
                         }
                         pushTemperatureEventCallBack(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                     }else{
