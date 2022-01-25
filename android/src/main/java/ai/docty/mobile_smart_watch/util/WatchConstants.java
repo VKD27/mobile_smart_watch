@@ -25,6 +25,7 @@ public class WatchConstants {
     public static final String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
     public static final String SET_USER_PARAMS = "setUserDetails";
     public static final String SET_24_HEART_RATE = "set24HeartRate";
+    public static final String SET_24_TEMPERATURE_TEST = "set24TempTest";
 
     // daily activities & operations
     public static final String SYNC_ALL_JUDGE = "fetchAllJudgement";
@@ -68,6 +69,7 @@ public class WatchConstants {
     public static final String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
     public static final String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
     public static final String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
+    public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "synTemp24hrAutomatic";
 
     public static final String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
     public static final String SYNC_TEMPERATURE_TIME_OUT = "syncTempTimeOut";

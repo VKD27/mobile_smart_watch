@@ -119,6 +119,16 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_24_HEART_RATE, params);
   }
 
+  Future<String> set24HrTemperatureTest(String interval) async{
+    //Mandatory:: interval is always in minutes
+    // The settable intervals are 1 minute, 5 minutes, 10 minutes, 30 minutes, 1 hour, 2 hours, 3 hours, 4 hours, 6 hours, 8 hours, 12 hours, 24 hours
+    // If set to 30 minutes, Interval = 30, set to 3 hours, then Interval = 3
+    // calculations are done, inside the plugin, internally
+    var params = {
+      "interval": interval, //interval is always in minutes
+    };
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SET_24_TEMPERATURE_TEST, params);
+  }
 
 
   Future<Map<String, dynamic>> fetchOverAllByDate(String dateTime) async{

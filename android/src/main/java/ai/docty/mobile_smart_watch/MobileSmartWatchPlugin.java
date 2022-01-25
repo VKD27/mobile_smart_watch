@@ -384,11 +384,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             //sync time ok
                             break;
 
-                        case ICallbackStatus.SYNC_STATUS_24_HOUR_RATE_OPEN:  //89
-                            // sync 24 hrs heart rate status
-                            jsonObject.put("status", status);
-                            pushEventCallBack(WatchConstants.SYNC_STATUS_24_HOUR_RATE_OPEN, jsonObject, WatchConstants.SC_SUCCESS);
-                            break;
 
                         case ICallbackStatus.OFFLINE_STEP_SYNC_OK: // 2
                             //steps sync done
@@ -465,6 +460,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         case ICallbackStatus.RATE_TEST_STOP: // 80
                             // runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS,  new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
                             pushEventCallBack(WatchConstants.HR_TEST_FINISHED, new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+
+                            //after connections
+                        case ICallbackStatus.SYNC_STATUS_24_HOUR_RATE_OPEN:  //89
+                            // sync 24 hrs heart rate status
+                            jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.SYNC_STATUS_24_HOUR_RATE_OPEN, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.SYNC_TEMPERATURE_AUTOMATICTEST_INTERVAL_COMMAND_OK: // 107
+                            jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
                         case ICallbackStatus.CONNECTED_STATUS: // 20
@@ -651,6 +658,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 break;
             case WatchConstants.SET_24_HEART_RATE:
                 set24HeartRate(call, result);
+                break;
+            case WatchConstants.SET_24_TEMPERATURE_TEST:
+                set24HrTemperatureTest(call, result);
                 break;
 
             case WatchConstants.GET_DEVICE_VERSION:
@@ -1166,6 +1176,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void set24HrTemperatureTest(MethodCall call, Result result) {
+        try {
+            String inter = call.argument("interval");
+            assert inter != null;
+            int interval = Integer.parseInt(inter);
+            if (mWriteCommand != null) {
+                mWriteCommand.syncTemperatureAutomaticTestInterval(true, interval*60);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("set24HeartRateExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
     private void getDeviceVersion(Result result) {
         try {
             deviceVersionIDResult = result;

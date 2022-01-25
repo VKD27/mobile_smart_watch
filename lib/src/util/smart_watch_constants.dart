@@ -57,6 +57,7 @@ class SmartWatchConstants {
   static const String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
   static const String SET_USER_PARAMS = "setUserDetails";
   static const String SET_24_HEART_RATE = "set24HeartRate";
+  static const String SET_24_TEMPERATURE_TEST = "set24TempTest";
 
   // daily activities & operations
   static const String SYNC_ALL_JUDGE = "fetchAllJudgement";
@@ -67,9 +68,7 @@ class SmartWatchConstants {
   static const String GET_SYNC_OXYGEN = "syncOxygen";
   static const String GET_SYNC_TEMPERATURE = "syncTemperature";
 
-
-
-
+  // test starts
   static const String START_TEST_TEMP = "startTestTemp";
   static const String START_BP_TEST = "startBPTest";
   static const String STOP_BP_TEST = "stopBPTest";
@@ -104,6 +103,8 @@ class SmartWatchConstants {
   static const String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
   static const String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
   static const String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
+  static const String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "synTemp24hrAutomatic";
+
 
   static const String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
   static const String SYNC_TEMPERATURE_TIME_OUT = "syncTempTimeOut";
