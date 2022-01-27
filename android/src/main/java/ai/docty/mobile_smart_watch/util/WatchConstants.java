@@ -10,15 +10,15 @@ public class WatchConstants {
     public static final String SC_DISCONNECTED = "disconnected";
     public static final String SC_INIT = "initiated";
     public static final String SC_NOT_SUPPORTED = "notSupported";
-    
+
     // device connections
     public static final String DEVICE_INITIALIZE = "initDeviceConnection";
     public static final String START_DEVICE_SEARCH = "startDeviceSearch";
-  //  public static final String STOP_DEVICE_SEARCH = "stopDeviceSearch";
-    public static final  String BIND_DEVICE = "connectDevice";
-    public static final  String UNBIND_DEVICE = "disconnectDevice";
-    public static final  String BLE_NOT_SUPPORTED = "bleNotSupported";
-    
+    //  public static final String STOP_DEVICE_SEARCH = "stopDeviceSearch";
+    public static final String BIND_DEVICE = "connectDevice";
+    public static final String UNBIND_DEVICE = "disconnectDevice";
+    public static final String BLE_NOT_SUPPORTED = "bleNotSupported";
+
     //device data
     public static final String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
     public static final String GET_DEVICE_VERSION = "fetchDeviceVersion";
@@ -35,7 +35,7 @@ public class WatchConstants {
     public static final String GET_SYNC_BP = "syncBP";
     public static final String GET_SYNC_OXYGEN = "syncOxygen";
     public static final String GET_SYNC_TEMPERATURE = "syncTemperature";
-    
+
     public static final String START_TEST_TEMP = "startTestTemp";
     public static final String START_BP_TEST = "startBPTest";
     public static final String STOP_BP_TEST = "stopBPTest";
@@ -69,7 +69,9 @@ public class WatchConstants {
     public static final String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
     public static final String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
     public static final String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
-    public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "synTemp24hrAutomatic";
+    public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
+    public static final String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
+
 
     public static final String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
     public static final String SYNC_TEMPERATURE_TIME_OUT = "syncTempTimeOut";
@@ -101,7 +103,7 @@ public class WatchConstants {
     //listeners result callback list
     public static final String BATTERY_STATUS = "batteryStatus";
     public static final String DEVICE_VERSION = "deviceVersion";
-   // public static final String DEVICE_NOT_VALID = "deviceNotValid";
+    // public static final String DEVICE_NOT_VALID = "deviceNotValid";
     public static final String DEVICE_DISCONNECTED = "deviceDisConnected";
     public static final String DEVICE_CONNECTED = "deviceConnected";
     public static final String UPDATE_DEVICE_PARAMS = "updateDeviceParams";

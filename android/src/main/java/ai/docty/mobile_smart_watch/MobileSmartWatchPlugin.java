@@ -474,6 +474,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
+                        case ICallbackStatus.TWO_DAY_WEATHER_SYNC_SUCCESS: // 73
+                            jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.SYNC_WEATHER_SUCCESS, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
                         case ICallbackStatus.CONNECTED_STATUS: // 20
                             // connected successfully
                             //runOnUIThread(new JSONObject(), WatchConstants.DEVICE_CONNECTED, WatchConstants.SC_SUCCESS);
@@ -1260,6 +1265,28 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 boolean isTemperatureCalibration = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_CALIBRATION);
                 boolean isSupportOxygen = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_OXYGEN);
 
+                boolean isSupportBreathe = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_BREATHE);
+
+                boolean isSupportWeather = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_SEVEN_DAYS_WEATHER);
+
+                boolean isWeatherForeCast =  GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_WEATHER_FORECAST);
+
+                boolean isSupportDrinkWater =  GetFunctionList.isSupportFunction_Fifth(mContext,GlobalVariable.IS_SUPPORT_DRINK_WATER_REMIND);
+
+                boolean isSupportWristCalibra =  GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_TURN_WRIST_CALIBRATION);
+
+                boolean isSupportBandFindPhone =    GetFunctionList.isSupportFunction_Second(mContext , GlobalVariable.IS_SUPPORT_BAND_FIND_PHONE_FUNCTION) ;
+
+                boolean isSupportMusicalControl =  GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_MUSIC_CONTROL);
+                boolean isSupportWristDetection =  GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_WRIST_DETECTION_SWITCH);
+                boolean isSupportMultiSportsHR =  GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_MULTIPLE_SPORTS_MODES_HEART_RATE);
+                boolean isSupportSportControl =  GetFunctionList.isSupportFunction_Fifth(mContext,GlobalVariable.IS_SUPPORT_SPORT_CONTROL);
+
+                boolean isSupportOnlineDial =  GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_ONLINE_DIAL);
+                boolean isSupportBodyComposition =  GetFunctionList.isSupportFunction_Third(mContext,GlobalVariable.IS_SUPPORT_BODY_COMPOSITION);
+                boolean isSupportECG =  GetFunctionList.isSupportFunction_Third(mContext,GlobalVariable.IS_SUPPORT_ECG);
+
+
                 try {
 
                     //judgeJson.put("status", WatchConstants.SC_SUCCESS);
@@ -1274,6 +1301,19 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     judgeJson.put("isSupportHorVer", isSupportHorVer);
                     judgeJson.put("isSupport24HrRate", isSupport24HrRate);
                     judgeJson.put("isSupportOxygen", isSupportOxygen);
+                    judgeJson.put("isSupportBreathe", isSupportBreathe);
+                    judgeJson.put("isSupportWeather", isSupportWeather);
+                    judgeJson.put("isWeatherForeCast", isWeatherForeCast);
+                    judgeJson.put("isSupportDrinkWater", isSupportDrinkWater);
+                    judgeJson.put("isSupportWristCalibra", isSupportWristCalibra);
+                    judgeJson.put("isSupportBandFindPhone", isSupportBandFindPhone);
+                    judgeJson.put("isSupportMusicalControl", isSupportMusicalControl);
+                    judgeJson.put("isSupportWristDetection", isSupportWristDetection);
+                    judgeJson.put("isSupportMultiSportsHR", isSupportMultiSportsHR);
+                    judgeJson.put("isSupportSportControl", isSupportSportControl);
+                    judgeJson.put("isSupportOnlineDial", isSupportOnlineDial);
+                    judgeJson.put("isSupportBodyComposition", isSupportBodyComposition);
+                    judgeJson.put("isSupportECG", isSupportECG);
 
 //                AsyncExecuteUpdate asyncTask=new AsyncExecuteUpdate();
 //                asyncTask.execute("");

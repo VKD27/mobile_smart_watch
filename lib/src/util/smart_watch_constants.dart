@@ -103,7 +103,8 @@ class SmartWatchConstants {
   static const String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
   static const String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
   static const String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
-  static const String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "synTemp24hrAutomatic";
+  static const String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
+  static const String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
 
 
   static const String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
