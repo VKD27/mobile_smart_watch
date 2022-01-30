@@ -58,6 +58,7 @@ class SmartWatchConstants {
   static const String SET_USER_PARAMS = "setUserDetails";
   static const String SET_24_HEART_RATE = "set24HeartRate";
   static const String SET_24_TEMPERATURE_TEST = "set24TempTest";
+  static const  String SET_WEATHER_INFO = "setWeatherInfo";
 
   // daily activities & operations
   static const String SYNC_ALL_JUDGE = "fetchAllJudgement";

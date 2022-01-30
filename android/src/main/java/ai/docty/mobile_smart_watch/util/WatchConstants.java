@@ -26,6 +26,7 @@ public class WatchConstants {
     public static final String SET_USER_PARAMS = "setUserDetails";
     public static final String SET_24_HEART_RATE = "set24HeartRate";
     public static final String SET_24_TEMPERATURE_TEST = "set24TempTest";
+    public static final String SET_WEATHER_INFO = "setWeatherInfo";
 
     // daily activities & operations
     public static final String SYNC_ALL_JUDGE = "fetchAllJudgement";

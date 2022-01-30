@@ -130,6 +130,12 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_24_TEMPERATURE_TEST, params);
   }
 
+  Future<String> setWeatherInfoSevenDays(String data) async{
+    var params = {
+      "data": data,
+    };
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SET_WEATHER_INFO, params);
+  }
 
   Future<Map<String, dynamic>> fetchOverAllByDate(String dateTime) async{
     var params = {

@@ -20,6 +20,7 @@ import com.yc.pedometer.info.HeartRateHeadsetSportModeInfo;
 import com.yc.pedometer.info.OxygenInfo;
 import com.yc.pedometer.info.Rate24HourDayInfo;
 import com.yc.pedometer.info.RateOneDayInfo;
+import com.yc.pedometer.info.SevenDayWeatherInfo;
 import com.yc.pedometer.info.SleepInfo;
 import com.yc.pedometer.info.SleepTimeInfo;
 import com.yc.pedometer.info.SportsModesInfo;
@@ -474,7 +475,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
-                        case ICallbackStatus.TWO_DAY_WEATHER_SYNC_SUCCESS: // 73
+                       /* case ICallbackStatus.TWO_DAY_WEATHER_SYNC_SUCCESS: // 73
+                            jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.SYNC_WEATHER_SUCCESS, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;*/
+
+                        case ICallbackStatus.SEVEN_DAY_WEATHER_SYNC_SUCCESS: // 51
                             jsonObject.put("status", status);
                             pushEventCallBack(WatchConstants.SYNC_WEATHER_SUCCESS, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
@@ -666,6 +672,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 break;
             case WatchConstants.SET_24_TEMPERATURE_TEST:
                 set24HrTemperatureTest(call, result);
+                break;
+            case WatchConstants.SET_WEATHER_INFO:
+                setSevenDaysWeatherInfo(call, result);
                 break;
 
             case WatchConstants.GET_DEVICE_VERSION:
@@ -1181,6 +1190,90 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void setSevenDaysWeatherInfo(MethodCall call, Result result) {
+        try {
+            String infoData = call.argument("data");
+            assert infoData != null;
+            JSONObject jsonObject = new JSONObject(infoData);
+            SevenDayWeatherInfo sevenDayWeatherInfo = new SevenDayWeatherInfo();
+
+            String cityName = jsonObject.optString("cityName");//max only 4 characters
+            sevenDayWeatherInfo.setCityName(cityName);
+
+            String todayWeatherCode = jsonObject.optString("todayWeatherCode");
+            int todayTmpCurrent = jsonObject.optInt("todayTmpCurrent");
+            int todayTmpMax = jsonObject.optInt("todayTmpMax");
+            int todayTmpMin = jsonObject.optInt("todayTmpMin");
+            //today
+            sevenDayWeatherInfo.setTodayWeatherCode(todayWeatherCode);
+            sevenDayWeatherInfo.setTodayTmpCurrent(todayTmpCurrent);
+            sevenDayWeatherInfo.setTodayTmpMax(todayTmpMax);
+            sevenDayWeatherInfo.setTodayTmpMin(todayTmpMin);
+            sevenDayWeatherInfo.setTodayPm25(0);
+            sevenDayWeatherInfo.setTodayAqi(0);
+
+            String secondDayWeatherCode = jsonObject.optString("secondDayWeatherCode");
+            int secondDayTmpMax = jsonObject.optInt("secondDayTmpMax");
+            int secondDayTmpMin = jsonObject.optInt("secondDayTmpMin");
+            //second
+            sevenDayWeatherInfo.setSecondDayWeatherCode(secondDayWeatherCode);
+            sevenDayWeatherInfo.setSecondDayTmpMax(secondDayTmpMax);
+            sevenDayWeatherInfo.setSecondDayTmpMin(secondDayTmpMin);
+
+            String thirdDayWeatherCode = jsonObject.optString("thirdDayWeatherCode");
+            int thirdDayTmpMax = jsonObject.optInt("thirdDayTmpMax");
+            int thirdDayTmpMin = jsonObject.optInt("thirdDayTmpMin");
+            //third
+            sevenDayWeatherInfo.setThirdDayWeatherCode(thirdDayWeatherCode);
+            sevenDayWeatherInfo.setThirdDayTmpMax(thirdDayTmpMax);
+            sevenDayWeatherInfo.setThirdDayTmpMin(thirdDayTmpMin);
+
+            String fourthDayWeatherCode = jsonObject.optString("fourthDayWeatherCode");
+            int fourthDayTmpMax = jsonObject.optInt("fourthDayTmpMax");
+            int fourthDayTmpMin = jsonObject.optInt("fourthDayTmpMin");
+            //fourth
+            sevenDayWeatherInfo.setFourthDayWeatherCode(fourthDayWeatherCode);
+            sevenDayWeatherInfo.setFourthDayTmpMax(fourthDayTmpMax);
+            sevenDayWeatherInfo.setFourthDayTmpMin(fourthDayTmpMin);
+
+            String fifthDayWeatherCode = jsonObject.optString("fifthDayWeatherCode");
+            int fifthDayTmpMax = jsonObject.optInt("fifthDayTmpMax");
+            int fifthDayTmpMin = jsonObject.optInt("fifthDayTmpMin");
+            //fifth
+            sevenDayWeatherInfo.setFifthDayWeatherCode(fifthDayWeatherCode);
+            sevenDayWeatherInfo.setFifthDayTmpMax(fifthDayTmpMax);
+            sevenDayWeatherInfo.setFifthDayTmpMin(fifthDayTmpMin);
+
+            String sixthDayWeatherCode = jsonObject.optString("sixthDayWeatherCode");
+            int sixthDayTmpMax = jsonObject.optInt("sixthDayTmpMax");
+            int sixthDayTmpMin = jsonObject.optInt("sixthDayTmpMin");
+            //sixth
+            sevenDayWeatherInfo.setSixthDayWeatherCode(sixthDayWeatherCode);
+            sevenDayWeatherInfo.setSixthDayTmpMax(sixthDayTmpMax);
+            sevenDayWeatherInfo.setSixthDayTmpMin(sixthDayTmpMin);
+
+            String seventhDayWeatherCode = jsonObject.optString("seventhDayWeatherCode");
+            int seventhDayTmpMax = jsonObject.optInt("seventhDayTmpMax");
+            int seventhDayTmpMin = jsonObject.optInt("seventhDayTmpMin");
+            //seventh
+            sevenDayWeatherInfo.setSeventhDayWeatherCode(seventhDayWeatherCode);
+            sevenDayWeatherInfo.setSeventhDayTmpMax(seventhDayTmpMax);
+            sevenDayWeatherInfo.setSeventhDayTmpMin(seventhDayTmpMin);
+
+//                    "todayPm25":"",
+//                    "todayAqi":"",
+
+            if (mWriteCommand != null) {
+                mWriteCommand.syncWeatherToBLEForXiaoYang(sevenDayWeatherInfo);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("set24HeartRateExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
     private void set24HrTemperatureTest(MethodCall call, Result result) {
         try {
             String inter = call.argument("interval");
