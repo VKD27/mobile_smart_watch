@@ -4,6 +4,7 @@ class MobileSmartWatch {
   late EventChannel _eventChannel;
   late EventChannel _bpTestChannel;
   late EventChannel _temperatureTestChannel;
+ // late EventChannel _connectionChannel;
   late MethodChannel _methodChannel;
   static MobileSmartWatch? _instance;
   Map? mapOptions;
@@ -11,6 +12,7 @@ class MobileSmartWatch {
   late StreamSubscription<dynamic> eventChannelListener;
   late StreamSubscription<dynamic> bpChannelListener;
   late StreamSubscription<dynamic> temperatureChannelListener;
+  late StreamSubscription<dynamic> connectionChannelListener;
 
   factory MobileSmartWatch([options]) {
     if (_instance == null) {
@@ -21,6 +23,8 @@ class MobileSmartWatch {
       EventChannel bpTestChannel = EventChannel(SmartWatchConstants.SMART_BP_TEST_CHANNEL);
 
       EventChannel temperatureTestChannel = EventChannel(SmartWatchConstants.SMART_TEMP_TEST_CHANNEL);
+
+     // EventChannel connectionChannel = EventChannel(SmartWatchConstants.SMART_CONNECTION_CHANNEL);
 
       //check if the option variable is AFOptions type or map type
       //assert(options is Map);
@@ -502,6 +506,29 @@ class MobileSmartWatch {
   void cancelEventListeners(){
     eventChannelListener.cancel();
   }
+
+
+  void receiveConnectionListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
+    connectionChannelListener = _eventChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
+  }
+
+  void pauseConnectionListeners(){
+    connectionChannelListener.pause();
+  }
+
+  bool resumeConnectionListeners(){
+    if (connectionChannelListener.isPaused) {
+      connectionChannelListener.resume();
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  void cancelConnectionListeners(){
+    connectionChannelListener.cancel();
+  }
+
 
   void receiveBPListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
     bpChannelListener = _bpTestChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);

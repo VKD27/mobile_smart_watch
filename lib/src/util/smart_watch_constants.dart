@@ -127,6 +127,7 @@ class SmartWatchConstants {
   static const String SMART_EVENT_CHANNEL = "smartEventChannel";
   static const String SMART_BP_TEST_CHANNEL = "smartBPTestChannel";
   static const String SMART_TEMP_TEST_CHANNEL = "smartTempTestChannel";
+  static const String SMART_CONNECTION_CHANNEL = "smartConnectionChannel";
 
 
   //for continuous call backs from the hardware device search
