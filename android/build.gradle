@@ -33,7 +33,7 @@ android {
     compileSdkVersion 31
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
-        minSdkVersion 20
+        minSdkVersion 21
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         compileOptions {
