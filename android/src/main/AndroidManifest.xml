@@ -42,6 +42,7 @@
         <service
             android:name="com.yc.pedometer.sdk.BluetoothLeService"
             android:enabled="true"
+            android:exported="false"
             android:theme="@style/PcmTextAppearance" />
 
         <!--  改成你的key，请联系sdk开发者申请提供 -->
@@ -58,7 +59,8 @@
         <!--DFU firmware upgrade-->
          <activity android:name="com.yc.pedometer.update.NotificationActivity" />
          <service android:name="com.yc.pedometer.update.DfuService"
-             android:enabled="true"/>
+             android:enabled="true"
+             android:exported="false"/>
 
         <meta-data
             android:name="flutterEmbedding"
