@@ -50,6 +50,7 @@ class SmartWatchConstants {
   static const String BIND_DEVICE = "connectDevice";
   static const String UNBIND_DEVICE = "disconnectDevice";
   static const String BLE_NOT_SUPPORTED = "bleNotSupported";
+  static const String  BLE_NOT_ENABLED = "bleNotEnabled";
 
   //device data
   static const String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
