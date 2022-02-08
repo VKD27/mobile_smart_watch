@@ -9,7 +9,8 @@ public class GlobalMethods {
     public static String getTempIntoFahrenheit(float tempInCelsius) {
         //  (°C × 9/5) + 32
         double infoValue =  (tempInCelsius *1.8000)+32.00;
-        return new DecimalFormat("0.00").format(infoValue);
+       // return new DecimalFormat("0.00").format(infoValue);
+        return new DecimalFormat("0.0").format(infoValue);
     }
 
     public static String getTempTimeByIntegerMin(int minutes) {
@@ -42,6 +43,11 @@ public class GlobalMethods {
     public static String convertDoubleToStringWithDecimal(double infoValue) {
         //Log.e("resultValue", "decimal_ddf: " + resultValue);
         return new DecimalFormat("0.00").format(infoValue);
+    }
+
+    public static String convertDoubleToCelsiusWithDecimal(double infoValue) {
+        //Log.e("resultValue", "decimal_ddf: " + resultValue);
+        return new DecimalFormat("0.0").format(infoValue);
     }
 
     public static String formatTime(long millis) {
