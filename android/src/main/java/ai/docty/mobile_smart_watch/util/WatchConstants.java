@@ -18,6 +18,7 @@ public class WatchConstants {
     public static final String BIND_DEVICE = "connectDevice";
     public static final String UNBIND_DEVICE = "disconnectDevice";
     public static final String BLE_NOT_SUPPORTED = "bleNotSupported";
+    public static final String BLE_NOT_ENABLED = "bleNotEnabled";
 
     //device data
     public static final String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
