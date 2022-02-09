@@ -11,11 +11,9 @@ import android.util.Log;
 import com.yc.pedometer.sdk.BLEServiceOperate;
 import com.yc.pedometer.sdk.BluetoothLeService;
 import com.yc.pedometer.sdk.DeviceScanInterfacer;
-import com.yc.pedometer.sdk.ICallbackStatus;
-import com.yc.pedometer.sdk.ServiceStatusCallback;
+import com.yc.pedometer.utils.SPUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ai.docty.mobile_smart_watch.model.BleDevices;
 import ai.docty.mobile_smart_watch.util.WatchConstants;
@@ -63,9 +61,9 @@ public class MobileConnect {
         this.mBluetoothLeService = mBluetoothLeService;
     }
 
-    /*public BluetoothLeService getBluetoothLeService(){
+    public BluetoothLeService getBluetoothLeService(){
         return this.mBluetoothLeService;
-    }*/
+    }
     
     public boolean isBleEnabled() {
        // this. mBLEServiceOperate = BLEServiceOperate.getInstance(context);
@@ -135,6 +133,14 @@ public class MobileConnect {
     public boolean connectDevice(String macAddress) {
         Log.e("mBLEServiceOperate: ",""+mBLEServiceOperate);
         Log.e("getBleService: ",""+mBLEServiceOperate.getBleService());
+        boolean status = this.mBLEServiceOperate.connect(macAddress);
+        Log.e("ble_service_operate: ",""+status);
+        if (mBluetoothLeService!= null)
+        {
+            boolean bleServiceStatus = this.mBluetoothLeService.connect(macAddress);
+            Log.e("bleServiceStatus: ",""+bleServiceStatus);
+        }
+        SPUtil.getInstance(context).setLastConnectDeviceAddress(macAddress);
         //mScanning = false;
      //  return this.mBLEServiceOperate.connect(macAddress);
        /* this.mBLEServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
@@ -143,18 +149,10 @@ public class MobileConnect {
                 if(i== ICallbackStatus.CONNECTED_STATUS){
 
                 }
-
             }
         });*/
-       boolean status = this.mBLEServiceOperate.connect(macAddress);
-       Log.e("ble_service_operate: ",""+status);
-       //if (status){
-        if (mBluetoothLeService!=null)
-        {
-            boolean bleServiceStatus = this.mBluetoothLeService.connect(macAddress);
-            Log.e("bleServiceStatus: ",""+bleServiceStatus);
-        }
 
+       //if (status){
 //       }else{
 //           if (this.mBLEServiceOperate!=null){
 //               this.mBLEServiceOperate.disConnect();
@@ -173,6 +171,8 @@ public class MobileConnect {
             this.mBLEServiceOperate.disConnect();
             if (this.mBluetoothLeService != null) {
                 this.mBluetoothLeService.disconnect();
+                this.mBluetoothLeService.ClearGattForDisConnect();
+                //this.mBLEServiceOperate.unBindService();
             }
             return true;
         }else{
