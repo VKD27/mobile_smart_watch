@@ -133,6 +133,8 @@ public class MobileConnect {
     }
 
     public boolean connectDevice(String macAddress) {
+        Log.e("mBLEServiceOperate: ",""+mBLEServiceOperate);
+        Log.e("getBleService: ",""+mBLEServiceOperate.getBleService());
         //mScanning = false;
      //  return this.mBLEServiceOperate.connect(macAddress);
        /* this.mBLEServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
