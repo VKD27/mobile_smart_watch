@@ -1,10 +1,13 @@
 package ai.docty.mobile_smart_watch;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +15,8 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.yc.pedometer.info.BPVOneDayInfo;
@@ -103,6 +108,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private MobileConnect mobileConnect;
 
     private final int REQUEST_ENABLE_BT = 1212;
+    private final int REQUEST_BLE_ENABLE = 1213;
     private Boolean validateDeviceListCallback = false;
 
     // pedometer integration
@@ -845,19 +851,26 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         }, 1000);
                     }else{
                         // turn on bluetooth
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            String[] multiplePermission = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE};
+                            if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)){
+                                //permissionLauncher.launch(multiplePermission);
+                                ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
+                            }
+                        }else{
+                            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                            activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                        }
                         new Handler().postDelayed(() -> {
                             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                             if (bluetoothAdapter != null) {
                                 Log.e("blueAdapter_status:", ""+bluetoothAdapter.isEnabled());
-                                if (!bluetoothAdapter.isEnabled()) {
+                                /*if (!bluetoothAdapter.isEnabled()) {
                                     bluetoothAdapter.enable();
-                                }
+                                }*/
                             }
                             result.success(resultStatus);
                             }, 1000);
-
                     }
                 }else{
                     result.success(WatchConstants.BLE_NOT_SUPPORTED);
@@ -902,7 +915,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             Log.e("initDeviceExp::", "" + exp.getMessage());
         }
     }
-
+    private boolean checkPermissionEnabled(String permission){
+        return ContextCompat.checkSelfPermission(mContext, permission) == PackageManager.PERMISSION_GRANTED;
+    }
     private void searchForBTDevices(Result result) {
         try {
             JSONObject jsonObject = new JSONObject();
