@@ -61,6 +61,12 @@ class MobileSmartWatch {
     }*/
   }
 
+  Future<String> bleReInitialize() async {
+    var result = await _methodChannel.invokeMethod(SmartWatchConstants.BLE_RE_INITIALIZE);
+    print('result>>$result');
+    return result.toString().trim();
+  }
+
   Future<String> reInitializeBlueConnection() async {
     var result = await _methodChannel.invokeMethod(SmartWatchConstants.DEVICE_RE_INITIATE);
     print('result>>$result');

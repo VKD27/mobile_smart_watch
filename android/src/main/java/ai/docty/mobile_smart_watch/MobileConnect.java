@@ -135,11 +135,11 @@ public class MobileConnect {
         Log.e("getBleService: ",""+mBLEServiceOperate.getBleService());
         boolean status = this.mBLEServiceOperate.connect(macAddress);
         Log.e("ble_service_operate: ",""+status);
-        if (mBluetoothLeService!= null)
+        /*if (mBluetoothLeService!= null)
         {
             boolean bleServiceStatus = this.mBluetoothLeService.connect(macAddress);
             Log.e("bleServiceStatus: ",""+bleServiceStatus);
-        }
+        }*/
         SPUtil.getInstance(context).setLastConnectDeviceAddress(macAddress);
         //mScanning = false;
      //  return this.mBLEServiceOperate.connect(macAddress);

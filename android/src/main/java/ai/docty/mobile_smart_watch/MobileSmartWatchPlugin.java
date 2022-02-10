@@ -694,6 +694,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 //initDeviceConnection(result);
                 startListening(call.arguments, result);
                 break;
+            case WatchConstants.BLE_RE_INITIALIZE:
+                bleReInitialize(result);
+                break;
             case WatchConstants.DEVICE_RE_INITIATE:
                 initReInitialize(result);
                 break;
@@ -834,9 +837,20 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void bleReInitialize(Result result){
+        try {
+        new Handler().postDelayed(() -> {
+            mobileConnect.getBluetoothLeService().initialize();
+          result.success(WatchConstants.SC_BLE_RE_INIT);
+          }, 1000);
+
+        } catch (Exception exp) {
+            Log.e("bleReInitializeExp::", "" + exp.getMessage());
+        }
+    }
     private void initReInitialize(Result result){
         try {
-            mUTESQLOperate = UTESQLOperate.getInstance(mContext.getApplicationContext());
+            //mUTESQLOperate = UTESQLOperate.getInstance(mContext.getApplicationContext());
             mobileConnect = new MobileConnect(mContext.getApplicationContext(), activity);
             bleServiceOperate = mobileConnect.getBLEServiceOperate();
             bleServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
@@ -856,13 +870,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 startListeningCallback(false);
             }
 
-            mWriteCommand = WriteCommandToBLE.getInstance(mContext.getApplicationContext());
-            mDataProcessing = DataProcessing.getInstance(mContext.getApplicationContext());
+//            mWriteCommand = WriteCommandToBLE.getInstance(mContext.getApplicationContext());
+//            mDataProcessing = DataProcessing.getInstance(mContext.getApplicationContext());
 
             startListeningDataProcessing();
             new Handler().postDelayed(() -> {
                 result.success(WatchConstants.SC_RE_INIT);
             }, 1000);
+
         } catch (Exception exp) {
             Log.e("initReInitialize::", "" + exp.getMessage());
         }

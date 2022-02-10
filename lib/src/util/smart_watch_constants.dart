@@ -42,9 +42,11 @@ class SmartWatchConstants {
   static const String SC_DISCONNECTED = "disconnected";
   static const String SC_INIT = "initiated";
   static const String SC_RE_INIT = "reInitiated";
+  static const String SC_BLE_RE_INIT = "bleReInitiated";
   static const String SC_NOT_SUPPORTED = "notSupported";
 
   //relates to device connections
+  static const String BLE_RE_INITIALIZE = "bleReInitialize";
   static const String DEVICE_RE_INITIATE = "deviceReInitiate";
   static const String DEVICE_INITIALIZE = "initDeviceConnection";
   static const String START_DEVICE_SEARCH = "startDeviceSearch";

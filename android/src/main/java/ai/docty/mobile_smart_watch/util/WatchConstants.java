@@ -10,9 +10,11 @@ public class WatchConstants {
     public static final String SC_DISCONNECTED = "disconnected";
     public static final String SC_INIT = "initiated";
     public static final String SC_RE_INIT = "reInitiated";
+    public static final String SC_BLE_RE_INIT = "bleReInitiated";
     public static final String SC_NOT_SUPPORTED = "notSupported";
 
     // device connections
+    public static final String BLE_RE_INITIALIZE = "bleReInitialize";
     public static final String DEVICE_RE_INITIATE = "deviceReInitiate";
     public static final String DEVICE_INITIALIZE = "initDeviceConnection";
     public static final String START_DEVICE_SEARCH = "startDeviceSearch";
