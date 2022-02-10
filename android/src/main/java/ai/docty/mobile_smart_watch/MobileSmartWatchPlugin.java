@@ -846,6 +846,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         boolean connectionStatus = SPUtil.getInstance(mContext).getBleConnectStatus();
                         Log.e("connectionStatus:", "" + connectionStatus);
                         //result.success(resultStatus);
+                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        if (bluetoothAdapter != null) {
+                            Log.e("blueAdapter_status:", ""+bluetoothAdapter.isEnabled());
+                                /*if (!bluetoothAdapter.isEnabled()) {
+                                    bluetoothAdapter.enable();
+                                }*/
+                        }
                         new Handler().postDelayed(() -> {
                             result.success(resultStatus);
                         }, 1000);
