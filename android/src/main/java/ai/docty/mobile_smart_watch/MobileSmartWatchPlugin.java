@@ -521,7 +521,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             // updateConnectionStatus(true);
                             //updateConnectionStatus2(true);
                             //updateConnectionStatus3(true);
-                            mobileConnect.getBluetoothLeService().setRssiHandler(mHandlerMessage);
+                           // mobileConnect.getBluetoothLeService().setRssiHandler(mHandlerMessage);
                             updateReadRSSIThread();
                             updatePasswordStatus();
                             // runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
@@ -1041,7 +1041,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     }
                     if (mBluetoothLeService != null) {
                         mBluetoothLeService.readRssi();
-                        mBluetoothLeService.initialize();
+                        //mBluetoothLeService.initialize();
                     }
                 }
             }
