@@ -61,6 +61,12 @@ class MobileSmartWatch {
     }*/
   }
 
+  Future<String> reInitializeBlueConnection() async {
+    var result = await _methodChannel.invokeMethod(SmartWatchConstants.DEVICE_RE_INITIATE);
+    print('result>>$result');
+    return result.toString().trim();
+  }
+
   Future<List<SmartDeviceModel>> startSearchingDevices() async {
     var resultDevices = await _methodChannel.invokeMethod(SmartWatchConstants.START_DEVICE_SEARCH);
     print('resultDevices>> $resultDevices');

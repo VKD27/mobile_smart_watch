@@ -9,9 +9,11 @@ public class WatchConstants {
     public static final String SC_CANCELED = "canceled";
     public static final String SC_DISCONNECTED = "disconnected";
     public static final String SC_INIT = "initiated";
+    public static final String SC_RE_INIT = "reInitiated";
     public static final String SC_NOT_SUPPORTED = "notSupported";
 
     // device connections
+    public static final String DEVICE_RE_INITIATE = "deviceReInitiate";
     public static final String DEVICE_INITIALIZE = "initDeviceConnection";
     public static final String START_DEVICE_SEARCH = "startDeviceSearch";
     //  public static final String STOP_DEVICE_SEARCH = "stopDeviceSearch";

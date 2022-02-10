@@ -632,6 +632,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
             }
         });//Set up heart rate calibration monitor
+
         mBluetoothLeService.setTurnWristCalibrationListener(new TurnWristCalibrationListener() {
             @Override
             public void onTurnWristCalibrationStatus(int i) {
@@ -692,6 +693,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             case WatchConstants.START_LISTENING:
                 //initDeviceConnection(result);
                 startListening(call.arguments, result);
+                break;
+            case WatchConstants.DEVICE_RE_INITIATE:
+                initReInitialize(result);
                 break;
             case WatchConstants.DEVICE_INITIALIZE:
                 initDeviceConnection(result);
@@ -830,6 +834,39 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void initReInitialize(Result result){
+        try {
+            mUTESQLOperate = UTESQLOperate.getInstance(mContext.getApplicationContext());
+            mobileConnect = new MobileConnect(mContext.getApplicationContext(), activity);
+            bleServiceOperate = mobileConnect.getBLEServiceOperate();
+            bleServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
+                @Override
+                public void OnServiceStatuslt(int status) {
+                    if (status == ICallbackStatus.BLE_SERVICE_START_OK) {
+                        Log.e("inside_service_result", "" + mBluetoothLeService);
+                        if (mBluetoothLeService == null) {
+                            startListeningCallback(true);
+                        }
+                    }
+                }
+            });
+
+            mBluetoothLeService = bleServiceOperate.getBleService();
+            if (mBluetoothLeService != null) {
+                startListeningCallback(false);
+            }
+
+            mWriteCommand = WriteCommandToBLE.getInstance(mContext.getApplicationContext());
+            mDataProcessing = DataProcessing.getInstance(mContext.getApplicationContext());
+
+            startListeningDataProcessing();
+            new Handler().postDelayed(() -> {
+                result.success(WatchConstants.SC_RE_INIT);
+            }, 1000);
+        } catch (Exception exp) {
+            Log.e("initReInitialize::", "" + exp.getMessage());
+        }
+    }
     private void initDeviceConnection(Result result) {
         // this.flutterInitResultBlu = result;
         try {
