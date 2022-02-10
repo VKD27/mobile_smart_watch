@@ -5,6 +5,7 @@ import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -199,7 +200,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
    private boolean initializeData(){
         mobileConnect = new MobileConnect(this.mContext.getApplicationContext(), activity);
         bleServiceOperate = mobileConnect.getBLEServiceOperate();
-
         /*bleServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
             @Override
             public void OnServiceStatuslt(int status) {
@@ -839,12 +839,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     if (enable){
                         boolean connectionStatus = SPUtil.getInstance(mContext).getBleConnectStatus();
                         Log.e("connectionStatus:", "" + connectionStatus);
-                        result.success(resultStatus);
+                        //result.success(resultStatus);
+                        new Handler().postDelayed(() -> {
+                            result.success(resultStatus);
+                        }, 1000);
                     }else{
                         // turn on bluetooth
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                         new Handler().postDelayed(() -> {
+                            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                            if (bluetoothAdapter != null) {
+                                Log.e("blueAdapter_status:", ""+bluetoothAdapter.isEnabled());
+                                if (!bluetoothAdapter.isEnabled()) {
+                                    bluetoothAdapter.enable();
+                                }
+                            }
                             result.success(resultStatus);
                             }, 1000);
 
@@ -1009,6 +1019,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     }
                     if (mBluetoothLeService != null) {
                         mBluetoothLeService.readRssi();
+                        mBluetoothLeService.initialize();
                     }
                 }
             }
@@ -1017,7 +1028,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private Handler mHandlerMessage = new Handler() {
         public void handleMessage(Message msg) {
-         Log.e("msg_what_handler: ", ""+msg.what);
+         Log.e("Msg_What_Handler: ", ""+msg.what);
+         switch (msg.what) {
+             case GlobalVariable.GET_RSSI_MSG:
+                 Bundle bundle = msg.getData();
+                 Log.e("GET_RSSI_MSG: ",bundle.getInt(GlobalVariable.EXTRA_RSSI) + "");
+                 break;
+         }
         }
     };
 
