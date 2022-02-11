@@ -61,6 +61,16 @@ class MobileSmartWatch {
     }*/
   }
 
+  Future<String> getLastConnectedDeviceAddress() async {
+    var result = await _methodChannel.invokeMethod(SmartWatchConstants.GET_LAST_DEVICE_ADDRESS);
+    print('result>>$result');
+    return result.toString().trim();
+  }
+
+  Future<String> connectLastDeviceAddress() async {
+    return await  _methodChannel.invokeMethod(SmartWatchConstants.CONNECT_LAST_DEVICE);
+  }
+
   Future<String> bleReInitialize() async {
     var result = await _methodChannel.invokeMethod(SmartWatchConstants.BLE_RE_INITIALIZE);
     print('result>>$result');

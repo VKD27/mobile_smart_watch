@@ -57,6 +57,8 @@ class SmartWatchConstants {
   static const String  BLE_NOT_ENABLED = "bleNotEnabled";
 
   //device data
+  static const String GET_LAST_DEVICE_ADDRESS = "getLastDeviceAddress";
+  static const String CONNECT_LAST_DEVICE = "connectLastDevice";
   static const String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
   static const String GET_DEVICE_VERSION = "fetchDeviceVersion";
   static const String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";

@@ -710,6 +710,17 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 String resultStatus = mobileConnect.stopDevicesScan();
                 result.success(resultStatus);
                 break;*/
+            case WatchConstants.GET_LAST_DEVICE_ADDRESS:
+                String lastConnectAddress = SPUtil.getInstance(mContext).getLastConnectDeviceAddress();
+                result.success(lastConnectAddress);
+                break;
+
+            case WatchConstants.CONNECT_LAST_DEVICE:
+                String lastAddress = SPUtil.getInstance(mContext).getLastConnectDeviceAddress();
+                 boolean connectResult = mobileConnect.getBLEServiceOperate().connect(lastAddress);
+                result.success(connectResult);
+                break;
+
             case WatchConstants.BIND_DEVICE:
                 connectBluDevice(call, result);
                 break;
