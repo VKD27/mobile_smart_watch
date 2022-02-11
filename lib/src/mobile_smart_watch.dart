@@ -67,8 +67,8 @@ class MobileSmartWatch {
     return result.toString().trim();
   }
 
-  Future<String> connectLastDeviceAddress() async {
-    return await  _methodChannel.invokeMethod(SmartWatchConstants.CONNECT_LAST_DEVICE);
+  Future<bool> connectLastDeviceAddress() async {
+    return await _methodChannel.invokeMethod(SmartWatchConstants.CONNECT_LAST_DEVICE);
   }
 
   Future<String> bleReInitialize() async {
