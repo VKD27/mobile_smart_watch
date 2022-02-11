@@ -71,6 +71,10 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.CONNECT_LAST_DEVICE);
   }
 
+  Future<bool> clearGattDisconnect() async {
+    return await _methodChannel.invokeMethod(SmartWatchConstants.CLEAR_GATT_DISCONNECT);
+  }
+
   Future<String> bleReInitialize() async {
     var result = await _methodChannel.invokeMethod(SmartWatchConstants.BLE_RE_INITIALIZE);
     print('result>>$result');

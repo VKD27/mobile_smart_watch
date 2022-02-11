@@ -203,7 +203,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-   private boolean initializeData(){
+    private boolean initializeData() {
         mobileConnect = new MobileConnect(this.mContext.getApplicationContext(), activity);
         bleServiceOperate = mobileConnect.getBLEServiceOperate();
         /*bleServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
@@ -496,7 +496,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.HR_TEST_FINISHED, new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
-                            //after connections
+                        //after connections
                         case ICallbackStatus.SYNC_STATUS_24_HOUR_RATE_OPEN:  //89
                             // sync 24 hrs heart rate status
                             jsonObject.put("status", status);
@@ -525,7 +525,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             // updateConnectionStatus(true);
                             //updateConnectionStatus2(true);
                             //updateConnectionStatus3(true);
-                           // mobileConnect.getBluetoothLeService().setRssiHandler(mHandlerMessage);
+                            // mobileConnect.getBluetoothLeService().setRssiHandler(mHandlerMessage);
                             updateReadRSSIThread();
                             updatePasswordStatus();
                             // runOnUIThread(WatchConstants.DEVICE_CONNECTED, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);
@@ -533,8 +533,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
                             String lastConnectAddress = SPUtil.getInstance(mContext).getLastConnectDeviceAddress();
-                          //  boolean connectResult = mobileConnect.getBLEServiceOperate().connect(lastConnectAddress);
-                           // jsonObject.put("status", connectResult);
+                            //  boolean connectResult = mobileConnect.getBLEServiceOperate().connect(lastConnectAddress);
+                            // jsonObject.put("status", connectResult);
                             // disconnected successfully
                             // mobileConnect.disconnectDevice();
                             // updateConnectionStatus(false);
@@ -600,7 +600,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             public void onTestResult(TemperatureInfo temperatureInfo) {
                 Log.e("temperatureListener", "temperature: " + temperatureInfo.getBodyTemperature() + ", type: " + temperatureInfo.getType());
                 try {
-                    if (temperatureInfo!=null){
+                    if (temperatureInfo != null) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("calender", temperatureInfo.getCalendar());
                         jsonObject.put("type", "" + temperatureInfo.getType());
@@ -611,12 +611,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         Log.e("onTestResult", "object: " + jsonObject.toString());
                         //pushEventCallBack(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                         Log.e("onTestResult", "mUTESQLOperate: " + mUTESQLOperate.toString());
-                        if (mUTESQLOperate!=null){
+                        if (mUTESQLOperate != null) {
                             mUTESQLOperate.saveTemperature(temperatureInfo);
                             Log.e("onTestResult", "mUTESQLOperate: After save saveTemperature");
                         }
                         pushTemperatureEventCallBack(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
-                    }else{
+                    } else {
                         pushTemperatureEventCallBack(WatchConstants.TEMP_TEST_TIME_OUT, new JSONObject(), WatchConstants.SC_SUCCESS);
                     }
                 } catch (Exception exp) {
@@ -666,17 +666,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         Log.e("inside_service_result", "listeners" + mBluetoothLeService);
     }
 
-    private void updatePasswordStatus(){
+    private void updatePasswordStatus() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.e( "mWriteCommand", mWriteCommand.toString());
-                if (mWriteCommand!=null){
+                Log.e("mWriteCommand", mWriteCommand.toString());
+                if (mWriteCommand != null) {
                     mWriteCommand.sendToQueryPasswardStatus();
                 }
             }
         }, 600);
     }
+
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         try {
@@ -721,8 +722,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
             case WatchConstants.CONNECT_LAST_DEVICE:
                 String lastAddress = SPUtil.getInstance(mContext).getLastConnectDeviceAddress();
-                 boolean connectResult = mobileConnect.getBLEServiceOperate().connect(lastAddress);
+                boolean connectResult = mobileConnect.getBLEServiceOperate().connect(lastAddress);
                 result.success(connectResult);
+                break;
+            case WatchConstants.CLEAR_GATT_DISCONNECT:
+                boolean clearGatt = mobileConnect.clearGattDisconnect();
+                result.success(clearGatt);
                 break;
 
             case WatchConstants.BIND_DEVICE:
@@ -852,18 +857,19 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private void bleReInitialize(Result result){
+    private void bleReInitialize(Result result) {
         try {
-        new Handler().postDelayed(() -> {
-            mobileConnect.getBluetoothLeService().initialize();
-          result.success(WatchConstants.SC_BLE_RE_INIT);
-          }, 1000);
+            new Handler().postDelayed(() -> {
+                mobileConnect.getBluetoothLeService().initialize();
+                result.success(WatchConstants.SC_BLE_RE_INIT);
+            }, 1000);
 
         } catch (Exception exp) {
             Log.e("bleReInitializeExp::", "" + exp.getMessage());
         }
     }
-    private void initReInitialize(Result result){
+
+    private void initReInitialize(Result result) {
         try {
             //mUTESQLOperate = UTESQLOperate.getInstance(mContext.getApplicationContext());
             mobileConnect = new MobileConnect(mContext.getApplicationContext(), activity);
@@ -897,6 +903,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             Log.e("initReInitialize::", "" + exp.getMessage());
         }
     }
+
     private void initDeviceConnection(Result result) {
         // this.flutterInitResultBlu = result;
         try {
@@ -905,17 +912,17 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 //mobileConnect = new MobileConnect(this.mContext.getApplicationContext(), activity);
                 boolean blu4Enabled = mobileConnect.checkBlu4();
                 Log.e("blu4Enabled:", "" + blu4Enabled);
-                if (blu4Enabled){
+                if (blu4Enabled) {
                     String resultStatus = mobileConnect.startListeners();
                     boolean enable = mobileConnect.isBleEnabled();
                     Log.e("device_enable:", "" + enable);
-                    if (enable){
+                    if (enable) {
                         boolean connectionStatus = SPUtil.getInstance(mContext).getBleConnectStatus();
                         Log.e("connectionStatus:", "" + connectionStatus);
                         //result.success(resultStatus);
                         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                         if (bluetoothAdapter != null) {
-                            Log.e("blueAdapter_status:", ""+bluetoothAdapter.isEnabled());
+                            Log.e("blueAdapter_status:", "" + bluetoothAdapter.isEnabled());
                                 /*if (!bluetoothAdapter.isEnabled()) {
                                     bluetoothAdapter.enable();
                                 }*/
@@ -923,30 +930,30 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         new Handler().postDelayed(() -> {
                             result.success(resultStatus);
                         }, 1000);
-                    }else{
+                    } else {
                         // turn on bluetooth
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             String[] multiplePermission = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE};
-                            if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)){
+                            if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
                                 //permissionLauncher.launch(multiplePermission);
                                 ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
                             }
-                        }else{
+                        } else {
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                         }
                         new Handler().postDelayed(() -> {
                             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                             if (bluetoothAdapter != null) {
-                                Log.e("blueAdapter_status:", ""+bluetoothAdapter.isEnabled());
+                                Log.e("blueAdapter_status:", "" + bluetoothAdapter.isEnabled());
                                 /*if (!bluetoothAdapter.isEnabled()) {
                                     bluetoothAdapter.enable();
                                 }*/
                             }
                             result.success(resultStatus);
-                            }, 1000);
+                        }, 1000);
                     }
-                }else{
+                } else {
                     result.success(WatchConstants.BLE_NOT_SUPPORTED);
                 }
 
@@ -989,9 +996,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             Log.e("initDeviceExp::", "" + exp.getMessage());
         }
     }
-    private boolean checkPermissionEnabled(String permission){
+
+    private boolean checkPermissionEnabled(String permission) {
         return ContextCompat.checkSelfPermission(mContext, permission) == PackageManager.PERMISSION_GRANTED;
     }
+
     private void searchForBTDevices(Result result) {
         try {
             JSONObject jsonObject = new JSONObject();
@@ -1095,7 +1104,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private void updateReadRSSIThread(){
+    private void updateReadRSSIThread() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -1117,13 +1126,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private Handler mHandlerMessage = new Handler() {
         public void handleMessage(Message msg) {
-         Log.e("Msg_What_Handler: ", ""+msg.what);
-         switch (msg.what) {
-             case GlobalVariable.GET_RSSI_MSG:
-                 Bundle bundle = msg.getData();
-                 Log.e("GET_RSSI_MSG: ",bundle.getInt(GlobalVariable.EXTRA_RSSI) + "");
-                 break;
-         }
+            Log.e("Msg_What_Handler: ", "" + msg.what);
+            switch (msg.what) {
+                case GlobalVariable.GET_RSSI_MSG:
+                    Bundle bundle = msg.getData();
+                    Log.e("GET_RSSI_MSG: ", bundle.getInt(GlobalVariable.EXTRA_RSSI) + "");
+                    break;
+            }
         }
     };
 
@@ -1333,7 +1342,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             assert inter != null;
             int interval = Integer.parseInt(inter);
             if (mWriteCommand != null) {
-                mWriteCommand.syncTemperatureAutomaticTestInterval(true, interval*60);
+                mWriteCommand.syncTemperatureAutomaticTestInterval(true, interval * 60);
                 result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
@@ -1416,22 +1425,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
                 boolean isSupportWeather = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_SEVEN_DAYS_WEATHER);
 
-                boolean isWeatherForeCast =  GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_WEATHER_FORECAST);
+                boolean isWeatherForeCast = GetFunctionList.isSupportFunction(mContext, GlobalVariable.IS_SUPPORT_WEATHER_FORECAST);
 
-                boolean isSupportDrinkWater =  GetFunctionList.isSupportFunction_Fifth(mContext,GlobalVariable.IS_SUPPORT_DRINK_WATER_REMIND);
+                boolean isSupportDrinkWater = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_DRINK_WATER_REMIND);
 
-                boolean isSupportWristCalibra =  GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_TURN_WRIST_CALIBRATION);
+                boolean isSupportWristCalibra = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_TURN_WRIST_CALIBRATION);
 
-                boolean isSupportBandFindPhone =    GetFunctionList.isSupportFunction_Second(mContext , GlobalVariable.IS_SUPPORT_BAND_FIND_PHONE_FUNCTION) ;
+                boolean isSupportBandFindPhone = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_BAND_FIND_PHONE_FUNCTION);
 
-                boolean isSupportMusicalControl =  GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_MUSIC_CONTROL);
-                boolean isSupportWristDetection =  GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_WRIST_DETECTION_SWITCH);
-                boolean isSupportMultiSportsHR =  GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_MULTIPLE_SPORTS_MODES_HEART_RATE);
-                boolean isSupportSportControl =  GetFunctionList.isSupportFunction_Fifth(mContext,GlobalVariable.IS_SUPPORT_SPORT_CONTROL);
+                boolean isSupportMusicalControl = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_MUSIC_CONTROL);
+                boolean isSupportWristDetection = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_WRIST_DETECTION_SWITCH);
+                boolean isSupportMultiSportsHR = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_MULTIPLE_SPORTS_MODES_HEART_RATE);
+                boolean isSupportSportControl = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_SPORT_CONTROL);
 
-                boolean isSupportOnlineDial =  GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_ONLINE_DIAL);
-                boolean isSupportBodyComposition =  GetFunctionList.isSupportFunction_Third(mContext,GlobalVariable.IS_SUPPORT_BODY_COMPOSITION);
-                boolean isSupportECG =  GetFunctionList.isSupportFunction_Third(mContext,GlobalVariable.IS_SUPPORT_ECG);
+                boolean isSupportOnlineDial = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_ONLINE_DIAL);
+                boolean isSupportBodyComposition = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_BODY_COMPOSITION);
+                boolean isSupportECG = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_ECG);
 
 
                 try {
@@ -1725,12 +1734,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     sleepJsonData.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
                     sleepJsonData.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
 
-                    sleepJsonData.put("totalNum", ""+sleepTimeInfo.getSleepTotalTime());
-                    sleepJsonData.put("lightNum", ""+sleepTimeInfo.getLightTime());
-                    sleepJsonData.put("deepNum", ""+sleepTimeInfo.getDeepTime());
-                    sleepJsonData.put("awakeNum", ""+sleepTimeInfo.getAwakeTime());
-                    sleepJsonData.put("beginTimeNum",""+sleepTimeInfo.getBeginTime());
-                    sleepJsonData.put("endTimeNum",""+sleepTimeInfo.getEndTime());
+                    sleepJsonData.put("totalNum", "" + sleepTimeInfo.getSleepTotalTime());
+                    sleepJsonData.put("lightNum", "" + sleepTimeInfo.getLightTime());
+                    sleepJsonData.put("deepNum", "" + sleepTimeInfo.getDeepTime());
+                    sleepJsonData.put("awakeNum", "" + sleepTimeInfo.getAwakeTime());
+                    sleepJsonData.put("beginTimeNum", "" + sleepTimeInfo.getBeginTime());
+                    sleepJsonData.put("endTimeNum", "" + sleepTimeInfo.getEndTime());
 
                     List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
                     JSONArray sleepArray = new JSONArray();
@@ -1741,9 +1750,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
                         object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 
-                        object.put("startTimeNum", ""+sleepInfo.getStartTime());
-                        object.put("endTimeNum", ""+sleepInfo.getEndTime());
-                        object.put("diffTimeNum",""+sleepInfo.getDiffTime());
+                        object.put("startTimeNum", "" + sleepInfo.getStartTime());
+                        object.put("endTimeNum", "" + sleepInfo.getEndTime());
+                        object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
                         sleepArray.put(object);
                     }
                     sleepJsonData.put("data", sleepArray);
@@ -1853,12 +1862,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 resultJson.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
                 resultJson.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
 
-                resultJson.put("totalNum", ""+sleepTimeInfo.getSleepTotalTime());
-                resultJson.put("lightNum", ""+sleepTimeInfo.getLightTime());
-                resultJson.put("deepNum", ""+sleepTimeInfo.getDeepTime());
-                resultJson.put("awakeNum", ""+sleepTimeInfo.getAwakeTime());
-                resultJson.put("beginTimeNum",""+sleepTimeInfo.getBeginTime());
-                resultJson.put("endTimeNum",""+sleepTimeInfo.getEndTime());
+                resultJson.put("totalNum", "" + sleepTimeInfo.getSleepTotalTime());
+                resultJson.put("lightNum", "" + sleepTimeInfo.getLightTime());
+                resultJson.put("deepNum", "" + sleepTimeInfo.getDeepTime());
+                resultJson.put("awakeNum", "" + sleepTimeInfo.getAwakeTime());
+                resultJson.put("beginTimeNum", "" + sleepTimeInfo.getBeginTime());
+                resultJson.put("endTimeNum", "" + sleepTimeInfo.getEndTime());
 //                Log.e("sleepTimeInfo111", "getBeginTime: " +  GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
 //                Log.e("sleepTimeInfo111", "getEndTime: " + GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
 //                Log.e("sleepTimeInfo111", "getDeepTime: " + GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getDeepTime()));
@@ -1877,9 +1886,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
                     object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 
-                    object.put("startTimeNum", ""+sleepInfo.getStartTime());
-                    object.put("endTimeNum", ""+sleepInfo.getEndTime());
-                    object.put("diffTimeNum",""+sleepInfo.getDiffTime());
+                    object.put("startTimeNum", "" + sleepInfo.getStartTime());
+                    object.put("endTimeNum", "" + sleepInfo.getEndTime());
+                    object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
 //                    Log.e("sleepInfoList", "getColorIndex: " + sleepInfo.getColorIndex());
 //                    Log.e("sleepInfoList", "getDiffTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 //                    Log.e("sleepInfoList", "getStartTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()) + " -- " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
@@ -2113,12 +2122,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonObject.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
                         jsonObject.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
 
-                        jsonObject.put("totalNum", ""+sleepTimeInfo.getSleepTotalTime());
-                        jsonObject.put("lightNum", ""+sleepTimeInfo.getLightTime());
-                        jsonObject.put("deepNum", ""+sleepTimeInfo.getDeepTime());
-                        jsonObject.put("awakeNum", ""+sleepTimeInfo.getAwakeTime());
-                        jsonObject.put("beginTimeNum",""+sleepTimeInfo.getBeginTime());
-                        jsonObject.put("endTimeNum",""+sleepTimeInfo.getEndTime());
+                        jsonObject.put("totalNum", "" + sleepTimeInfo.getSleepTotalTime());
+                        jsonObject.put("lightNum", "" + sleepTimeInfo.getLightTime());
+                        jsonObject.put("deepNum", "" + sleepTimeInfo.getDeepTime());
+                        jsonObject.put("awakeNum", "" + sleepTimeInfo.getAwakeTime());
+                        jsonObject.put("beginTimeNum", "" + sleepTimeInfo.getBeginTime());
+                        jsonObject.put("endTimeNum", "" + sleepTimeInfo.getEndTime());
 
 
                         List<SleepInfo> sleepInfoList = sleepTimeInfo.getSleepInfoList();
@@ -2132,9 +2141,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
                             object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 
-                            object.put("startTimeNum", ""+sleepInfo.getStartTime());
-                            object.put("endTimeNum", ""+sleepInfo.getEndTime());
-                            object.put("diffTimeNum",""+sleepInfo.getDiffTime());
+                            object.put("startTimeNum", "" + sleepInfo.getStartTime());
+                            object.put("endTimeNum", "" + sleepInfo.getEndTime());
+                            object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
                             sleepDataArray.put(object);
                         }
 
@@ -2291,12 +2300,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         sleepObject.put("beginTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getBeginTime()));
                         sleepObject.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepTimeInfo.getEndTime()));
 
-                        sleepObject.put("totalNum", ""+sleepTimeInfo.getSleepTotalTime());
-                        sleepObject.put("lightNum", ""+sleepTimeInfo.getLightTime());
-                        sleepObject.put("deepNum", ""+sleepTimeInfo.getDeepTime());
-                        sleepObject.put("awakeNum", ""+sleepTimeInfo.getAwakeTime());
-                        sleepObject.put("beginTimeNum",""+sleepTimeInfo.getBeginTime());
-                        sleepObject.put("endTimeNum",""+sleepTimeInfo.getEndTime());
+                        sleepObject.put("totalNum", "" + sleepTimeInfo.getSleepTotalTime());
+                        sleepObject.put("lightNum", "" + sleepTimeInfo.getLightTime());
+                        sleepObject.put("deepNum", "" + sleepTimeInfo.getDeepTime());
+                        sleepObject.put("awakeNum", "" + sleepTimeInfo.getAwakeTime());
+                        sleepObject.put("beginTimeNum", "" + sleepTimeInfo.getBeginTime());
+                        sleepObject.put("endTimeNum", "" + sleepTimeInfo.getEndTime());
                         List<SleepInfo> sleepDataList = sleepTimeInfo.getSleepInfoList();
                         JSONArray sleepDataArray = new JSONArray();
                         for (SleepInfo sleepInfo : sleepDataList) {
@@ -2306,9 +2315,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             obj.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
                             obj.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 
-                            obj.put("startTimeNum", ""+sleepInfo.getStartTime());
-                            obj.put("endTimeNum", ""+sleepInfo.getEndTime());
-                            obj.put("diffTimeNum",""+sleepInfo.getDiffTime());
+                            obj.put("startTimeNum", "" + sleepInfo.getStartTime());
+                            obj.put("endTimeNum", "" + sleepInfo.getEndTime());
+                            obj.put("diffTimeNum", "" + sleepInfo.getDiffTime());
                             sleepDataArray.put(obj);
                         }
                         sleepObject.put("data", sleepDataArray);
@@ -2349,7 +2358,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
                 //temperature data
                 List<TemperatureInfo> temperatureInfoList = mUTESQLOperate.queryTemperatureAll();
-                Log.e("temperatureInfoList::", ""+temperatureInfoList.size());
+                Log.e("temperatureInfoList::", "" + temperatureInfoList.size());
                 if (temperatureInfoList != null) {
                     JSONArray temperatureArray = new JSONArray();
                     for (TemperatureInfo temperatureInfo : temperatureInfoList) {
@@ -2473,7 +2482,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 if (GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_TEMPERATURE_TEST)) {
                     mWriteCommand.queryCurrentTemperatureData();
                     result.success(WatchConstants.SC_INIT);
-                }else{
+                } else {
                     result.success(WatchConstants.SC_NOT_SUPPORTED);
                 }
             } else {
@@ -2663,7 +2672,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
                 }
             });*//*
-           *//* new Handler(Looper.getMainLooper()).post(new Runnable() {
+     *//* new Handler(Looper.getMainLooper()).post(new Runnable() {
                  @Override
                  public void run() {
                  Log.e("runOnUIThread", "Calling runOnUIThread with: " + data);

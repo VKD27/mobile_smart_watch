@@ -179,7 +179,15 @@ public class MobileConnect {
             return false;
         }
     }
-    
+
+    public boolean clearGattDisconnect() {
+        if (this.mBluetoothLeService != null) {
+            this.mBluetoothLeService.ClearGattForDisConnect();
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public ArrayList<BleDevices> getDevicesList() {
         Log.e("getDevicesList ", "BleDevices::" + this.mLeDevices.size());

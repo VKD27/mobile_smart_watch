@@ -27,6 +27,7 @@ public class WatchConstants {
     //device data
     public static final String GET_LAST_DEVICE_ADDRESS = "getLastDeviceAddress";
     public static final String CONNECT_LAST_DEVICE = "connectLastDevice";
+    public static final String CLEAR_GATT_DISCONNECT = "clearGattDisconnect";
     public static final String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
     public static final String GET_DEVICE_VERSION = "fetchDeviceVersion";
     public static final String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
