@@ -170,9 +170,9 @@ public class MobileConnect {
         if (mBLEServiceOperate != null) {
             this.mBLEServiceOperate.disConnect();
             if (this.mBluetoothLeService != null) {
-                this.mBluetoothLeService.disconnect();
+               // this.mBluetoothLeService.disconnect();
                 this.mBluetoothLeService.ClearGattForDisConnect();
-                this.mBLEServiceOperate.unBindService();
+              //  this.mBLEServiceOperate.unBindService();
             }
             return true;
         }else{
