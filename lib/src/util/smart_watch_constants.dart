@@ -114,7 +114,8 @@ class SmartWatchConstants {
   static const String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
   static const String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
 
-
+  //any sync failed
+  static const String SYNC_BLE_WRITE_FAIL = "syncBleWriteFail";
   static const String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
   static const String SYNC_TEMPERATURE_TIME_OUT = "syncTempTimeOut";
 

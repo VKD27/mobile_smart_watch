@@ -80,7 +80,8 @@ public class WatchConstants {
     public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
     public static final String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
 
-
+    //any sync failed
+    public static final String SYNC_BLE_WRITE_FAIL = "syncBleWriteFail";
     public static final String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
     public static final String SYNC_TEMPERATURE_TIME_OUT = "syncTempTimeOut";
 

@@ -408,10 +408,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         // while connecting a device
                         case ICallbackStatus.READ_CHAR_SUCCESS: // 137
                             break;
-                        case ICallbackStatus.WRITE_COMMAND_TO_BLE_SUCCESS: // 148
-                            break;
                         case ICallbackStatus.SYNC_TIME_OK: // 6
                             //sync time ok
+                            break;
+                        case ICallbackStatus.WRITE_COMMAND_TO_BLE_SUCCESS: // 148
+                            break;
+                        case ICallbackStatus.WRITE_COMMAND_TO_BLE_FAIL: // 149
+                            // when any ble write command failed
+                            pushEventCallBack(WatchConstants.SYNC_BLE_WRITE_FAIL, new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
 
