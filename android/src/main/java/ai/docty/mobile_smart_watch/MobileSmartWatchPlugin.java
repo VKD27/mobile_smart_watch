@@ -529,8 +529,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             break;
                         case ICallbackStatus.DISCONNECT_STATUS: // 19
                             String lastConnectAddress = SPUtil.getInstance(mContext).getLastConnectDeviceAddress();
-                            boolean connectResult = mobileConnect.getBLEServiceOperate().connect(lastConnectAddress);
-                            jsonObject.put("status", connectResult);
+                          //  boolean connectResult = mobileConnect.getBLEServiceOperate().connect(lastConnectAddress);
+                           // jsonObject.put("status", connectResult);
                             // disconnected successfully
                             // mobileConnect.disconnectDevice();
                             // updateConnectionStatus(false);
