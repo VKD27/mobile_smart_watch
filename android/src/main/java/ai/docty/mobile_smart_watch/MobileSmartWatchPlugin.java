@@ -932,20 +932,20 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         boolean connectionStatus = SPUtil.getInstance(mContext).getBleConnectStatus();
                         Log.e("connectionStatus:", "" + connectionStatus);
                         //result.success(resultStatus);
-                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                        if (bluetoothAdapter != null) {
-                            Log.e("blueAdapter_status:", "" + bluetoothAdapter.isEnabled());
-                                /*if (!bluetoothAdapter.isEnabled()) {
-                                    bluetoothAdapter.enable();
-                                }*/
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
-                                    //permissionLauncher.launch(multiplePermission);
-                                    ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
-                                }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
+                                //permissionLauncher.launch(multiplePermission);
+                                ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
                             }
                         }
                         new Handler().postDelayed(() -> {
+                            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                            if (bluetoothAdapter != null) {
+                                Log.e("blueAdapter_status11:", "" + bluetoothAdapter.isEnabled());
+                                /*if (!bluetoothAdapter.isEnabled()) {
+                                    bluetoothAdapter.enable();
+                                }*/
+                            }
                             result.success(resultStatus);
                         }, 1000);
                     } else {
@@ -959,7 +959,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                 BluetoothManager bluetoothManager = (BluetoothManager) activity.getSystemService(Context.BLUETOOTH_SERVICE);
                                 BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
                                 if (bluetoothAdapter != null) {
-                                    Log.e("blueAdapter_status:", "" + bluetoothAdapter.isEnabled());
+                                    Log.e("blueAdapter_status1:", "" + bluetoothAdapter.isEnabled());
                                     if (!bluetoothAdapter.isEnabled()) {
                                         bluetoothAdapter.enable();
                                     }
@@ -974,7 +974,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         new Handler().postDelayed(() -> {
                             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                             if (bluetoothAdapter != null) {
-                                Log.e("blueAdapter_status:", "" + bluetoothAdapter.isEnabled());
+                                Log.e("blueAdapter_status2:", "" + bluetoothAdapter.isEnabled());
                                 /*if (!bluetoothAdapter.isEnabled()) {
                                     bluetoothAdapter.enable();
                                 }*/
