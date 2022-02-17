@@ -907,6 +907,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void initDeviceConnection(Result result) {
         // this.flutterInitResultBlu = result;
+        boolean isException = false;
         String[] multiplePermission = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_PRIVILEGED, Manifest.permission.BLUETOOTH_ADVERTISE};
 
         try {
@@ -950,6 +951,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         }, 1000);
                     } else {
                         // turn on bluetooth
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
                                 //permissionLauncher.launch(multiplePermission);
@@ -966,12 +968,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                 }
                             }catch (Exception exp){
                                 Log.e("blue_service_exp", exp.getMessage());
-                                result.success(WatchConstants.BLE_NOT_ENABLED);
+                                isException = true;
                             }
                         } else {
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                         }
+                        boolean finalIsException = isException;
                         new Handler().postDelayed(() -> {
                             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                             if (bluetoothAdapter != null) {
@@ -980,7 +983,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                     bluetoothAdapter.enable();
                                 }*/
                             }
-                            result.success(resultStatus);
+                            if (finalIsException){
+                                result.success(WatchConstants.BLE_NOT_ENABLED);
+                            }else {
+                                result.success(resultStatus);
+                            }
+
                         }, 1000);
                     }
                 } else {
