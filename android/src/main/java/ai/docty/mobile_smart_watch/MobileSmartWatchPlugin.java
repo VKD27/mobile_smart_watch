@@ -966,6 +966,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                 }
                             }catch (Exception exp){
                                 Log.e("blue_service_exp", exp.getMessage());
+                                result.success(WatchConstants.BLE_NOT_ENABLED);
                             }
                         } else {
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
