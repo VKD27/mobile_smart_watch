@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -953,6 +954,18 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
                                 //permissionLauncher.launch(multiplePermission);
                                 ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
+                            }
+                            try {
+                                BluetoothManager bluetoothManager = (BluetoothManager) activity.getSystemService(Context.BLUETOOTH_SERVICE);
+                                BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+                                if (bluetoothAdapter != null) {
+                                    Log.e("blueAdapter_status:", "" + bluetoothAdapter.isEnabled());
+                                    if (!bluetoothAdapter.isEnabled()) {
+                                        bluetoothAdapter.enable();
+                                    }
+                                }
+                            }catch (Exception exp){
+                                Log.e("blue_service_exp", exp.getMessage());
                             }
                         } else {
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
