@@ -906,13 +906,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
     private void initDeviceConnection(Result result) {
         // this.flutterInitResultBlu = result;
-        String[] multiplePermission = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE};
+        String[] multiplePermission = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_PRIVILEGED, Manifest.permission.BLUETOOTH_ADVERTISE};
 
         try {
             if (mobileConnect != null) {
                 //  boolean initStatus = initializeData();
                 //mobileConnect = new MobileConnect(this.mContext.getApplicationContext(), activity);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_CONNECT)) {
                         //permissionLauncher.launch(multiplePermission);
                         ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
@@ -920,7 +920,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 } else {
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }
+                }*/
                 boolean blu4Enabled = mobileConnect.checkBlu4();
                 Log.e("blu4Enabled:", "" + blu4Enabled);
                 if (blu4Enabled) {
@@ -937,21 +937,27 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                 /*if (!bluetoothAdapter.isEnabled()) {
                                     bluetoothAdapter.enable();
                                 }*/
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
+                                    //permissionLauncher.launch(multiplePermission);
+                                    ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
+                                }
+                            }
                         }
                         new Handler().postDelayed(() -> {
                             result.success(resultStatus);
                         }, 1000);
                     } else {
                         // turn on bluetooth
-                       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_CONNECT)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
                                 //permissionLauncher.launch(multiplePermission);
                                 ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
                             }
                         } else {
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                        }*/
+                        }
                         new Handler().postDelayed(() -> {
                             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                             if (bluetoothAdapter != null) {
