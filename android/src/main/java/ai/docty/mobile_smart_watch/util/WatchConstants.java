@@ -35,6 +35,7 @@ public class WatchConstants {
     public static final String SET_24_HEART_RATE = "set24HeartRate";
     public static final String SET_24_TEMPERATURE_TEST = "set24TempTest";
     public static final String SET_WEATHER_INFO = "setWeatherInfo";
+    public static final String SET_BAND_LANGUAGE = "setBandLanguage";
 
     // daily activities & operations
     public static final String SYNC_ALL_JUDGE = "fetchAllJudgement";
@@ -81,6 +82,7 @@ public class WatchConstants {
     public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
     public static final String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
 
+
     //any sync failed
     public static final String SYNC_BLE_WRITE_FAIL = "syncBleWriteFail";
     public static final String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
@@ -117,6 +119,9 @@ public class WatchConstants {
     public static final String DEVICE_DISCONNECTED = "deviceDisConnected";
     public static final String DEVICE_CONNECTED = "deviceConnected";
     public static final String UPDATE_DEVICE_PARAMS = "updateDeviceParams";
+
+    public static final String QUERY_BAND_LANGUAGE = "queryBandLanguage";
+    public static final String SYNC_BAND_LANGUAGE = "syncBandLanguage";
 
     //real time sync data constants
     public static final String STEPS_REAL_TIME = "stepsRealTime";

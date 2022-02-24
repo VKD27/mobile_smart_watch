@@ -66,7 +66,8 @@ class SmartWatchConstants {
   static const String SET_USER_PARAMS = "setUserDetails";
   static const String SET_24_HEART_RATE = "set24HeartRate";
   static const String SET_24_TEMPERATURE_TEST = "set24TempTest";
-  static const  String SET_WEATHER_INFO = "setWeatherInfo";
+  static const String SET_WEATHER_INFO = "setWeatherInfo";
+  static const String SET_BAND_LANGUAGE = "setBandLanguage";
 
   // daily activities & operations
   static const String SYNC_ALL_JUDGE = "fetchAllJudgement";
@@ -153,6 +154,9 @@ class SmartWatchConstants {
   static const String DEVICE_DISCONNECTED = "deviceDisConnected";
   static const String DEVICE_CONNECTED = "deviceConnected";
   static const String UPDATE_DEVICE_PARAMS = "updateDeviceParams";
+
+  static const String QUERY_BAND_LANGUAGE = "queryBandLanguage";
+  static const String SYNC_BAND_LANGUAGE = "syncBandLanguage";
 
   //real time sync data constants
   static const String STEPS_REAL_TIME = "stepsRealTime";

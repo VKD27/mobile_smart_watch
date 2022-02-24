@@ -53,6 +53,7 @@ import com.yc.pedometer.sdk.SleepChangeListener;
 import com.yc.pedometer.sdk.StepChangeListener;
 import com.yc.pedometer.sdk.UTESQLOperate;
 import com.yc.pedometer.sdk.WriteCommandToBLE;
+import com.yc.pedometer.utils.BandLanguageUtil;
 import com.yc.pedometer.utils.CalendarUtils;
 import com.yc.pedometer.utils.GetFunctionList;
 import com.yc.pedometer.utils.GlobalVariable;
@@ -509,10 +510,19 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
-                       /* case ICallbackStatus.TWO_DAY_WEATHER_SYNC_SUCCESS: // 73
+                        case ICallbackStatus.QUERY_BAND_LANGUAGE_OK: // 147
                             jsonObject.put("status", status);
-                            pushEventCallBack(WatchConstants.SYNC_WEATHER_SUCCESS, jsonObject, WatchConstants.SC_SUCCESS);
-                            break;*/
+                            jsonObject.put("result", result);
+                            int languageType = SPUtil.getInstance(mContext).getBandCurrentLanguageType();
+                            jsonObject.put("languageType", ""+languageType);
+                            pushEventCallBack(WatchConstants.QUERY_BAND_LANGUAGE, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.BAND_LANGUAGE_SYNC_OK: // 78
+                            jsonObject.put("status", status);
+                            jsonObject.put("result", result);
+                            pushEventCallBack(WatchConstants.SYNC_BAND_LANGUAGE, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
 
                         case ICallbackStatus.SEVEN_DAY_WEATHER_SYNC_SUCCESS: // 51
                             jsonObject.put("status", status);
@@ -748,6 +758,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 break;
             case WatchConstants.SET_WEATHER_INFO:
                 setSevenDaysWeatherInfo(call, result);
+                break;
+
+            case WatchConstants.SET_BAND_LANGUAGE:
+                setDeviceBandLanguage(call, result);
                 break;
 
             case WatchConstants.GET_DEVICE_VERSION:
@@ -1374,6 +1388,33 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void setDeviceBandLanguage(MethodCall call, Result result) {
+        try {
+            String langInfo = call.argument("lang");
+            assert langInfo != null;
+            if (langInfo.equalsIgnoreCase("es")){
+                //if spanish
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncBandLanguage(BandLanguageUtil.BAND_LANGUAGE_ES);
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
+                }
+            }else{
+                // english
+                if (mWriteCommand != null) {
+                    mWriteCommand.syncBandLanguage(BandLanguageUtil.BAND_LANGUAGE_EN);
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
+                }
+            }
+        } catch (Exception exp) {
+            Log.e("set24HeartRateExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
     private void set24HrTemperatureTest(MethodCall call, Result result) {
         try {
             String inter = call.argument("interval");
@@ -1480,6 +1521,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 boolean isSupportBodyComposition = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_BODY_COMPOSITION);
                 boolean isSupportECG = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_ECG);
 
+                boolean isSupportQueryBandLang = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_QUERY_BAND_LANGUAGE); // to get current value of the language
+                boolean isSupportBandLangDisplay = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_BAND_LANGUAGE_DISPLAY); // language supported by the query device is supported
+
 
                 try {
 
@@ -1508,6 +1552,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     judgeJson.put("isSupportOnlineDial", isSupportOnlineDial);
                     judgeJson.put("isSupportBodyComposition", isSupportBodyComposition);
                     judgeJson.put("isSupportECG", isSupportECG);
+                    judgeJson.put("isSupportQueryBandLang", isSupportQueryBandLang);
+                    judgeJson.put("isSupportBandLangDisplay", isSupportBandLangDisplay);
 
 //                AsyncExecuteUpdate asyncTask=new AsyncExecuteUpdate();
 //                asyncTask.execute("");

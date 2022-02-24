@@ -167,6 +167,13 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_WEATHER_INFO, params);
   }
 
+  Future<String> setDeviceBandLanguage(String lang) async{
+    var params = {
+      "lang": lang, //either es or en
+    };
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SET_BAND_LANGUAGE, params);
+  }
+
   Future<Map<String, dynamic>> fetchOverAllByDate(String dateTime) async{
     var params = {
       "dateTime":dateTime,  // dateTime is mandatory to pass
