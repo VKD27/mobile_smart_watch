@@ -190,8 +190,12 @@ public class MobileConnect {
     }
 
     public ArrayList<BleDevices> getDevicesList() {
-        Log.e("getDevicesList ", "BleDevices::" + this.mLeDevices.size());
-        return this.mLeDevices;
+        if (this.mLeDevices == null) {
+            return new ArrayList<>();
+        }else{
+            Log.e("getDevicesList ", "BleDevices::" + this.mLeDevices.size());
+            return this.mLeDevices;
+        }
     }
 
     private void addDevice(BleDevices device) {
