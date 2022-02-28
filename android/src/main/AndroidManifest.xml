@@ -63,7 +63,7 @@
         <!--Solve the bug of using ProtocolVersion to throw exception on android9.0-->
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false" />
+            android:required="true" />
 
         <!--DFU firmware upgrade-->
          <activity android:name="com.yc.pedometer.update.NotificationActivity" />
