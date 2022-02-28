@@ -1377,8 +1377,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                    "todayAqi":"",
 
             if (mWriteCommand != null) {
-                //mWriteCommand.syncWeatherToBLEForXiaoYang(sevenDayWeatherInfo);
-                mWriteCommand.syncSevenDayWeatherToBle(sevenDayWeatherInfo);
+                mWriteCommand.syncWeatherToBLEForXiaoYang(sevenDayWeatherInfo);
+               // mWriteCommand.syncSevenDayWeatherToBle(sevenDayWeatherInfo);
                 result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
