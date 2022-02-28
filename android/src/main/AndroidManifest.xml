@@ -66,7 +66,7 @@
             android:required="false" />
 
         <!--DFU firmware upgrade-->
-        <!-- <activity android:name="com.yc.pedometer.update.NotificationActivity" />-->
+         <activity android:name="com.yc.pedometer.update.NotificationActivity" />
          <service android:name="com.yc.pedometer.update.DfuService"
              android:enabled="true"
              android:exported="false"/>
