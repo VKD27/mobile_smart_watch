@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--NRF upgrade-->
+    <string name="channel_connected_devices_title">Background connections</string>
+    <string name="channel_connected_devices_description">Shows a notification when a device is connected in background.</string>
+    <string name="channel_files_title">Files</string>
+    <string name="channel_files_description">Shows notifications when new files has been saved.</string>
+    <string name="channel_proximity_warnings_title">Proximity warnings</string>
+    <string name="channel_proximity_warnings_description">Shows notifications when a proximity device got out of range.</string>
+
+</resources>
