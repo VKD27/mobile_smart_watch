@@ -4,6 +4,7 @@ package ai.docty.mobile_smart_watch;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 
 import ai.docty.mobile_smart_watch.model.BleDevices;
 import ai.docty.mobile_smart_watch.util.WatchConstants;
+import no.nordicsemi.android.dfu.DfuServiceInitiator;
 
 
 public class MobileConnect {
@@ -51,6 +53,14 @@ public class MobileConnect {
         //if (mBLEServiceOperate!=null){
          //   this.mBluetoothLeService = mBLEServiceOperate.getBleService();
        // }
+
+        initializeDfuService(this.context);
+    }
+
+    private void initializeDfuService(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DfuServiceInitiator.createDfuNotificationChannel(context);
+        }
     }
 
     public BLEServiceOperate getBLEServiceOperate(){

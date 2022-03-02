@@ -205,10 +205,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
-    private boolean initializeData() {
+    /*private boolean initializeData() {
         mobileConnect = new MobileConnect(this.mContext.getApplicationContext(), activity);
         bleServiceOperate = mobileConnect.getBLEServiceOperate();
-        /*bleServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
+        *//*bleServiceOperate.setServiceStatusCallback(new ServiceStatusCallback() {
             @Override
             public void OnServiceStatuslt(int status) {
                 if (status == ICallbackStatus.BLE_SERVICE_START_OK) {
@@ -218,13 +218,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     }
                 }
             }
-        });*/
+        });*//*
         mBluetoothLeService = bleServiceOperate.getBleService();
         if (mBluetoothLeService != null) {
             startListeningCallback(false);
         }
         return true;
-    }
+    }*/
 
    /* private void setUpDataEngine( BinaryMessenger binaryMessenger){
         try{
@@ -1377,8 +1377,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                    "todayAqi":"",
 
             if (mWriteCommand != null) {
-                mWriteCommand.syncWeatherToBLEForXiaoYang(sevenDayWeatherInfo);
-               // mWriteCommand.syncSevenDayWeatherToBle(sevenDayWeatherInfo);
+               // mWriteCommand.syncWeatherToBLEForXiaoYang(sevenDayWeatherInfo);
+                 mWriteCommand.syncSevenDayWeatherToBle(sevenDayWeatherInfo);
                 result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
