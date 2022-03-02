@@ -66,10 +66,10 @@
             android:required="true" />
 
         <!--DFU firmware upgrade-->
-         <activity android:name="com.yc.pedometer.update.NotificationActivity" />
+         <activity android:name="com.yc.pedometer.update.NotificationActivity"  android:exported="true"/>
          <service android:name="com.yc.pedometer.update.DfuService"
              android:enabled="true"
-             android:exported="false"/>
+             android:exported="true"/>
 
         <meta-data
             android:name="flutterEmbedding"

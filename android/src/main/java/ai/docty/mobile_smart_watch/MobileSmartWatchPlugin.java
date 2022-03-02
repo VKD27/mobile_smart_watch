@@ -499,7 +499,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             break;
 
                         //after connections
-                        case ICallbackStatus.SYNC_STATUS_24_HOUR_RATE_OPEN:  //89
+                        case ICallbackStatus.SYNC_STATUS_24_HOUR_RATE_OPEN:  //175
                             // sync 24 hrs heart rate status
                             jsonObject.put("status", status);
                             pushEventCallBack(WatchConstants.SYNC_STATUS_24_HOUR_RATE_OPEN, jsonObject, WatchConstants.SC_SUCCESS);

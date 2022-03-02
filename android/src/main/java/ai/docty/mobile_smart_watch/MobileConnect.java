@@ -2,6 +2,9 @@ package ai.docty.mobile_smart_watch;
 
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Build;
@@ -22,6 +25,10 @@ import no.nordicsemi.android.dfu.DfuServiceInitiator;
 
 
 public class MobileConnect {
+
+    public static final String CONNECTED_DEVICE_CHANNEL = "connected_device_channel";
+    public static final String FILE_SAVED_CHANNEL = "file_saved_channel";
+    public static final String PROXIMITY_WARNINGS_CHANNEL = "proximity_warnings_channel";
 
     private  Context context;
     private  Activity activity;
@@ -60,6 +67,26 @@ public class MobileConnect {
     private void initializeDfuService(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DfuServiceInitiator.createDfuNotificationChannel(context);
+            //activity.
+            final NotificationChannel channel = new NotificationChannel(CONNECTED_DEVICE_CHANNEL, context.getString(R.string.channel_connected_devices_title), NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription(context.getString(R.string.channel_connected_devices_description));
+            channel.setShowBadge(false);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+            final NotificationChannel fileChannel = new NotificationChannel(FILE_SAVED_CHANNEL, context.getString(R.string.channel_files_title), NotificationManager.IMPORTANCE_LOW);
+            fileChannel.setDescription(context.getString(R.string.channel_files_description));
+            fileChannel.setShowBadge(false);
+            fileChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+
+            final NotificationChannel proximityChannel = new NotificationChannel(PROXIMITY_WARNINGS_CHANNEL, context.getString(R.string.channel_proximity_warnings_title), NotificationManager.IMPORTANCE_LOW);
+            proximityChannel.setDescription(context.getString(R.string.channel_proximity_warnings_description));
+            proximityChannel.setShowBadge(false);
+            proximityChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+            final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(channel);
+            notificationManager.createNotificationChannel(fileChannel);
+            notificationManager.createNotificationChannel(proximityChannel);
         }
     }
 
