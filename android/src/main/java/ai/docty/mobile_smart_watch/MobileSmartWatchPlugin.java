@@ -741,6 +741,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 result.success(clearGatt);
                 break;
 
+            case WatchConstants.CHECK_FIND_BAND:
+                boolean findAvailable = GetFunctionList.isSupportFunction_Second(mContext, GlobalVariable.IS_SUPPORT_BAND_FIND_PHONE_FUNCTION);
+                result.success(findAvailable);
+                break;
+
             case WatchConstants.BIND_DEVICE:
                 connectBluDevice(call, result);
                 break;
@@ -750,6 +755,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             case WatchConstants.SET_USER_PARAMS:
                 setUserParams(call, result);
                 break;
+
+            case WatchConstants.FIND_BAND_DEVICE:
+                findBandDevice(result);
+                break;
+
             case WatchConstants.SET_24_HEART_RATE:
                 set24HeartRate(call, result);
                 break;
@@ -1283,6 +1293,20 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void findBandDevice(Result result) {
+        try {
+            if (mWriteCommand != null) {
+                mWriteCommand.findBand(3);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("findBandDeviceExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
     private void set24HeartRate(MethodCall call, Result result) {
         try {
             String enable = call.argument("enable");
@@ -1419,10 +1443,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private void set24HrTemperatureTest(MethodCall call, Result result) {
         try {
             String inter = call.argument("interval");
+            String isOpen = call.argument("isOpen");
             assert inter != null;
             int interval = Integer.parseInt(inter);
+
+            assert isOpen != null;
+            boolean openEnabled = isOpen.toLowerCase().equalsIgnoreCase("true");
             if (mWriteCommand != null) {
-                mWriteCommand.syncTemperatureAutomaticTestInterval(true, interval * 60);
+                mWriteCommand.syncTemperatureAutomaticTestInterval(openEnabled, interval * 60);
                 result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);

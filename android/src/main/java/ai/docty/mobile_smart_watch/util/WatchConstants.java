@@ -37,6 +37,8 @@ public class WatchConstants {
     public static final String SET_WEATHER_INFO = "setWeatherInfo";
     public static final String SET_BAND_LANGUAGE = "setBandLanguage";
 
+    public static final String FIND_BAND_DEVICE = "findBandDevice";
+
     // daily activities & operations
     public static final String SYNC_ALL_JUDGE = "fetchAllJudgement";
     public static final String GET_SYNC_STEPS = "syncAllStepsData";
@@ -82,6 +84,7 @@ public class WatchConstants {
     public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
     public static final String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
 
+    public static final String CHECK_FIND_BAND = "checkFindBand";
 
     //any sync failed
     public static final String SYNC_BLE_WRITE_FAIL = "syncBleWriteFail";
