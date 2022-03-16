@@ -34,6 +34,8 @@ import com.yc.pedometer.info.SleepTimeInfo;
 import com.yc.pedometer.info.SportsModesInfo;
 import com.yc.pedometer.info.StepOneDayAllInfo;
 import com.yc.pedometer.info.StepOneHourInfo;
+import com.yc.pedometer.info.StepRunHourInfo;
+import com.yc.pedometer.info.StepWalkHourInfo;
 import com.yc.pedometer.info.TemperatureInfo;
 import com.yc.pedometer.listener.BreatheRealListener;
 import com.yc.pedometer.listener.OxygenRealListener;
@@ -1917,6 +1919,24 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 jsonObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getDistance()));
                 jsonObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
 
+
+                Log.e("calender:", " "+stepOneDayAllInfo.getCalendar());
+                Log.e("steps:", " "+stepOneDayAllInfo.getStep());
+                Log.e("calories:", " "+stepOneDayAllInfo.getCalories());
+                Log.e("distance:", " "+stepOneDayAllInfo.getDistance());
+
+                Log.e("getRunSteps:", " "+stepOneDayAllInfo.getRunSteps());
+                Log.e("getRunCalories:", " "+stepOneDayAllInfo.getRunCalories());
+                Log.e("getRunDistance:", " "+stepOneDayAllInfo.getRunDistance());
+                Log.e("getRunHourDetails:", " "+stepOneDayAllInfo.getRunHourDetails());
+                Log.e("getRunDurationTime:", " "+stepOneDayAllInfo.getRunDurationTime());
+
+                Log.e("getWalkSteps:", " "+stepOneDayAllInfo.getWalkSteps());
+                Log.e("getWalkCalories:", " "+stepOneDayAllInfo.getWalkCalories());
+                Log.e("getWalkDistance:", " "+stepOneDayAllInfo.getWalkDistance());
+                Log.e("getWalkHourDetails:", " "+stepOneDayAllInfo.getWalkHourDetails());
+                Log.e("getWalkDurationTime:", " "+stepOneDayAllInfo.getWalkDurationTime());
+
 //                Log.e("onStepChange111", "getStep: " + stepOneDayAllInfo.getStep());
 //                Log.e("onStepChange112", "getCalories: " + stepOneDayAllInfo.getCalories());
 //                Log.e("onStepChange113", "getDistance: " + stepOneDayAllInfo.getDistance());
@@ -2364,6 +2384,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 if (stepsInfoList != null) {
                     JSONArray stepsJsonArray = new JSONArray();
                     for (StepOneDayAllInfo info : stepsInfoList) {
+
                         JSONObject stepsObject = new JSONObject();
                         stepsObject.put("calender", info.getCalendar());
                         stepsObject.put("steps", info.getStep());
@@ -2378,6 +2399,28 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             stepsArray.put(objStep);
                         }
                         stepsObject.put("data", stepsArray);
+
+                        Log.e("calender:", " "+info.getCalendar());
+                        Log.e("steps:", " "+info.getStep());
+                        Log.e("calories:", " "+info.getCalories());
+                        Log.e("distance:", " "+info.getDistance());
+
+                        Log.e("getRunSteps:", " "+info.getRunSteps());
+                        Log.e("getRunCalories:", " "+info.getRunCalories());
+                        Log.e("getRunDistance:", " "+info.getRunDistance());
+                        Log.e("getRunHourDetails:", " "+info.getRunHourDetails());
+                        Log.e("getRunDurationTime:", " "+info.getRunDurationTime());
+
+                        Log.e("getWalkSteps:", " "+info.getWalkSteps());
+                        Log.e("getWalkCalories:", " "+info.getWalkCalories());
+                        Log.e("getWalkDistance:", " "+info.getWalkDistance());
+                        Log.e("getWalkHourDetails:", " "+info.getWalkHourDetails());
+                        Log.e("getWalkDurationTime:", " "+info.getWalkDurationTime());
+
+//                        ArrayList<StepRunHourInfo>  stepRunHourInfoList = info.getStepRunHourArrayInfo();
+//                        ArrayList<StepWalkHourInfo>  stepWalkHourInfoList = info.getStepWalkHourArrayInfo();
+//                        ArrayList<StepWalkHourInfo>  stepWalkHourInfoList = info.get();
+
                         stepsJsonArray.put(stepsObject);
                     }
                     overAllJson.put("steps", stepsJsonArray);
