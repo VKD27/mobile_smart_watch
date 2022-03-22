@@ -2019,7 +2019,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 jsonObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
 
 
-                Log.e("calender:", " " + stepOneDayAllInfo.getCalendar());
+                /*Log.e("calender:", " " + stepOneDayAllInfo.getCalendar());
                 Log.e("steps:", " " + stepOneDayAllInfo.getStep());
                 Log.e("calories:", " " + stepOneDayAllInfo.getCalories());
                 Log.e("distance:", " " + stepOneDayAllInfo.getDistance());
@@ -2034,7 +2034,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 Log.e("getWalkCalories:", " " + stepOneDayAllInfo.getWalkCalories());
                 Log.e("getWalkDistance:", " " + stepOneDayAllInfo.getWalkDistance());
                 Log.e("getWalkHourDetails:", " " + stepOneDayAllInfo.getWalkHourDetails());
-                Log.e("getWalkDurationTime:", " " + stepOneDayAllInfo.getWalkDurationTime());
+                Log.e("getWalkDurationTime:", " " + stepOneDayAllInfo.getWalkDurationTime());*/
 
 //                Log.e("onStepChange111", "getStep: " + stepOneDayAllInfo.getStep());
 //                Log.e("onStepChange112", "getCalories: " + stepOneDayAllInfo.getCalories());
@@ -2477,7 +2477,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             JSONObject overAllJson = new JSONObject();
             if (mUTESQLOperate != null) {
                 overAllJson.put("status", WatchConstants.SC_SUCCESS);
-
                 //steps data
                 List<StepOneDayAllInfo> stepsInfoList = mUTESQLOperate.queryRunWalkAllDay();
                 if (stepsInfoList != null) {
@@ -2499,7 +2498,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         }
                         stepsObject.put("data", stepsArray);
 
-                        Log.e("calender:", " " + info.getCalendar());
+                       /* Log.e("calender:", " " + info.getCalendar());
                         Log.e("steps:", " " + info.getStep());
                         Log.e("calories:", " " + info.getCalories());
                         Log.e("distance:", " " + info.getDistance());
@@ -2514,7 +2513,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         Log.e("getWalkCalories:", " " + info.getWalkCalories());
                         Log.e("getWalkDistance:", " " + info.getWalkDistance());
                         Log.e("getWalkHourDetails:", " " + info.getWalkHourDetails());
-                        Log.e("getWalkDurationTime:", " " + info.getWalkDurationTime());
+                        Log.e("getWalkDurationTime:", " " + info.getWalkDurationTime());*/
 
 //                        ArrayList<StepRunHourInfo>  stepRunHourInfoList = info.getStepRunHourArrayInfo();
 //                        ArrayList<StepWalkHourInfo>  stepWalkHourInfoList = info.getStepWalkHourArrayInfo();
