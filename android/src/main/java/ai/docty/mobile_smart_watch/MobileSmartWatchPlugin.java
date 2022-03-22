@@ -512,11 +512,21 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
+                        case ICallbackStatus.DO_NOT_DISTURB_OPEN: // 107
+                            jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.DND_OPENED, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.DO_NOT_DISTURB_CLOSE: // 107
+                            jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.DND_CLOSED, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
                         case ICallbackStatus.QUERY_BAND_LANGUAGE_OK: // 147
                             jsonObject.put("status", status);
                             jsonObject.put("result", result);
                             int languageType = SPUtil.getInstance(mContext).getBandCurrentLanguageType();
-                            jsonObject.put("languageType", ""+languageType);
+                            jsonObject.put("languageType", "" + languageType);
                             pushEventCallBack(WatchConstants.QUERY_BAND_LANGUAGE, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
@@ -762,6 +772,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 findBandDevice(result);
                 break;
 
+            case WatchConstants.SET_DO_NOT_DISTURB:
+                setDoNotDisturb(call, result);
+                break;
+
+            case WatchConstants.SET_REJECT_CALL:
+                setRejectIncomingCall(call, result);
+                break;
+
             case WatchConstants.SET_24_HEART_RATE:
                 set24HeartRate(call, result);
                 break;
@@ -992,7 +1010,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                         bluetoothAdapter.enable();
                                     }
                                 }
-                            }catch (Exception exp){
+                            } catch (Exception exp) {
                                 Log.e("blue_service_exp", exp.getMessage());
                                 isException = true;
                             }
@@ -1009,9 +1027,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                     bluetoothAdapter.enable();
                                 }*/
                             }
-                            if (finalIsException){
+                            if (finalIsException) {
                                 result.success(WatchConstants.BLE_NOT_ENABLED);
-                            }else {
+                            } else {
                                 result.success(resultStatus);
                             }
 
@@ -1329,6 +1347,87 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void setRejectIncomingCall(MethodCall call, Result result) {
+        try {
+            String enable = call.argument("enable");
+            boolean isEnable = false;
+            assert enable != null;
+            if (enable.trim().toLowerCase().equalsIgnoreCase("true")) {
+                isEnable = true;
+            }
+            if (mWriteCommand != null) {
+                mWriteCommand.sendEndCallToBle(isEnable);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("setRejectInCallExp:", exp.getMessage());
+        }
+    }
+
+    private void setDoNotDisturb(MethodCall call, Result result) {
+        try {
+            String isMessageOn = call.argument("isMessageOn");
+            String isMotorOn = call.argument("isMotorOn");
+            String disturbTimeSwitch = call.argument("disturbTimeSwitch");
+
+            String from_time_hour = call.argument("from_time_hour");
+            String from_time_minute = call.argument("from_time_minute");
+
+            String to_time_hour = call.argument("to_time_hour");
+            String to_time_minute = call.argument("to_time_minute");
+
+            boolean isEnableMessageOn = false;
+            boolean isEnableMotorOn = false;
+            boolean isDisturbTimeSwitch = false;
+
+            assert isMessageOn != null;
+            if (isMessageOn.trim().toLowerCase().equalsIgnoreCase("true")) {
+                isEnableMessageOn = true;
+            }
+
+            assert isMotorOn != null;
+            if (isMotorOn.trim().toLowerCase().equalsIgnoreCase("true")) {
+                isEnableMotorOn = true;
+            }
+
+            assert disturbTimeSwitch != null;
+            if (disturbTimeSwitch.trim().toLowerCase().equalsIgnoreCase("true")) {
+                isDisturbTimeSwitch = true;
+            }
+
+
+            if (mWriteCommand != null) {
+                if (isDisturbTimeSwitch) {
+                    assert from_time_hour != null;
+                    int fromHour = Integer.parseInt(from_time_hour);
+
+                    assert from_time_minute != null;
+                    int fromMinute = Integer.parseInt(from_time_minute);
+
+                    assert to_time_hour != null;
+                    int toHour = Integer.parseInt(to_time_hour);
+
+                    assert to_time_minute != null;
+                    int toMinute = Integer.parseInt(to_time_minute);
+
+                    mWriteCommand.sendDisturbToBle(isEnableMessageOn, isEnableMotorOn, isDisturbTimeSwitch, fromHour, fromMinute, toHour, toMinute);
+                } else {
+                    mWriteCommand.sendDisturbToBle(isEnableMessageOn, isEnableMotorOn, isDisturbTimeSwitch, 0, 0, 0, 0);
+                }
+
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+
+        } catch (Exception exp) {
+            Log.e("setDoNotDisturbExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
     private void setSevenDaysWeatherInfo(MethodCall call, Result result) {
         try {
             String infoData = call.argument("data");
@@ -1403,8 +1502,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                    "todayAqi":"",
 
             if (mWriteCommand != null) {
-               // mWriteCommand.syncWeatherToBLEForXiaoYang(sevenDayWeatherInfo);
-                 mWriteCommand.syncSevenDayWeatherToBle(sevenDayWeatherInfo);
+                // mWriteCommand.syncWeatherToBLEForXiaoYang(sevenDayWeatherInfo);
+                mWriteCommand.syncSevenDayWeatherToBle(sevenDayWeatherInfo);
                 result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
@@ -1419,7 +1518,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         try {
             String langInfo = call.argument("lang");
             assert langInfo != null;
-            if (langInfo.equalsIgnoreCase("es")){
+            if (langInfo.equalsIgnoreCase("es")) {
                 //if spanish
                 if (mWriteCommand != null) {
                     mWriteCommand.syncBandLanguage(BandLanguageUtil.BAND_LANGUAGE_ES);
@@ -1427,7 +1526,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 } else {
                     result.success(WatchConstants.SC_FAILURE);
                 }
-            }else{
+            } else {
                 // english
                 if (mWriteCommand != null) {
                     mWriteCommand.syncBandLanguage(BandLanguageUtil.BAND_LANGUAGE_EN);
@@ -1920,22 +2019,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 jsonObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
 
 
-                Log.e("calender:", " "+stepOneDayAllInfo.getCalendar());
-                Log.e("steps:", " "+stepOneDayAllInfo.getStep());
-                Log.e("calories:", " "+stepOneDayAllInfo.getCalories());
-                Log.e("distance:", " "+stepOneDayAllInfo.getDistance());
+                Log.e("calender:", " " + stepOneDayAllInfo.getCalendar());
+                Log.e("steps:", " " + stepOneDayAllInfo.getStep());
+                Log.e("calories:", " " + stepOneDayAllInfo.getCalories());
+                Log.e("distance:", " " + stepOneDayAllInfo.getDistance());
 
-                Log.e("getRunSteps:", " "+stepOneDayAllInfo.getRunSteps());
-                Log.e("getRunCalories:", " "+stepOneDayAllInfo.getRunCalories());
-                Log.e("getRunDistance:", " "+stepOneDayAllInfo.getRunDistance());
-                Log.e("getRunHourDetails:", " "+stepOneDayAllInfo.getRunHourDetails());
-                Log.e("getRunDurationTime:", " "+stepOneDayAllInfo.getRunDurationTime());
+                Log.e("getRunSteps:", " " + stepOneDayAllInfo.getRunSteps());
+                Log.e("getRunCalories:", " " + stepOneDayAllInfo.getRunCalories());
+                Log.e("getRunDistance:", " " + stepOneDayAllInfo.getRunDistance());
+                Log.e("getRunHourDetails:", " " + stepOneDayAllInfo.getRunHourDetails());
+                Log.e("getRunDurationTime:", " " + stepOneDayAllInfo.getRunDurationTime());
 
-                Log.e("getWalkSteps:", " "+stepOneDayAllInfo.getWalkSteps());
-                Log.e("getWalkCalories:", " "+stepOneDayAllInfo.getWalkCalories());
-                Log.e("getWalkDistance:", " "+stepOneDayAllInfo.getWalkDistance());
-                Log.e("getWalkHourDetails:", " "+stepOneDayAllInfo.getWalkHourDetails());
-                Log.e("getWalkDurationTime:", " "+stepOneDayAllInfo.getWalkDurationTime());
+                Log.e("getWalkSteps:", " " + stepOneDayAllInfo.getWalkSteps());
+                Log.e("getWalkCalories:", " " + stepOneDayAllInfo.getWalkCalories());
+                Log.e("getWalkDistance:", " " + stepOneDayAllInfo.getWalkDistance());
+                Log.e("getWalkHourDetails:", " " + stepOneDayAllInfo.getWalkHourDetails());
+                Log.e("getWalkDurationTime:", " " + stepOneDayAllInfo.getWalkDurationTime());
 
 //                Log.e("onStepChange111", "getStep: " + stepOneDayAllInfo.getStep());
 //                Log.e("onStepChange112", "getCalories: " + stepOneDayAllInfo.getCalories());
@@ -2400,22 +2499,22 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         }
                         stepsObject.put("data", stepsArray);
 
-                        Log.e("calender:", " "+info.getCalendar());
-                        Log.e("steps:", " "+info.getStep());
-                        Log.e("calories:", " "+info.getCalories());
-                        Log.e("distance:", " "+info.getDistance());
+                        Log.e("calender:", " " + info.getCalendar());
+                        Log.e("steps:", " " + info.getStep());
+                        Log.e("calories:", " " + info.getCalories());
+                        Log.e("distance:", " " + info.getDistance());
 
-                        Log.e("getRunSteps:", " "+info.getRunSteps());
-                        Log.e("getRunCalories:", " "+info.getRunCalories());
-                        Log.e("getRunDistance:", " "+info.getRunDistance());
-                        Log.e("getRunHourDetails:", " "+info.getRunHourDetails());
-                        Log.e("getRunDurationTime:", " "+info.getRunDurationTime());
+                        Log.e("getRunSteps:", " " + info.getRunSteps());
+                        Log.e("getRunCalories:", " " + info.getRunCalories());
+                        Log.e("getRunDistance:", " " + info.getRunDistance());
+                        Log.e("getRunHourDetails:", " " + info.getRunHourDetails());
+                        Log.e("getRunDurationTime:", " " + info.getRunDurationTime());
 
-                        Log.e("getWalkSteps:", " "+info.getWalkSteps());
-                        Log.e("getWalkCalories:", " "+info.getWalkCalories());
-                        Log.e("getWalkDistance:", " "+info.getWalkDistance());
-                        Log.e("getWalkHourDetails:", " "+info.getWalkHourDetails());
-                        Log.e("getWalkDurationTime:", " "+info.getWalkDurationTime());
+                        Log.e("getWalkSteps:", " " + info.getWalkSteps());
+                        Log.e("getWalkCalories:", " " + info.getWalkCalories());
+                        Log.e("getWalkDistance:", " " + info.getWalkDistance());
+                        Log.e("getWalkHourDetails:", " " + info.getWalkHourDetails());
+                        Log.e("getWalkDurationTime:", " " + info.getWalkDurationTime());
 
 //                        ArrayList<StepRunHourInfo>  stepRunHourInfoList = info.getStepRunHourArrayInfo();
 //                        ArrayList<StepWalkHourInfo>  stepWalkHourInfoList = info.getStepWalkHourArrayInfo();
@@ -2869,7 +2968,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             @Override
             public void run() {
                 flutterResultBluConnect.success(status);
-            }
+            }.
         });*//*
     }
     private void updateConnectionStatus3(boolean status) {

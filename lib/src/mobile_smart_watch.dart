@@ -132,7 +132,8 @@ class MobileSmartWatch {
   }
 
   Future<String> setUserParameters(var userParams) async{
-    var userParamsSample = {
+    //ex. sample paylod
+   /* var userParamsSample = {
       "age":"50",  // user age (0-254)
       "height":"50", // always cm
       "weight":"50", // always in kgs
@@ -142,7 +143,7 @@ class MobileSmartWatch {
       "screenOffTime": "15", //screen off time
       "isChineseLang": "false", //true for chinese lang setup and false for english
       "raiseHandWakeUp": "false", //true or false -- send true to wake up bright light switch
-    };
+    };*/
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_USER_PARAMS, userParams);
   }
 
@@ -183,6 +184,27 @@ class MobileSmartWatch {
     };
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_BAND_LANGUAGE, params);
   }
+
+  Future<String> setRejectIncomingCall(bool enable) async{
+    var params = {
+      "enable": enable?"true":"false", //true or false -- send true to enable it
+    };
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SET_REJECT_CALL, params);
+  }
+
+  Future<String> setDoNotDisturb(bool isMessageOn, bool isMotorOn, bool disturbTimeSwitch,int fromHr, int fromMin, int toHour, int toMin) async{
+    var params = {
+      "isMessageOn": isMessageOn?"true":"false", //true or false -- send true to enable it
+      "isMotorOn": isMotorOn?"true":"false", //true or false -- send true to enable it
+      "disturbTimeSwitch": disturbTimeSwitch?"true":"false", //true or false -- send true to enable it
+      "from_time_hour": fromHr.toString(), // send integer value as string
+      "from_time_minute": fromMin.toString(),// send integer value as string
+      "to_time_hour": toHour.toString(), // send integer value as string
+      "to_time_minute": toMin.toString(), // send integer value as string
+    };
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SET_DO_NOT_DISTURB, params);
+  }
+
 
   Future<Map<String, dynamic>> fetchOverAllByDate(String dateTime) async{
     var params = {

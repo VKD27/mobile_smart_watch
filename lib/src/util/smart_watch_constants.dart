@@ -69,7 +69,11 @@ class SmartWatchConstants {
   static const String SET_WEATHER_INFO = "setWeatherInfo";
   static const String SET_BAND_LANGUAGE = "setBandLanguage";
 
+  static const String CHECK_FIND_BAND = "checkFindBand";
   static const String FIND_BAND_DEVICE = "findBandDevice";
+
+  static const String SET_DO_NOT_DISTURB = "setDoNotDisturb";
+  static const String SET_REJECT_CALL = "setRejectCall";
 
   // daily activities & operations
   static const String SYNC_ALL_JUDGE = "fetchAllJudgement";
@@ -118,7 +122,8 @@ class SmartWatchConstants {
   static const String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
   static const String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
 
-  static const String CHECK_FIND_BAND = "checkFindBand";
+  static const String DND_OPENED = "dndOpened";
+  static const String DND_CLOSED = "dndClosed";
 
   //any sync failed
   static const String SYNC_BLE_WRITE_FAIL = "syncBleWriteFail";
