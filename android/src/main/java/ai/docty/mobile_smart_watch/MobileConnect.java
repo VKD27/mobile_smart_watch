@@ -141,7 +141,10 @@ public class MobileConnect {
                         } else {
                             mBleDevices = new BleDevices(device.getName(), device.getAddress(), rssi, device.getType(), device.getBondState(), "");
                         }
-                        addDevice(mBleDevices);
+
+                        if (mBleDevices.getAddress().contains("78:02:B7:") || mBleDevices.getName().toLowerCase().contains("docty")){
+                            addDevice(mBleDevices);
+                        }
                         //Log.e("afterAddDevice", "" + mLeDevices);
                     }
                 }/* else {
