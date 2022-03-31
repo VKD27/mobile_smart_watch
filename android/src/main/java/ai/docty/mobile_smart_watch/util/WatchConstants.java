@@ -93,6 +93,7 @@ public class WatchConstants {
 
 
     //any sync failed
+    public static final String SYNC_BLE_WRITE_SUCCESS = "syncBleWriteSuccess";
     public static final String SYNC_BLE_WRITE_FAIL = "syncBleWriteFail";
     public static final String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
     public static final String SYNC_TEMPERATURE_TIME_OUT = "syncTempTimeOut";

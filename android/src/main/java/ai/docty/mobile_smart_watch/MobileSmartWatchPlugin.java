@@ -59,6 +59,7 @@ import com.yc.pedometer.utils.BandLanguageUtil;
 import com.yc.pedometer.utils.CalendarUtils;
 import com.yc.pedometer.utils.GetFunctionList;
 import com.yc.pedometer.utils.GlobalVariable;
+import com.yc.pedometer.utils.LogUtils;
 import com.yc.pedometer.utils.SPUtil;
 
 import org.json.JSONArray;
@@ -416,6 +417,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             //sync time ok
                             break;
                         case ICallbackStatus.WRITE_COMMAND_TO_BLE_SUCCESS: // 148
+                            pushEventCallBack(WatchConstants.SYNC_BLE_WRITE_SUCCESS, new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
                         case ICallbackStatus.WRITE_COMMAND_TO_BLE_FAIL: // 149
                             // when any ble write command failed
@@ -574,8 +576,72 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             }
 
             @Override
-            public void OnDataResult(boolean status, int i, byte[] bytes) {
-                Log.e("OnDataResult:", "status>> " + status + "resultValue>> " + i);
+            public void OnDataResult(boolean result, int status, byte[] data) {
+                Log.e("OnDataResult:", "result>> " + result + ": status>> " + status +" :data>> "+data.toString());
+                StringBuilder stringBuilder = null;
+                if (data != null && data.length > 0) {
+                    stringBuilder = new StringBuilder(data.length);
+                    for (byte byteChar : data) {
+                        stringBuilder.append(String.format("%02X", byteChar));
+                    }
+                    LogUtils.i("sendTextKey", "BLE---->APK data =" + stringBuilder.toString());
+                    Log.e("dataBuilder :", "" + stringBuilder.toString() );
+                }
+
+                switch (status) {
+                    case ICallbackStatus.DO_NOT_DISTURB_CLOSE://回调 勿扰模式关闭
+                        try{
+                            Log.e("DO_NOT_DISTURB_CLOSE :", "" + stringBuilder.toString() );
+                            if (data != null && data.length >= 2) {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("B3", String.valueOf(data[3]));
+                                jsonObject.put("B2", String.valueOf(data[2]));
+                                jsonObject.put("B1", String.valueOf(data[1]));
+                                jsonObject.put("B0", String.valueOf(data[0]));
+                                Log.e("DND_DATA :", "" + jsonObject.toString());
+
+                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
+                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
+                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
+                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
+
+                                Log.e("DND_WITH_DATA :", "" + jsonObject.toString());
+
+                            }
+                        }catch (Exception exp){
+                            Log.e("DND_CLOSE_EXP: ", exp.getMessage());
+                        }
+                        break;
+                    case ICallbackStatus.DO_NOT_DISTURB_OPEN://回调 勿扰模式打开
+                        try{
+                            Log.e("DO_NOT_DISTURB_OPEN :", "" + stringBuilder.toString() );
+                            if (data != null && data.length >= 2) {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("B3", String.valueOf(data[3]));
+                                jsonObject.put("B2", String.valueOf(data[2]));
+                                jsonObject.put("B1", String.valueOf(data[1]));
+                                jsonObject.put("B0", String.valueOf(data[0]));
+                                Log.e("DND_OPEN_DATA :", "" + jsonObject.toString());
+
+                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
+                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
+                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
+                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
+
+                                Log.e("DND_OPEN_WITH_DATA :", "" + jsonObject.toString());
+
+                            }
+                        }catch (Exception exp){
+                            Log.e("DND_OPEN_EXP: ", exp.getMessage());
+                        }
+                        break;
+                    case ICallbackStatus.QUICK_SWITCH_STATUS_COMMAND_OK://Callback The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes
+                        LogUtils.d("QUICK_SWITCH_STATUS_CMD_OK", "The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes");
+                        //For data parsing, refer to the document queryQuickSwitchSupListStatus method description
+                        Log.e("QUICK_STATUS_STR:", "" + stringBuilder.toString() );
+                        Log.e("QUICK_STATUS_data:", "" + data.toString() );
+                        break;
+                }
             }
 
             @Override
