@@ -91,6 +91,8 @@ public class WatchConstants {
     public static final String DND_OPENED = "dndOpened";
     public static final String DND_CLOSED = "dndClosed";
 
+    public static final String QUICK_SWITCH_STATUS = "quickSwitchStatus";
+
 
     //any sync failed
     public static final String SYNC_BLE_WRITE_SUCCESS = "syncBleWriteSuccess";

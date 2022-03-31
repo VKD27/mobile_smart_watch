@@ -577,54 +577,58 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
             @Override
             public void OnDataResult(boolean status, int result, byte[] data) {
-                Log.e("OnDataResult:", "result>> " + result + ": status>> " + status +" :data>> "+data.toString());
+                Log.e("OnDataResult:", "result>> " + result + ": status>> " + status + " :data>> " + data.toString());
                 Log.e("OnDataResult:", "data.length>> " + data.length);
                 Log.e("OnDataResult:", "data[0]>> " + data[0]);
-                Log.e("OnDataResult:", "data[1]>> " +data[1]);
-                Log.e("OnDataResult:", "data[2]>> " +data[2]);
+                Log.e("OnDataResult:", "data[1]>> " + data[1]);
+                Log.e("OnDataResult:", "data[2]>> " + data[2]);
                 StringBuilder stringBuilder = null;
                 if (data != null && data.length > 0) {
                     stringBuilder = new StringBuilder(data.length);
                     for (byte byteChar : data) {
                         Log.e("each_data :", "" + String.format("%02X", byteChar));
+                        Log.e("each_data_int :", "" + Integer.parseInt(String.format("%02X", byteChar),2));
                         stringBuilder.append(String.format("%02X", byteChar));
                     }
                     //LogUtils.i("sendTextKey", "BLE---->APK data =" + stringBuilder.toString());
-                    Log.e("dataBuilder :", "" + stringBuilder.toString() );
+                    Log.e("dataBuilder :", "" + stringBuilder.toString());
                 }
 
                 switch (result) {
                     case ICallbackStatus.DO_NOT_DISTURB_CLOSE://回调 勿扰模式关闭
-                        try{
-                            Log.e("DO_NOT_DISTURB_CLOSE :", "" + stringBuilder.toString() );
+                        try {
+                            Log.e("DO_NOT_DISTURB_CLOSE :", "" + stringBuilder.toString());
                             if (data != null && data.length >= 2) {
                                 JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("result", ""+result);
-                                jsonObject.put("status",""+status);
-                                jsonObject.put("B3", String.valueOf(data[3]));
-                                jsonObject.put("B2", String.valueOf(data[2]));
-                                jsonObject.put("B1", String.valueOf(data[1]));
+                                jsonObject.put("result", "" + result);
+                                jsonObject.put("status", "" + status);
+
                                 jsonObject.put("B0", String.valueOf(data[0]));
+                                jsonObject.put("B1", String.valueOf(data[1]));
+                                jsonObject.put("B2", String.valueOf(data[2]));
+                                jsonObject.put("B3", String.valueOf(data[3]));
+
+
                                 Log.e("DND_DATA :", "" + jsonObject.toString());
 //                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
 //                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
 //                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
 //                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
-                              //  Log.e("DND_WITH_DATA :", "" + jsonObject.toString());
+                                //  Log.e("DND_WITH_DATA :", "" + jsonObject.toString());
 
                                 pushEventCallBack(WatchConstants.DND_CLOSED, jsonObject, WatchConstants.SC_SUCCESS);
                             }
-                        }catch (Exception exp){
+                        } catch (Exception exp) {
                             Log.e("DND_CLOSE_EXP: ", exp.getMessage());
                         }
                         break;
                     case ICallbackStatus.DO_NOT_DISTURB_OPEN://回调 勿扰模式打开
-                        try{
-                            Log.e("DO_NOT_DISTURB_OPEN :", "" + stringBuilder.toString() );
+                        try {
+                            Log.e("DO_NOT_DISTURB_OPEN :", "" + stringBuilder.toString());
                             if (data != null && data.length >= 2) {
                                 JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("result", ""+result);
-                                jsonObject.put("status",""+status);
+                                jsonObject.put("result", "" + result);
+                                jsonObject.put("status", "" + status);
                                 jsonObject.put("B3", String.valueOf(data[3]));
                                 jsonObject.put("B2", String.valueOf(data[2]));
                                 jsonObject.put("B1", String.valueOf(data[1]));
@@ -635,19 +639,27 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
 //                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
 //                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
-
                                 //Log.e("DND_OPEN_WITH_DATA :", "" + jsonObject.toString());
                                 pushEventCallBack(WatchConstants.DND_OPENED, jsonObject, WatchConstants.SC_SUCCESS);
                             }
-                        }catch (Exception exp){
+                        } catch (Exception exp) {
                             Log.e("DND_OPEN_EXP: ", exp.getMessage());
                         }
                         break;
                     case ICallbackStatus.QUICK_SWITCH_STATUS_COMMAND_OK://Callback The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes
                         LogUtils.d("QUICK_SWITCH_STATUS_CMD_OK", "The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes");
                         //For data parsing, refer to the document queryQuickSwitchSupListStatus method description
-                        Log.e("QUICK_STATUS_STR:", "" + stringBuilder.toString() );
-                        Log.e("QUICK_STATUS_data:", "" + data.toString() );
+                        try {
+                            Log.e("QUICK_STATUS_STR:", "" + stringBuilder.toString());
+                            Log.e("QUICK_STATUS_data:", "" + data.toString());
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("result", "" + result);
+                            jsonObject.put("status", "" + status);
+
+                            pushEventCallBack(WatchConstants.QUICK_SWITCH_STATUS, jsonObject, WatchConstants.SC_SUCCESS);
+                        } catch (Exception exp) {
+                            Log.e("QUICK_STATUS_EXP: ", exp.getMessage());
+                        }
                         break;
                 }
             }
