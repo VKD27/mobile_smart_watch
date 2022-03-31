@@ -576,37 +576,43 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             }
 
             @Override
-            public void OnDataResult(boolean result, int status, byte[] data) {
+            public void OnDataResult(boolean status, int result, byte[] data) {
                 Log.e("OnDataResult:", "result>> " + result + ": status>> " + status +" :data>> "+data.toString());
+                Log.e("OnDataResult:", "data.length>> " + data.length);
+                Log.e("OnDataResult:", "data[0]>> " + data[0]);
+                Log.e("OnDataResult:", "data[1]>> " +data[1]);
+                Log.e("OnDataResult:", "data[2]>> " +data[2]);
                 StringBuilder stringBuilder = null;
                 if (data != null && data.length > 0) {
                     stringBuilder = new StringBuilder(data.length);
                     for (byte byteChar : data) {
+                        Log.e("each_data :", "" + String.format("%02X", byteChar));
                         stringBuilder.append(String.format("%02X", byteChar));
                     }
-                    LogUtils.i("sendTextKey", "BLE---->APK data =" + stringBuilder.toString());
+                    //LogUtils.i("sendTextKey", "BLE---->APK data =" + stringBuilder.toString());
                     Log.e("dataBuilder :", "" + stringBuilder.toString() );
                 }
 
-                switch (status) {
+                switch (result) {
                     case ICallbackStatus.DO_NOT_DISTURB_CLOSE://回调 勿扰模式关闭
                         try{
                             Log.e("DO_NOT_DISTURB_CLOSE :", "" + stringBuilder.toString() );
                             if (data != null && data.length >= 2) {
                                 JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("result", ""+result);
+                                jsonObject.put("status",""+status);
                                 jsonObject.put("B3", String.valueOf(data[3]));
                                 jsonObject.put("B2", String.valueOf(data[2]));
                                 jsonObject.put("B1", String.valueOf(data[1]));
                                 jsonObject.put("B0", String.valueOf(data[0]));
                                 Log.e("DND_DATA :", "" + jsonObject.toString());
+//                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
+//                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
+//                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
+//                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
+                              //  Log.e("DND_WITH_DATA :", "" + jsonObject.toString());
 
-                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
-                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
-                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
-                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
-
-                                Log.e("DND_WITH_DATA :", "" + jsonObject.toString());
-
+                                pushEventCallBack(WatchConstants.DND_CLOSED, jsonObject, WatchConstants.SC_SUCCESS);
                             }
                         }catch (Exception exp){
                             Log.e("DND_CLOSE_EXP: ", exp.getMessage());
@@ -617,19 +623,21 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             Log.e("DO_NOT_DISTURB_OPEN :", "" + stringBuilder.toString() );
                             if (data != null && data.length >= 2) {
                                 JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("result", ""+result);
+                                jsonObject.put("status",""+status);
                                 jsonObject.put("B3", String.valueOf(data[3]));
                                 jsonObject.put("B2", String.valueOf(data[2]));
                                 jsonObject.put("B1", String.valueOf(data[1]));
                                 jsonObject.put("B0", String.valueOf(data[0]));
                                 Log.e("DND_OPEN_DATA :", "" + jsonObject.toString());
 
-                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
-                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
-                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
-                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
+//                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
+//                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
+//                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
+//                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
 
-                                Log.e("DND_OPEN_WITH_DATA :", "" + jsonObject.toString());
-
+                                //Log.e("DND_OPEN_WITH_DATA :", "" + jsonObject.toString());
+                                pushEventCallBack(WatchConstants.DND_OPENED, jsonObject, WatchConstants.SC_SUCCESS);
                             }
                         }catch (Exception exp){
                             Log.e("DND_OPEN_EXP: ", exp.getMessage());
