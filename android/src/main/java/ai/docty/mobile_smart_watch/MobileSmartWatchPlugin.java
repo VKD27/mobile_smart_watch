@@ -673,37 +673,38 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
             @Override
             public void onIbeaconWriteCallback(boolean b, int i, int i1, String s) {
-
+                Log.e("onIbeaconWriteCallback:", "status>> " + i);
             }
 
             @Override
             public void onQueryDialModeCallback(boolean b, int i, int i1, int i2) {
-
+                Log.e("onQueryDialModeCbk:", "status>> " + i);
             }
 
             @Override
             public void onControlDialCallback(boolean b, int i, int i1) {
-
+                Log.e("onControlDialCbk:", "status>> " + i);
             }
 
             @Override
             public void onSportsTimeCallback(boolean b, String s, int i, int i1) {
+                Log.e("onSportsTimeCallback:", "status>> " + i);
 
             }
 
             @Override
             public void OnResultSportsModes(boolean b, int i, int i1, int i2, SportsModesInfo sportsModesInfo) {
-
+                Log.e("OnResultSportsModes:", "status>> " + i);
             }
 
             @Override
             public void OnResultHeartRateHeadset(boolean b, int i, int i1, int i2, HeartRateHeadsetSportModeInfo heartRateHeadsetSportModeInfo) {
-
+                Log.e("OnResultHRateHeadset:", "status>> " + i);
             }
 
             @Override
             public void OnResultCustomTestStatus(boolean b, int i, CustomTestStatusInfo customTestStatusInfo) {
-
+                Log.e("OnResultCusTestStatus:", "status>> " + i);
             }
         });
         mBluetoothLeService.setTemperatureListener(new TemperatureListener() {
