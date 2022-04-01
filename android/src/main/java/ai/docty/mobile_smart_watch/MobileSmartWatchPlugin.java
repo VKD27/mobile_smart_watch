@@ -586,8 +586,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 if (data != null && data.length > 0) {
                     stringBuilder = new StringBuilder(data.length);
                     for (byte byteChar : data) {
-                        Log.e("each_data :", "" + String.format("%02X", byteChar));
-                        Log.e("each_data_int :", "" + Integer.parseInt(String.format("%02X", byteChar),2));
+                        Log.e("each_byteChar :", "" + byteChar);
+                        Log.e("each_data_str :", "" + String.format("%02X", byteChar));
+                        Log.e("each_data_dec :", "" + Integer.parseInt(String.format("%02X", byteChar), 16));
+                        //Log.e("each_data_int :", "" + Integer.parseInt(String.format("%02X", byteChar),2));
                         stringBuilder.append(String.format("%02X", byteChar));
                     }
                     //LogUtils.i("sendTextKey", "BLE---->APK data =" + stringBuilder.toString());
