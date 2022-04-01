@@ -378,6 +378,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private long hexToLong(String hex) {
+        return Long.parseLong(hex, 16);
+    }
+
     private void startListeningCallback(boolean initial) {
         if (initial) {
             mBluetoothLeService = mobileConnect.getBLEServiceOperate().getBleService();
@@ -594,6 +598,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     }
                     //LogUtils.i("sendTextKey", "BLE---->APK data =" + stringBuilder.toString());
                     Log.e("dataBuilder :", "" + stringBuilder.toString());
+                    Log.e("dataBuilderLong :", "" + hexToLong(stringBuilder.toString()));
                 }
 
                 switch (result) {
