@@ -125,6 +125,10 @@ class SmartWatchConstants {
   static const String DND_OPENED = "dndOpened";
   static const String DND_CLOSED = "dndClosed";
 
+  static const String CHECK_QUICK_SWITCH_SETTING = "callQuickSwitchSettingStatus";
+  static const String QUICK_SWITCH_STATUS = "quickSwitchStatus";
+  static const String QUICK_SWITCH_SUPPORT = "quickSwitchSupport";
+
   //any sync failed
   static const String SYNC_BLE_WRITE_SUCCESS = "syncBleWriteSuccess";
   static const String SYNC_BLE_WRITE_FAIL = "syncBleWriteFail";

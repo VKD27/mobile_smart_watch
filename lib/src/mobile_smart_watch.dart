@@ -286,6 +286,11 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.CHECK_CONNECTION_STATUS);
   }
 
+  Future<String> callQuickSwitchSettingStatus() async{
+    return  await _methodChannel.invokeMethod(SmartWatchConstants.CHECK_QUICK_SWITCH_SETTING);
+  }
+
+
   Future<String> syncStepsData() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_STEPS);

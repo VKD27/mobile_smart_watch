@@ -583,86 +583,85 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             public void OnDataResult(boolean status, int result, byte[] data) {
                 Log.e("OnDataResult:", "result>> " + result + ": status>> " + status + " :data>> " + data.toString());
                 Log.e("OnDataResult:", "data.length>> " + data.length);
-                Log.e("OnDataResult:", "data[0]>> " + data[0]);
-                Log.e("OnDataResult:", "data[1]>> " + data[1]);
-                Log.e("OnDataResult:", "data[2]>> " + data[2]);
+                JSONArray hexArray = new JSONArray();
+                JSONArray decimalArray = new JSONArray();
                 StringBuilder stringBuilder = null;
-                if (data != null && data.length > 0) {
-                    stringBuilder = new StringBuilder(data.length);
-                    for (byte byteChar : data) {
-                        Log.e("each_byteChar :", "" + byteChar);
-                        Log.e("each_data_str :", "" + String.format("%02X", byteChar));
-                        Log.e("each_data_dec :", "" + Integer.parseInt(String.format("%02X", byteChar), 16));
-                        //Log.e("each_data_int :", "" + Integer.parseInt(String.format("%02X", byteChar),2));
-                        stringBuilder.append(String.format("%02X", byteChar));
+                try {
+                    if (data != null && data.length > 0) {
+                        stringBuilder = new StringBuilder(data.length);
+
+                        for (byte byteChar : data) {
+                            Log.e("each_byteChar :", "" + byteChar);
+                            String hexCode = String.format("%02X", byteChar);
+                            Log.e("each_data_str :", "" + hexCode);
+                            Log.e("each_data_dec :", "" + Integer.parseInt(String.format("%02X", byteChar), 16));
+                            //Log.e("each_data_int :", "" + Integer.parseInt(String.format("%02X", byteChar),2));
+                            hexArray.put(hexCode);
+                            decimalArray.put("" + Integer.parseInt(hexCode, 16));
+                            stringBuilder.append(hexCode);
+                        }
+                        Log.e("dataBuilder :", "" + stringBuilder.toString());
+                        Log.e("dataBuilderLong :", "" + hexToLong(stringBuilder.toString()));
                     }
-                    //LogUtils.i("sendTextKey", "BLE---->APK data =" + stringBuilder.toString());
-                    Log.e("dataBuilder :", "" + stringBuilder.toString());
-                    Log.e("dataBuilderLong :", "" + hexToLong(stringBuilder.toString()));
+                } catch (Exception exp) {
+                    Log.e("stringBuilderExp:", "" + exp.getMessage());
                 }
-
                 switch (result) {
-                    case ICallbackStatus.DO_NOT_DISTURB_CLOSE://回调 勿扰模式关闭
+                    case ICallbackStatus.DO_NOT_DISTURB_CLOSE://85 // Do not disturb mode off
                         try {
-                            Log.e("DO_NOT_DISTURB_CLOSE :", "" + stringBuilder.toString());
-                            if (data != null && data.length >= 2) {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("result", "" + result);
-                                jsonObject.put("status", "" + status);
-
-                                jsonObject.put("B0", String.valueOf(data[0]));
-                                jsonObject.put("B1", String.valueOf(data[1]));
-                                jsonObject.put("B2", String.valueOf(data[2]));
-                                jsonObject.put("B3", String.valueOf(data[3]));
-
-
-                                Log.e("DND_DATA :", "" + jsonObject.toString());
-//                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
-//                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
-//                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
-//                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
-                                //  Log.e("DND_WITH_DATA :", "" + jsonObject.toString());
-
-                                pushEventCallBack(WatchConstants.DND_CLOSED, jsonObject, WatchConstants.SC_SUCCESS);
-                            }
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("result", "" + result);
+                            jsonObject.put("status", "" + status);
+                            jsonObject.put("value", "" + stringBuilder.toString());
+                            jsonObject.put("hex", hexArray);
+                            jsonObject.put("decimal", decimalArray);
+                            Log.e("DO_NOT_DISTURB_CLOSE :", "" + jsonObject.toString());
+                            pushEventCallBack(WatchConstants.DND_CLOSED, jsonObject, WatchConstants.SC_SUCCESS);
                         } catch (Exception exp) {
                             Log.e("DND_CLOSE_EXP: ", exp.getMessage());
                         }
                         break;
                     case ICallbackStatus.DO_NOT_DISTURB_OPEN://回调 勿扰模式打开
                         try {
-                            Log.e("DO_NOT_DISTURB_OPEN :", "" + stringBuilder.toString());
-                            if (data != null && data.length >= 2) {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("result", "" + result);
-                                jsonObject.put("status", "" + status);
-                                jsonObject.put("B3", String.valueOf(data[3]));
-                                jsonObject.put("B2", String.valueOf(data[2]));
-                                jsonObject.put("B1", String.valueOf(data[1]));
-                                jsonObject.put("B0", String.valueOf(data[0]));
-                                Log.e("DND_OPEN_DATA :", "" + jsonObject.toString());
-
-//                                jsonObject.put("B3", Integer.parseInt(String.valueOf(data[3]),2));
-//                                jsonObject.put("B2", Integer.parseInt(String.valueOf(data[2]),2));
-//                                jsonObject.put("B1", Integer.parseInt(String.valueOf(data[1]),2));
-//                                jsonObject.put("B0", Integer.parseInt(String.valueOf(data[0]),2));
-                                //Log.e("DND_OPEN_WITH_DATA :", "" + jsonObject.toString());
-                                pushEventCallBack(WatchConstants.DND_OPENED, jsonObject, WatchConstants.SC_SUCCESS);
-                            }
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("result", "" + result);
+                            jsonObject.put("status", "" + status);
+                            jsonObject.put("value", "" + stringBuilder.toString());
+                            jsonObject.put("hex", hexArray);
+                            jsonObject.put("decimal", decimalArray);
+                            Log.e("DO_NOT_DISTURB_OPEN :", "" + jsonObject.toString());
+                            pushEventCallBack(WatchConstants.DND_OPENED, jsonObject, WatchConstants.SC_SUCCESS);
                         } catch (Exception exp) {
                             Log.e("DND_OPEN_EXP: ", exp.getMessage());
                         }
                         break;
-                    case ICallbackStatus.QUICK_SWITCH_STATUS_COMMAND_OK://Callback The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes
-                        LogUtils.d("QUICK_SWITCH_STATUS_CMD_OK", "The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes");
-                        //For data parsing, refer to the document queryQuickSwitchSupListStatus method description
+                    case ICallbackStatus.QUICK_SWITCH_SURPPORT_COMMAND_OK://118 ;
                         try {
-                            Log.e("QUICK_STATUS_STR:", "" + stringBuilder.toString());
-                            Log.e("QUICK_STATUS_data:", "" + data.toString());
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("result", "" + result);
                             jsonObject.put("status", "" + status);
+                            jsonObject.put("value", "" + stringBuilder.toString());
+                            jsonObject.put("hex", hexArray);
+                            jsonObject.put("decimal", decimalArray);
+                            Log.e("QUICK_SUPPORT_data:", jsonObject.toString());
+                            pushEventCallBack(WatchConstants.QUICK_SWITCH_SUPPORT, jsonObject, WatchConstants.SC_SUCCESS);
+                        } catch (Exception exp) {
+                            Log.e("QUICK_SUPPORT_EXP: ", exp.getMessage());
+                        }
+                        break;
 
+
+                    case ICallbackStatus.QUICK_SWITCH_STATUS_COMMAND_OK://119 ; Callback The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes
+                       // LogUtils.d("QUICK_SWITCH_STATUS_CMD_OK", "The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes");
+                        //For data parsing, refer to the document queryQuickSwitchSupListStatus method description
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("result", "" + result);
+                            jsonObject.put("status", "" + status);
+                            jsonObject.put("value", "" + stringBuilder.toString());
+                            jsonObject.put("hex", hexArray);
+                            jsonObject.put("decimal", decimalArray);
+                            Log.e("QUICK_STATUS_data:", jsonObject.toString());
                             pushEventCallBack(WatchConstants.QUICK_SWITCH_STATUS, jsonObject, WatchConstants.SC_SUCCESS);
                         } catch (Exception exp) {
                             Log.e("QUICK_STATUS_EXP: ", exp.getMessage());
@@ -898,6 +897,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
             case WatchConstants.CHECK_CONNECTION_STATUS:
                 getCheckConnectionStatus(result);
+                break;
+
+            case WatchConstants.CHECK_QUICK_SWITCH_SETTING:
+                callCheckQuickSwitchStatus(result);
                 break;
 
             // sync all the data,from watch to the local (android SDK)
@@ -1702,6 +1705,34 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void callCheckQuickSwitchStatus(Result result) {
+        try {
+            if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
+
+                boolean isSupportBandQuickSwitch = GetFunctionList.isSupportFunction_Fourth(mContext, GlobalVariable.IS_SUPPORT_BAND_QUICK_SWITCH_SETTING); // language supported by the query device is supported
+                Log.e("isSupportQuickSwitch:", ""+isSupportBandQuickSwitch);
+                if (isSupportBandQuickSwitch){
+                    if (mWriteCommand != null) {
+                        mWriteCommand.queryQuickSwitchSupList();
+                    }
+                }
+
+                if (mWriteCommand != null) {
+                    mWriteCommand.queryQuickSwitchSupListStatus();
+                    result.success(WatchConstants.SC_INIT);
+                } else {
+                    result.success(WatchConstants.SC_FAILURE);
+                }
+            } else {
+                //device disconnected
+                result.success(WatchConstants.SC_DISCONNECTED);
+            }
+
+        } catch (Exception exp) {
+            Log.e("quickSwitchStatusExp:", exp.getMessage());
+        }
+    }
+
     // sync the activities
     private void fetchAllJudgement(MethodCall call, Result result) {
         try {
@@ -1748,6 +1779,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 boolean isSupportQueryBandLang = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_QUERY_BAND_LANGUAGE); // to get current value of the language
                 boolean isSupportBandLangDisplay = GetFunctionList.isSupportFunction_Fifth(mContext, GlobalVariable.IS_SUPPORT_BAND_LANGUAGE_DISPLAY); // language supported by the query device is supported
 
+                boolean isSupportBandQuickSwitch = GetFunctionList.isSupportFunction_Fourth(mContext, GlobalVariable.IS_SUPPORT_BAND_QUICK_SWITCH_SETTING); // language supported by the query device is supported
+
 
                 try {
 
@@ -1778,6 +1811,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     judgeJson.put("isSupportECG", isSupportECG);
                     judgeJson.put("isSupportQueryBandLang", isSupportQueryBandLang);
                     judgeJson.put("isSupportBandLangDisplay", isSupportBandLangDisplay);
+                    judgeJson.put("isSupportBandQuickSwitch", isSupportBandQuickSwitch);
 
 //                AsyncExecuteUpdate asyncTask=new AsyncExecuteUpdate();
 //                asyncTask.execute("");
