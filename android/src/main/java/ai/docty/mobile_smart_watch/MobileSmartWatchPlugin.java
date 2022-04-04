@@ -2141,28 +2141,31 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (mUTESQLOperate != null) {
 
                 Log.e("dateTime::", ""+dateTime.toString());
-
                 StepOneDayAllInfo stepOneDayAllInfo = mUTESQLOperate.queryRunWalkInfo(dateTime);
-
                 Log.e("stepOneDayAllInfo::", ""+stepOneDayAllInfo.toString());
-
                 jsonObject.put("status", WatchConstants.SC_SUCCESS);
-
-                jsonObject.put("calender", stepOneDayAllInfo.getCalendar());
-                jsonObject.put("steps", stepOneDayAllInfo.getStep());
-                jsonObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getDistance()));
-                jsonObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
-
-                ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = stepOneDayAllInfo.getStepOneHourArrayInfo();
-                JSONArray jsonArray = new JSONArray();
-                for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
-                    JSONObject object = new JSONObject();
-                    object.put("step", stepOneHourInfo.getStep());
-                    object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
-                    jsonArray.put(object);
+                if (stepOneDayAllInfo !=null){
+                    jsonObject.put("calender", stepOneDayAllInfo.getCalendar());
+                    jsonObject.put("steps", ""+stepOneDayAllInfo.getStep());
+                    jsonObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getDistance()));
+                    jsonObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
+                    ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = stepOneDayAllInfo.getStepOneHourArrayInfo();
+                    JSONArray jsonArray = new JSONArray();
+                    for (StepOneHourInfo stepOneHourInfo : stepOneHourInfoArrayList) {
+                        JSONObject object = new JSONObject();
+                        object.put("step", stepOneHourInfo.getStep());
+                        object.put("time", GlobalMethods.getIntegerToHHmm(stepOneHourInfo.getTime()));
+                        jsonArray.put(object);
+                    }
+                    jsonObject.put("data", jsonArray);
+                }else{
+                    jsonObject.put("calender", dateTime);
+                    jsonObject.put("steps", "0");
+                    jsonObject.put("distance","0.00");
+                    jsonObject.put("calories", "0.00");
+                    JSONArray jsonArray = new JSONArray();
+                    jsonObject.put("data", jsonArray);
                 }
-                jsonObject.put("data", jsonArray);
-
                 result.success(jsonObject.toString());
             } else {
                 jsonObject.put("status", WatchConstants.SC_FAILURE);
