@@ -133,6 +133,7 @@ class SmartWatchConstants {
   static const String SYNC_BLE_WRITE_SUCCESS = "syncBleWriteSuccess";
   static const String SYNC_BLE_WRITE_FAIL = "syncBleWriteFail";
   static const String SYNC_SLEEP_TIME_OUT = "syncSleepTimeOut";
+  static const String SYNC_STEPS_TIME_OUT = "syncStepsTimeOut";
   static const String SYNC_TEMPERATURE_TIME_OUT = "syncTempTimeOut";
 
   static const String BP_TEST_STARTED = "bpTestStarted";

@@ -34,8 +34,6 @@ import com.yc.pedometer.info.SleepTimeInfo;
 import com.yc.pedometer.info.SportsModesInfo;
 import com.yc.pedometer.info.StepOneDayAllInfo;
 import com.yc.pedometer.info.StepOneHourInfo;
-import com.yc.pedometer.info.StepRunHourInfo;
-import com.yc.pedometer.info.StepWalkHourInfo;
 import com.yc.pedometer.info.TemperatureInfo;
 import com.yc.pedometer.listener.BreatheRealListener;
 import com.yc.pedometer.listener.OxygenRealListener;
@@ -59,7 +57,6 @@ import com.yc.pedometer.utils.BandLanguageUtil;
 import com.yc.pedometer.utils.CalendarUtils;
 import com.yc.pedometer.utils.GetFunctionList;
 import com.yc.pedometer.utils.GlobalVariable;
-import com.yc.pedometer.utils.LogUtils;
 import com.yc.pedometer.utils.SPUtil;
 
 import org.json.JSONArray;
@@ -436,6 +433,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         case ICallbackStatus.OFFLINE_SLEEP_SYNC_OK: // 6
                             //sleep sync done
                             pushEventCallBack(WatchConstants.SYNC_SLEEP_FINISH, new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
+                        case ICallbackStatus.OFFLINE_STEP_SYNC_TIMEOUT: // 93
+                            //sleep sync done
+                            pushEventCallBack(WatchConstants.SYNC_STEPS_TIME_OUT, new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
                         case ICallbackStatus.OFFLINE_SLEEP_SYNC_TIMEOUT: // 93
