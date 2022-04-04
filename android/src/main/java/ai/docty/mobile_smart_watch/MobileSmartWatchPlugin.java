@@ -2142,7 +2142,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
                 Log.e("dateTime::", ""+dateTime.toString());
                 StepOneDayAllInfo stepOneDayAllInfo = mUTESQLOperate.queryRunWalkInfo(dateTime);
-                Log.e("stepOneDayAllInfo::", ""+stepOneDayAllInfo.toString());
+                Log.e("stepOneDayAllInfo::", ""+stepOneDayAllInfo);
                 jsonObject.put("status", WatchConstants.SC_SUCCESS);
                 if (stepOneDayAllInfo !=null){
                     jsonObject.put("calender", stepOneDayAllInfo.getCalendar());
