@@ -519,7 +519,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
-                        case ICallbackStatus.DO_NOT_DISTURB_OPEN: // 107
+                        /*case ICallbackStatus.DO_NOT_DISTURB_OPEN: // 107
                             jsonObject.put("status", status);
                             pushEventCallBack(WatchConstants.DND_OPENED, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
@@ -527,7 +527,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         case ICallbackStatus.DO_NOT_DISTURB_CLOSE: // 107
                             jsonObject.put("status", status);
                             pushEventCallBack(WatchConstants.DND_CLOSED, jsonObject, WatchConstants.SC_SUCCESS);
-                            break;
+                            break;*/
 
                         case ICallbackStatus.QUERY_BAND_LANGUAGE_OK: // 147
                             jsonObject.put("status", status);
@@ -2139,35 +2139,19 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             String dateTime = call.argument("dateTime"); // always in "yyyyMMdd";
             JSONObject jsonObject = new JSONObject();
             if (mUTESQLOperate != null) {
+
+                Log.e("dateTime::", ""+dateTime.toString());
+
                 StepOneDayAllInfo stepOneDayAllInfo = mUTESQLOperate.queryRunWalkInfo(dateTime);
+
+                Log.e("stepOneDayAllInfo::", ""+stepOneDayAllInfo.toString());
+
                 jsonObject.put("status", WatchConstants.SC_SUCCESS);
 
                 jsonObject.put("calender", stepOneDayAllInfo.getCalendar());
                 jsonObject.put("steps", stepOneDayAllInfo.getStep());
                 jsonObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getDistance()));
                 jsonObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
-
-
-                /*Log.e("calender:", " " + stepOneDayAllInfo.getCalendar());
-                Log.e("steps:", " " + stepOneDayAllInfo.getStep());
-                Log.e("calories:", " " + stepOneDayAllInfo.getCalories());
-                Log.e("distance:", " " + stepOneDayAllInfo.getDistance());
-
-                Log.e("getRunSteps:", " " + stepOneDayAllInfo.getRunSteps());
-                Log.e("getRunCalories:", " " + stepOneDayAllInfo.getRunCalories());
-                Log.e("getRunDistance:", " " + stepOneDayAllInfo.getRunDistance());
-                Log.e("getRunHourDetails:", " " + stepOneDayAllInfo.getRunHourDetails());
-                Log.e("getRunDurationTime:", " " + stepOneDayAllInfo.getRunDurationTime());
-
-                Log.e("getWalkSteps:", " " + stepOneDayAllInfo.getWalkSteps());
-                Log.e("getWalkCalories:", " " + stepOneDayAllInfo.getWalkCalories());
-                Log.e("getWalkDistance:", " " + stepOneDayAllInfo.getWalkDistance());
-                Log.e("getWalkHourDetails:", " " + stepOneDayAllInfo.getWalkHourDetails());
-                Log.e("getWalkDurationTime:", " " + stepOneDayAllInfo.getWalkDurationTime());*/
-
-//                Log.e("onStepChange111", "getStep: " + stepOneDayAllInfo.getStep());
-//                Log.e("onStepChange112", "getCalories: " + stepOneDayAllInfo.getCalories());
-//                Log.e("onStepChange113", "getDistance: " + stepOneDayAllInfo.getDistance());
 
                 ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = stepOneDayAllInfo.getStepOneHourArrayInfo();
                 JSONArray jsonArray = new JSONArray();
