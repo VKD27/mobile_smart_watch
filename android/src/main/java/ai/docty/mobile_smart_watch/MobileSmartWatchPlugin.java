@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.yc.pedometer.dial.OnlineDialUtil;
 import com.yc.pedometer.info.BPVOneDayInfo;
 import com.yc.pedometer.info.BreatheInfo;
 import com.yc.pedometer.info.CustomTestStatusInfo;
@@ -36,10 +37,12 @@ import com.yc.pedometer.info.StepOneDayAllInfo;
 import com.yc.pedometer.info.StepOneHourInfo;
 import com.yc.pedometer.info.TemperatureInfo;
 import com.yc.pedometer.listener.BreatheRealListener;
+import com.yc.pedometer.listener.OnlineDialListener;
 import com.yc.pedometer.listener.OxygenRealListener;
 import com.yc.pedometer.listener.RateCalibrationListener;
 import com.yc.pedometer.listener.TemperatureListener;
 import com.yc.pedometer.listener.TurnWristCalibrationListener;
+import com.yc.pedometer.listener.WatchSyncProgressListener;
 import com.yc.pedometer.sdk.BLEServiceOperate;
 import com.yc.pedometer.sdk.BloodPressureChangeListener;
 import com.yc.pedometer.sdk.BluetoothLeService;
@@ -592,9 +595,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         stringBuilder = new StringBuilder(data.length);
 
                         for (byte byteChar : data) {
-                            Log.e("each_byteChar :", "" + byteChar);
+                            //Log.e("each_byteChar :", "" + byteChar);
                             String hexCode = String.format("%02X", byteChar);
-                            Log.e("each_data_str :", "" + hexCode);
+                           // Log.e("each_data_str :", "" + hexCode);
                             Log.e("each_data_dec :", "" + Integer.parseInt(String.format("%02X", byteChar), 16));
                             //Log.e("each_data_int :", "" + Integer.parseInt(String.format("%02X", byteChar),2));
                             hexArray.put(hexCode);
@@ -780,7 +783,45 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             }
         });//Breathe Listener
 
+        mBluetoothLeService.setOnlineDialListener(new OnlineDialListener() {
+            @Override
+            public void onlineDialStatus(int status) {
+                Log.e("setOnlineDialListener", "status: " + status);
+                if (OnlineDialUtil.getInstance().getDialStatus() == OnlineDialUtil.DialStatus.RegularDial) {
+                    OnlineDialUtil.LogI("onlineDialStatus  status =" + status);
+                   switch (status){
+                       case OnlineDialUtil.READ_DEVICE_ONLINE_DIAL_CONFIGURATION_OK:
+
+                           break;
+                       case OnlineDialUtil.PREPARE_SEND_ONLINE_DIAL_DATA:
+                           OnlineDialUtil.LogI("Prepare to send watch face data");
+                          /* mWriteCommand.setWatchSyncProgressListener(new WatchSyncProgressListener() {
+                               @Override
+                               public void WatchSyncProgress(int i) {
+
+                               }
+                           });*/
+                        /*   if (mUIFile != null) {
+                               OnlineDialDataTask task = new OnlineDialDataTask();
+                               task.execute();
+                           }*/
+
+                           break;
+                       case OnlineDialUtil.SEND_ONLINE_DIAL_SUCCESS:
+                           break;
+                       case OnlineDialUtil.SEND_ONLINE_DIAL_CRC_FAIL:
+                           break;
+                       case OnlineDialUtil.SEND_ONLINE_DIAL_DATA_TOO_LARGE:
+                           break;
+                   }
+                }
+
+
+            }
+        });
+
         Log.e("inside_service_result", "listeners" + mBluetoothLeService);
+
     }
 
     private void updatePasswordStatus() {
@@ -852,6 +893,36 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 result.success(findAvailable);
                 break;
 
+            case WatchConstants.FIND_BAND_DEVICE:
+                findBandDevice(result);
+                break;
+
+            case WatchConstants.CHECK_DIAL_SUPPORT:
+                boolean dialSupport = GetFunctionList.isSupportFunction_Third(mContext, GlobalVariable.IS_SUPPORT_ONLINE_DIAL);
+                result.success(dialSupport);
+                break;
+
+            case WatchConstants.READ_ONLINE_DIAL_CONFIG:
+                readOnlineDialConfig(result);
+                break;
+
+            case WatchConstants.PREPARE_SEND_ONLINE_DIAL:
+                prepareSendOnlineDialData(result);
+                break;
+
+            case WatchConstants.LISTEN_WATCH_DIAL_PROGRESS:
+                listenWatchDialProgress(result);
+                break;
+
+            case WatchConstants.SEND_ONLINE_DIAL_DATA:
+                sendOnlineDialData(call, result);
+                break;
+
+            case WatchConstants.STOP_ONLINE_DIAL_DATA:
+                stopOnlineDialData(result);
+                break;
+
+
             case WatchConstants.BIND_DEVICE:
                 connectBluDevice(call, result);
                 break;
@@ -862,9 +933,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 setUserParams(call, result);
                 break;
 
-            case WatchConstants.FIND_BAND_DEVICE:
-                findBandDevice(result);
-                break;
+
 
             case WatchConstants.SET_DO_NOT_DISTURB:
                 setDoNotDisturb(call, result);
@@ -1407,6 +1476,80 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
         } catch (Exception exp) {
             Log.e("setUserParamsExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void readOnlineDialConfig(Result result) {
+        try {
+            if (mWriteCommand != null) {
+                mWriteCommand.readDeviceOnlineDialConfiguration();
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("readOnDialConfigExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void prepareSendOnlineDialData(Result result) {
+        try {
+            if (mWriteCommand != null) {
+                mWriteCommand.prepareSendOnlineDialData();
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("prepareSendDialExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void listenWatchDialProgress(Result result) {
+        try {
+            if (mWriteCommand != null) {
+                mWriteCommand.setWatchSyncProgressListener(new WatchSyncProgressListener() {
+                    @Override
+                    public void WatchSyncProgress(int progress) {
+                        Log.e("WatchSyncProgress::", ""+progress);
+                    }
+                });
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("prepareSendDialExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+    private void sendOnlineDialData(MethodCall call, Result result) {
+        try {
+            byte[] data = call.argument("data");
+            if (mWriteCommand != null) {
+                mWriteCommand.sendOnlineDialData(data);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("sendOnlineDialDataExp::", exp.getMessage());
+        }
+    }
+
+    private void stopOnlineDialData(Result result) {
+        try {
+            if (mWriteCommand != null) {
+                mWriteCommand.stopOnlineDialData();
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("stopOnlineDialDataExp::", exp.getMessage());
             //result.success(WatchConstants.SC_FAILURE);
         }
     }

@@ -72,6 +72,14 @@ class SmartWatchConstants {
   static const String CHECK_FIND_BAND = "checkFindBand";
   static const String FIND_BAND_DEVICE = "findBandDevice";
 
+  static const String CHECK_DIAL_SUPPORT = "checkDialSupport";
+  static const String READ_ONLINE_DIAL_CONFIG = "readOnlineDialConfig";
+  static const String PREPARE_SEND_ONLINE_DIAL = "prepareSendOnlineDial";
+  static const String LISTEN_WATCH_DIAL_PROGRESS= "listenWatchDialProgress";
+  static const String SEND_ONLINE_DIAL_DATA = "sendOnlineDialData";
+  static const String STOP_ONLINE_DIAL_DATA = "stopOnlineDialData";
+
+
   static const String SET_DO_NOT_DISTURB = "setDoNotDisturb";
   static const String SET_REJECT_CALL = "setRejectCall";
 

@@ -79,6 +79,38 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.CHECK_FIND_BAND);
   }
 
+  Future<String> findBandDevice() async{
+    return await _methodChannel.invokeMethod(SmartWatchConstants.FIND_BAND_DEVICE);
+  }
+
+  Future<bool> checkDialSupport() async {
+    return await _methodChannel.invokeMethod(SmartWatchConstants.CHECK_DIAL_SUPPORT);
+  }
+
+  Future<String> readOnlineDialConfig() async{
+    return await _methodChannel.invokeMethod(SmartWatchConstants.READ_ONLINE_DIAL_CONFIG);
+  }
+
+  Future<String> prepareSendOnlineDialData() async{
+    return await _methodChannel.invokeMethod(SmartWatchConstants.PREPARE_SEND_ONLINE_DIAL);
+  }
+
+  Future<String> listenWatchDialProgress() async{
+    return await _methodChannel.invokeMethod(SmartWatchConstants.LISTEN_WATCH_DIAL_PROGRESS);
+  }
+
+  Future<String> sendOnlineDialData(dynamic bandData) async{
+    var params = {
+      "data": bandData, //bandData --send always band data as byte[] array
+    };
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SEND_ONLINE_DIAL_DATA, params);
+  }
+
+  Future<String> stopOnlineDialData() async{
+    return await _methodChannel.invokeMethod(SmartWatchConstants.STOP_ONLINE_DIAL_DATA);
+  }
+
+
   Future<String> bleReInitialize() async {
     var result = await _methodChannel.invokeMethod(SmartWatchConstants.BLE_RE_INITIALIZE);
     print('result>>$result');
@@ -154,9 +186,6 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_24_HEART_RATE, params);
   }
 
-  Future<String> findBandDevice() async{
-    return await _methodChannel.invokeMethod(SmartWatchConstants.FIND_BAND_DEVICE);
-  }
 
 
   Future<String> set24HrTemperatureTest(String interval, bool isEnabled) async{
