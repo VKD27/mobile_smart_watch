@@ -78,7 +78,8 @@ class SmartWatchConstants {
   static const String LISTEN_WATCH_DIAL_PROGRESS= "listenWatchDialProgress";
   static const String SEND_ONLINE_DIAL_DATA = "sendOnlineDialData";
   static const String STOP_ONLINE_DIAL_DATA = "stopOnlineDialData";
-
+  
+  static const String WATCH_DIAL_PROGRESS_STATUS = "watchDialProgressStatus";
 
   static const String SET_DO_NOT_DISTURB = "setDoNotDisturb";
   static const String SET_REJECT_CALL = "setRejectCall";

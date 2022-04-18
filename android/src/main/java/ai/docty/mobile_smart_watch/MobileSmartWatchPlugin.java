@@ -63,6 +63,7 @@ import com.yc.pedometer.utils.GlobalVariable;
 import com.yc.pedometer.utils.SPUtil;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -597,7 +598,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         for (byte byteChar : data) {
                             //Log.e("each_byteChar :", "" + byteChar);
                             String hexCode = String.format("%02X", byteChar);
-                           // Log.e("each_data_str :", "" + hexCode);
+                            // Log.e("each_data_str :", "" + hexCode);
                             Log.e("each_data_dec :", "" + Integer.parseInt(String.format("%02X", byteChar), 16));
                             //Log.e("each_data_int :", "" + Integer.parseInt(String.format("%02X", byteChar),2));
                             hexArray.put(hexCode);
@@ -656,7 +657,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
 
                     case ICallbackStatus.QUICK_SWITCH_STATUS_COMMAND_OK://119 ; Callback The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes
-                       // LogUtils.d("QUICK_SWITCH_STATUS_CMD_OK", "The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes");
+                        // LogUtils.d("QUICK_SWITCH_STATUS_CMD_OK", "The APP queries the status of the shortcut switch, returns all the status of the shortcut switch, and automatically reports the status of the shortcut switch when the shortcut switch on the bracelet changes");
                         //For data parsing, refer to the document queryQuickSwitchSupListStatus method description
                         try {
                             JSONObject jsonObject = new JSONObject();
@@ -789,12 +790,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 Log.e("setOnlineDialListener", "status: " + status);
                 if (OnlineDialUtil.getInstance().getDialStatus() == OnlineDialUtil.DialStatus.RegularDial) {
                     OnlineDialUtil.LogI("onlineDialStatus  status =" + status);
-                   switch (status){
-                       case OnlineDialUtil.READ_DEVICE_ONLINE_DIAL_CONFIGURATION_OK:
+                    switch (status) {
+                        case OnlineDialUtil.READ_DEVICE_ONLINE_DIAL_CONFIGURATION_OK:
 
-                           break;
-                       case OnlineDialUtil.PREPARE_SEND_ONLINE_DIAL_DATA:
-                           OnlineDialUtil.LogI("Prepare to send watch face data");
+                            break;
+                        case OnlineDialUtil.PREPARE_SEND_ONLINE_DIAL_DATA:
+                            OnlineDialUtil.LogI("Prepare to send watch face data");
                           /* mWriteCommand.setWatchSyncProgressListener(new WatchSyncProgressListener() {
                                @Override
                                public void WatchSyncProgress(int i) {
@@ -806,14 +807,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                task.execute();
                            }*/
 
-                           break;
-                       case OnlineDialUtil.SEND_ONLINE_DIAL_SUCCESS:
-                           break;
-                       case OnlineDialUtil.SEND_ONLINE_DIAL_CRC_FAIL:
-                           break;
-                       case OnlineDialUtil.SEND_ONLINE_DIAL_DATA_TOO_LARGE:
-                           break;
-                   }
+                            break;
+                        case OnlineDialUtil.SEND_ONLINE_DIAL_SUCCESS:
+                            break;
+                        case OnlineDialUtil.SEND_ONLINE_DIAL_CRC_FAIL:
+                            break;
+                        case OnlineDialUtil.SEND_ONLINE_DIAL_DATA_TOO_LARGE:
+                            break;
+                    }
                 }
 
 
@@ -932,7 +933,6 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             case WatchConstants.SET_USER_PARAMS:
                 setUserParams(call, result);
                 break;
-
 
 
             case WatchConstants.SET_DO_NOT_DISTURB:
@@ -1514,7 +1514,17 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 mWriteCommand.setWatchSyncProgressListener(new WatchSyncProgressListener() {
                     @Override
                     public void WatchSyncProgress(int progress) {
-                        Log.e("WatchSyncProgress::", ""+progress);
+                        Log.e("WatchSyncProgress::", "" + progress);
+                        try {
+
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("progress", progress);
+                            pushEventCallBack(WatchConstants.WATCH_DIAL_PROGRESS_STATUS, jsonObject, WatchConstants.SC_SUCCESS);
+
+                        } catch (Exception exp) {
+                            Log.e("listenWatchJsonExp::", exp.getMessage());
+                            //e.printStackTrace();
+                        }
                     }
                 });
                 result.success(WatchConstants.SC_INIT);
@@ -1522,10 +1532,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 result.success(WatchConstants.SC_FAILURE);
             }
         } catch (Exception exp) {
-            Log.e("prepareSendDialExp::", exp.getMessage());
+            Log.e("listenWatchDialExp::", exp.getMessage());
             //result.success(WatchConstants.SC_FAILURE);
         }
     }
+
     private void sendOnlineDialData(MethodCall call, Result result) {
         try {
             byte[] data = call.argument("data");
@@ -1854,8 +1865,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             if (SPUtil.getInstance(mContext).getBleConnectStatus()) {
 
                 boolean isSupportBandQuickSwitch = GetFunctionList.isSupportFunction_Fourth(mContext, GlobalVariable.IS_SUPPORT_BAND_QUICK_SWITCH_SETTING); // language supported by the query device is supported
-                Log.e("isSupportQuickSwitch:", ""+isSupportBandQuickSwitch);
-                if (isSupportBandQuickSwitch){
+                Log.e("isSupportQuickSwitch:", "" + isSupportBandQuickSwitch);
+                if (isSupportBandQuickSwitch) {
                     if (mWriteCommand != null) {
                         mWriteCommand.queryQuickSwitchSupList();
                     }
@@ -2283,13 +2294,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             JSONObject jsonObject = new JSONObject();
             if (mUTESQLOperate != null) {
 
-                Log.e("dateTime::", ""+dateTime.toString());
+                Log.e("dateTime::", "" + dateTime.toString());
                 StepOneDayAllInfo stepOneDayAllInfo = mUTESQLOperate.queryRunWalkInfo(dateTime);
-                Log.e("stepOneDayAllInfo::", ""+stepOneDayAllInfo);
+                Log.e("stepOneDayAllInfo::", "" + stepOneDayAllInfo);
                 jsonObject.put("status", WatchConstants.SC_SUCCESS);
-                if (stepOneDayAllInfo !=null){
+                if (stepOneDayAllInfo != null) {
                     jsonObject.put("calender", stepOneDayAllInfo.getCalendar());
-                    jsonObject.put("steps", ""+stepOneDayAllInfo.getStep());
+                    jsonObject.put("steps", "" + stepOneDayAllInfo.getStep());
                     jsonObject.put("distance", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getDistance()));
                     jsonObject.put("calories", GlobalMethods.convertDoubleToStringWithDecimal(stepOneDayAllInfo.getCalories()));
                     ArrayList<StepOneHourInfo> stepOneHourInfoArrayList = stepOneDayAllInfo.getStepOneHourArrayInfo();
@@ -2301,10 +2312,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonArray.put(object);
                     }
                     jsonObject.put("data", jsonArray);
-                }else{
+                } else {
                     jsonObject.put("calender", dateTime);
                     jsonObject.put("steps", "0");
-                    jsonObject.put("distance","0.00");
+                    jsonObject.put("distance", "0.00");
                     jsonObject.put("calories", "0.00");
                     JSONArray jsonArray = new JSONArray();
                     jsonObject.put("data", jsonArray);

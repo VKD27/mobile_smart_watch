@@ -43,9 +43,11 @@ public class WatchConstants {
     public static final String CHECK_DIAL_SUPPORT = "checkDialSupport";
     public static final String READ_ONLINE_DIAL_CONFIG = "readOnlineDialConfig";
     public static final String PREPARE_SEND_ONLINE_DIAL = "prepareSendOnlineDial";
-    public static final String LISTEN_WATCH_DIAL_PROGRESS= "listenWatchDialProgress";
+    public static final String LISTEN_WATCH_DIAL_PROGRESS = "listenWatchDialProgress";
     public static final String SEND_ONLINE_DIAL_DATA = "sendOnlineDialData";
     public static final String STOP_ONLINE_DIAL_DATA = "stopOnlineDialData";
+
+    public static final String WATCH_DIAL_PROGRESS_STATUS = "watchDialProgressStatus";
 
 
     public static final String SET_DO_NOT_DISTURB = "setDoNotDisturb";
