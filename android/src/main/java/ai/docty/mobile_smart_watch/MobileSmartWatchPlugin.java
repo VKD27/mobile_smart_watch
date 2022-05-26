@@ -526,7 +526,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         /*case ICallbackStatus.DO_NOT_DISTURB_OPEN: // 107
                             jsonObject.put("status", status);
                             pushEventCallBack(WatchConstants.DND_OPENED, jsonObject, WatchConstants.SC_SUCCESS);
-                            break;
+                            break;  `
 
                         case ICallbackStatus.DO_NOT_DISTURB_CLOSE: // 107
                             jsonObject.put("status", status);
@@ -1119,7 +1119,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private void initDeviceConnection(Result result) {
         // this.flutterInitResultBlu = result;
         boolean isException = false;
-        String[] multiplePermission = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_PRIVILEGED, Manifest.permission.BLUETOOTH_ADVERTISE};
+       // String[] multiplePermission = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_PRIVILEGED, Manifest.permission.BLUETOOTH_ADVERTISE};
+       // String[] multiplePermission = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT};
 
         try {
             if (mobileConnect != null) {
@@ -1144,12 +1145,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         boolean connectionStatus = SPUtil.getInstance(mContext).getBleConnectStatus();
                         Log.e("connectionStatus:", "" + connectionStatus);
                         //result.success(resultStatus);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
                                 //permissionLauncher.launch(multiplePermission);
                                 ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
                             }
-                        }
+                        }*/
                         new Handler().postDelayed(() -> {
                             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                             if (bluetoothAdapter != null) {
@@ -1163,7 +1164,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     } else {
                         // turn on bluetooth
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             if (!checkPermissionEnabled(Manifest.permission.BLUETOOTH_SCAN)) {
                                 //permissionLauncher.launch(multiplePermission);
                                 ActivityCompat.requestPermissions(activity, multiplePermission, REQUEST_BLE_ENABLE);
@@ -1181,10 +1182,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                                 Log.e("blue_service_exp", exp.getMessage());
                                 isException = true;
                             }
-                        } else {
+                        } else {*/
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                        }
+                        //}
                         boolean finalIsException = isException;
                         new Handler().postDelayed(() -> {
                             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

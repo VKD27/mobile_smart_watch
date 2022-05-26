@@ -2,58 +2,63 @@
     xmlns:tools="http://schemas.android.com/tools"
   package="ai.docty.mobile_smart_watch">
 
-    <!--    <uses-feature android:name="android.hardware.bluetooth_le" />
-<uses-permission android:name="android.permission.BLUETOOTH" />
-<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
+    <uses-permission android:name="android.permission.INTERNET"  android:required="false"/>
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:required="false" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:required="false" />
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:required="false" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"  android:required="false"/>
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <!-- NRF upgrade required -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"  android:required="false"/>
 
     <!-- The custom dial of the demo needs to take photos to replace the background-->
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA" android:required="false"/>
 
-    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+<!--    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>-->
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
 
-    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:required="false"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:required="false" />
+
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" android:required="false" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" android:required="false" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" android:required="false" />
+
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" android:required="false"/>
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" android:required="false" />
+    <uses-permission android:name="android.permission.GET_TASKS" android:required="false" />
+
 
     <!--<uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
 
     <!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED"
-        tools:ignore="ProtectedPermissions" />
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>-->
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />-->
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED"-->
+<!--        tools:ignore="ProtectedPermissions" />-->
     <!-- Needed only if your app makes the device discoverable to Bluetooth devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />-->
 
     <!--<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-
-
-    <application>
+    <application
+        android:allowBackup="false">
         <!--android:label="mobile_smart_watch_example"
         tools:replace="android:label"-->
         <service
             android:name="com.yc.pedometer.sdk.BluetoothLeService"
             android:enabled="true"
-            android:exported="false"
-            android:theme="@style/PcmTextAppearance" />
-
+            android:exported="false" />
+       <!-- android:theme="@style/PcmTextAppearance"-->
         <!--  改成你的key，请联系sdk开发者申请提供 -->
         <meta-data
             android:name="YCAPPKEY"
@@ -69,7 +74,7 @@
          <activity android:name="com.yc.pedometer.update.NotificationActivity"  android:exported="true"/>
          <service android:name="com.yc.pedometer.update.DfuService"
              android:enabled="true"
-             android:exported="true"/>
+             android:exported="false"/>
 
         <meta-data
             android:name="flutterEmbedding"

@@ -5,7 +5,7 @@ buildscript {
     repositories {
         google()
         jcenter()
-        mavenCentral()
+       // mavenCentral()
     }
 
     dependencies {
@@ -17,7 +17,7 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
-        mavenCentral()
+        //mavenCentral()
         flatDir {
             dirs 'libs'
             //dirs project(':<plugin_name>').file('libs')
@@ -33,8 +33,9 @@ android {
     compileSdkVersion 30
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 18
         targetSdkVersion 30
+
         ndk {
             abiFilters 'armeabi-v7a', 'x86', 'x86_64', 'arm64-v8a'
         }
@@ -53,7 +54,8 @@ android {
         release {
             debuggable true
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+           // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         /*release {
             minifyEnabled false

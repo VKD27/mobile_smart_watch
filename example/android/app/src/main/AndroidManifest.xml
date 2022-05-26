@@ -7,32 +7,46 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:required="false" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"  android:required="false"/>
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <!-- NRF upgrade required -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <!-- The custom dial of the demo needs to take photos to replace the background-->
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
 
-    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:required="false"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:required="false"/>
 
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <!-- Needed only if your app makes the device discoverable to Bluetooth devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" android:required="false" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" android:required="false" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" android:required="false" />
+
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" android:required="false"/>
+
+   <!-- <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+-->
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />-->
+    <!--
+    &lt;!&ndash; Needed only if your app makes the device discoverable to Bluetooth devices. &ndash;&gt;
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    &lt;!&ndash; Needed only if your app communicates with already-paired Bluetooth devices. &ndash;&gt;
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />-->
 
 
     <application
         android:label="mobile_smart_watch_example"
         android:icon="@mipmap/ic_launcher"
-       tools:replace="android:label"
+        tools:replace="android:label"
         android:allowBackup="false">
 
         <activity
@@ -42,6 +56,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
+            android:supportsRtl="true"
             android:exported="true">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
@@ -65,6 +80,22 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.yc.pedometer.sdk.BluetoothLeService"
+            android:enabled="true" />
+
+        <meta-data
+            android:name="YCAPPKEY"
+            tools:replace="android:value"
+            android:value="dcd05f241b65ec7b6af0bbe6f05145c2" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <service android:name="com.yc.pedometer.update.DfuService" />
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
