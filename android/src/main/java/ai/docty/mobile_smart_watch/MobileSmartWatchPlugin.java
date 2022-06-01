@@ -1,14 +1,11 @@
 package ai.docty.mobile_smart_watch;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,7 +13,6 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -63,7 +59,6 @@ import com.yc.pedometer.utils.GlobalVariable;
 import com.yc.pedometer.utils.SPUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -104,7 +99,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private MethodChannel mCallbackChannel;
 
     // Callbacks
-    private Handler uiThreadHandler = new Handler(Looper.getMainLooper());
+    private final Handler uiThreadHandler = new Handler(Looper.getMainLooper());
     // private Map<String, Runnable> callbackById = new HashMap<>();
     Map<String, Map<String, Object>> mCallbacks = new HashMap<>();
 
@@ -3092,7 +3087,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     Log.e("sendEventExp:", e.getMessage());
                 }
             }
-        }, 200);
+        }, 500);
     }
 
     private void pushBPEventCallBack(final String result, final JSONObject data, final String status) {
@@ -3110,7 +3105,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     Log.e("sendEventExp:", e.getMessage());
                 }
             }
-        }, 200);
+        }, 500);
     }
 
     private void pushTemperatureEventCallBack(final String result, final JSONObject data, final String status) {
@@ -3128,7 +3123,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     Log.e("sendEventExp:", e.getMessage());
                 }
             }
-        }, 200);
+        }, 500);
     }
 
 
