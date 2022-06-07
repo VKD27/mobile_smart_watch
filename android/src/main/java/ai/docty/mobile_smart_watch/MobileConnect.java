@@ -37,8 +37,8 @@ public class MobileConnect {
     private BluetoothLeService mBluetoothLeService;
     private ArrayList<BleDevices> mLeDevices;
 
-    private Handler mHandler;
-    private boolean mScanning;
+  //  private Handler mHandler;
+   // private boolean mScanning;
 
 //    private final long SCAN_PERIOD = 10000;
 //    private final int REQUEST_ENABLE_BT = 1122;

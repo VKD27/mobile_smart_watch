@@ -467,6 +467,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_ECG_DATA_FINISH, new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
+                        case ICallbackStatus.SYNC_OXYGEN_COMMAND_OK: // 165
+                            pushEventCallBack(WatchConstants.SYNC_OXYGEN_FINISH, new JSONObject(), WatchConstants.SC_SUCCESS);
+                            break;
 
                         case ICallbackStatus.SET_STEPLEN_WEIGHT_OK: // 8
                             //runOnUIThread(WatchConstants.UPDATE_DEVICE_PARAMS, new JSONObject(), WatchConstants.SMART_CALLBACK, WatchConstants.SC_SUCCESS);

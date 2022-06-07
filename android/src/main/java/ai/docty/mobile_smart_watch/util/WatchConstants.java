@@ -94,6 +94,9 @@ public class WatchConstants {
     public static final String SYNC_TEMPERATURE_FINISH = "syncTempFinish";
     public static final String SYNC_24_HOUR_RATE_FINISH = "sync24hrRateFinish";
     public static final String SYNC_ECG_DATA_FINISH = "syncEcgDataFinish";
+    public static final String SYNC_OXYGEN_FINISH = "syncOxygenFinish";
+
+
     public static final String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
     public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
     public static final String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
