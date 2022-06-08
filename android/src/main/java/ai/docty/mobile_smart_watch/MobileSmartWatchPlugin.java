@@ -2881,6 +2881,19 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     overAllJson.put("temperature", temperatureArray);
                 }
 
+                List<OxygenInfo> oxygenInfoList =  mUTESQLOperate.queryOxygenAll();
+                if (oxygenInfoList !=null){
+                    JSONArray oxygenArray = new JSONArray();
+                    for (OxygenInfo oxygenInfo : oxygenInfoList) {
+                        JSONObject oxygenObject = new JSONObject();
+                        oxygenObject.put("calender", oxygenInfo.getCalendar());
+                        oxygenObject.put("value", "" + oxygenInfo.getOxygenValue());
+                        oxygenObject.put("startDate", "" + oxygenInfo.getStartDate()); //yyyyMMddHHmmss
+                        oxygenObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
+                        oxygenArray.put(oxygenObject);
+                    }
+                }
+
                 result.success(overAllJson.toString());
             } else {
                 result.success(overAllJson.toString());
