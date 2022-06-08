@@ -2892,6 +2892,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         oxygenObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
                         oxygenArray.put(oxygenObject);
                     }
+                    overAllJson.put("oxygen", oxygenArray);
                 }
 
                 result.success(overAllJson.toString());
