@@ -95,7 +95,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private ActivityPluginBinding activityPluginBinding;
 
     private MethodChannel methodChannel;
-    private EventChannel eventChannel, bpEventChannel, tempEventChannel;
+    private EventChannel eventChannel, bpEventChannel, oxygenEventChannel, tempEventChannel;
     private MethodChannel mCallbackChannel;
 
     // Callbacks
@@ -163,6 +163,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
         eventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_EVENT_CHANNEL);
         bpEventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_BP_TEST_CHANNEL);
+        oxygenEventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_OXYGEN_TEST_CHANNEL);
         tempEventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_TEMP_TEST_CHANNEL);
 
         mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
@@ -170,6 +171,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         mCallbackChannel.setMethodCallHandler(mobileSmartWatchPlugin);
         eventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
         bpEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
+        oxygenEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
         tempEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
 
         try {
@@ -3018,10 +3020,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         methodChannel.setMethodCallHandler(null);
         eventChannel.setStreamHandler(null);
         bpEventChannel.setStreamHandler(null);
+        oxygenEventChannel.setStreamHandler(null);
         tempEventChannel.setStreamHandler(null);
         methodChannel = null;
         eventChannel = null;
         bpEventChannel = null;
+        oxygenEventChannel = null;
         tempEventChannel = null;
     }
 
@@ -3117,6 +3121,24 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     args.put("result", result);
                     args.put("data", data);
                     sendEventToDart(args, WatchConstants.SMART_BP_TEST_CHANNEL);
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                    Log.e("sendEventExp:", e.getMessage());
+                }
+            }
+        }, 500);
+    }
+
+    private void pushOxygenEventCallBack(final String result, final JSONObject data, final String status) {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject args = new JSONObject();
+                    args.put("status", status);
+                    args.put("result", result);
+                    args.put("data", data);
+                    sendEventToDart(args, WatchConstants.SMART_OXYGEN_TEST_CHANNEL);
                 } catch (Exception e) {
                     // e.printStackTrace();
                     Log.e("sendEventExp:", e.getMessage());

@@ -122,6 +122,11 @@ public class WatchConstants {
     public static final String BP_TEST_TIME_OUT = "bpTestTimeOut";
     public static final String BP_TEST_ERROR = "bpTestError";
 
+    public static final String OXYGEN_TEST_STARTED = "oxyTestStarted";
+    public static final String OXYGEN_TEST_FINISHED = "oxyTestFinished";
+    public static final String OXYGEN_TEST_TIME_OUT = "oxyTestTimeOut";
+    public static final String OXYGEN_TEST_ERROR = "oxyTestError";
+
     public static final String TEMP_TEST_OK = "tempTestOK";
     public static final String TEMP_TEST_TIME_OUT = "tempTestTimeOut";
 
@@ -132,6 +137,7 @@ public class WatchConstants {
     public static final String SMART_METHOD_CHANNEL = "smartMethodChannel";
     public static final String SMART_EVENT_CHANNEL = "smartEventChannel";
     public static final String SMART_BP_TEST_CHANNEL = "smartBPTestChannel";
+    public static final String SMART_OXYGEN_TEST_CHANNEL = "smartOxygenTestChannel";
     public static final String SMART_TEMP_TEST_CHANNEL = "smartTempTestChannel";
 
     //to listen for continuous call backs from the hardware device search

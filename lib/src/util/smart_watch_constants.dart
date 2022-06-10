@@ -153,6 +153,11 @@ class SmartWatchConstants {
   static const String BP_TEST_TIME_OUT = "bpTestTimeOut";
   static const String BP_TEST_ERROR = "bpTestError";
 
+  static const String OXYGEN_TEST_STARTED = "oxyTestStarted";
+  static const String OXYGEN_TEST_FINISHED = "oxyTestFinished";
+  static const String OXYGEN_TEST_TIME_OUT = "oxyTestTimeOut";
+  static const String OXYGEN_TEST_ERROR = "oxyTestError";
+
   static const String TEMP_TEST_OK = "tempTestOK";
   static const String TEMP_TEST_TIME_OUT = "tempTestTimeOut";
 
@@ -163,6 +168,7 @@ class SmartWatchConstants {
   static const String SMART_METHOD_CHANNEL = "smartMethodChannel";
   static const String SMART_EVENT_CHANNEL = "smartEventChannel";
   static const String SMART_BP_TEST_CHANNEL = "smartBPTestChannel";
+  static const String SMART_OXYGEN_TEST_CHANNEL = "smartOxygenTestChannel";
   static const String SMART_TEMP_TEST_CHANNEL = "smartTempTestChannel";
   static const String SMART_CONNECTION_CHANNEL = "smartConnectionChannel";
 
@@ -190,6 +196,7 @@ class SmartWatchConstants {
   static const String HR_REAL_TIME = "heartRateRT";
   static const String BP_RESULT = "bpResult";
   static const String TEMP_RESULT = "tempResult";
+  static const String OXYGEN_RESULT = "oxygenResult";
   static const String HR_24_REAL_RESULT = "hr24RealResult";
 
   static const String CALLBACK_EXCEPTION = "callbackException";

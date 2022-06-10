@@ -3,6 +3,7 @@ part of mobile_smart_watch;
 class MobileSmartWatch {
   late EventChannel _eventChannel;
   late EventChannel _bpTestChannel;
+  late EventChannel _oxygenTestChannel;
   late EventChannel _temperatureTestChannel;
  // late EventChannel _connectionChannel;
   late MethodChannel _methodChannel;
@@ -10,6 +11,7 @@ class MobileSmartWatch {
   Map? mapOptions;
 
   late StreamSubscription<dynamic> eventChannelListener;
+  late StreamSubscription<dynamic> oxygenChannelListener;
   late StreamSubscription<dynamic> bpChannelListener;
   late StreamSubscription<dynamic> temperatureChannelListener;
   late StreamSubscription<dynamic> connectionChannelListener;
@@ -22,6 +24,8 @@ class MobileSmartWatch {
 
       EventChannel bpTestChannel = EventChannel(SmartWatchConstants.SMART_BP_TEST_CHANNEL);
 
+      EventChannel oxygenTestChannel = EventChannel(SmartWatchConstants.SMART_OXYGEN_TEST_CHANNEL);
+
       EventChannel temperatureTestChannel = EventChannel(SmartWatchConstants.SMART_TEMP_TEST_CHANNEL);
 
      // EventChannel connectionChannel = EventChannel(SmartWatchConstants.SMART_CONNECTION_CHANNEL);
@@ -29,14 +33,14 @@ class MobileSmartWatch {
       //check if the option variable is AFOptions type or map type
       //assert(options is Map);
      // if (options is Map) {
-        _instance = MobileSmartWatch.private(methodChannel, eventChannel,bpTestChannel,temperatureTestChannel,  mapOptions: options);
+        _instance = MobileSmartWatch.private(methodChannel, eventChannel,bpTestChannel, oxygenTestChannel, temperatureTestChannel,  mapOptions: options);
      // }
     }
     return _instance!;
   }
 
   @visibleForTesting
-  MobileSmartWatch.private(this._methodChannel, this._eventChannel, this._bpTestChannel, this._temperatureTestChannel, {this.mapOptions});
+  MobileSmartWatch.private(this._methodChannel, this._eventChannel, this._bpTestChannel, this._oxygenTestChannel, this._temperatureTestChannel, {this.mapOptions});
 
 
   Future<String> initializeDeviceConnection() async {
@@ -628,6 +632,26 @@ class MobileSmartWatch {
     connectionChannelListener.cancel();
   }
 
+  void receiveOxygenListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
+    oxygenChannelListener = _oxygenTestChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
+  }
+
+  void pauseOxygenListeners(){
+    oxygenChannelListener.pause();
+  }
+
+  bool resumeOxygenListeners(){
+    if (oxygenChannelListener.isPaused) {
+      oxygenChannelListener.resume();
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  void cancelOxygenListeners(){
+    oxygenChannelListener.cancel();
+  }
 
   void receiveBPListeners({Function(dynamic)? onData, Function(dynamic)? onError, Function()? onDone}) {
     bpChannelListener = _bpTestChannel.receiveBroadcastStream().listen(onData,onError:onError, onDone: onDone, cancelOnError: false);
