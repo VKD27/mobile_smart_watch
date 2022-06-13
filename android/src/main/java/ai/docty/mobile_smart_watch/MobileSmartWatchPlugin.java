@@ -768,18 +768,20 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         mBluetoothLeService.setOxygenListener(new OxygenRealListener() {
             @Override
             public void onTestResult(int status, OxygenInfo oxygenInfo) {
-                Log.e("oxygenListener", "value: " + oxygenInfo.getOxygenValue() + ", status: " + status);
+
 
                 try {
                     JSONObject jsonObject = new JSONObject();
                     try {
                         if (oxygenInfo !=null){
+                            Log.e("oxygenListener", "value: " + oxygenInfo.getOxygenValue() + ", status: " + status);
+
                             jsonObject.put("calender", oxygenInfo.getCalendar());
                             jsonObject.put("value", "" + oxygenInfo.getOxygenValue());
                             jsonObject.put("startDate", "" + oxygenInfo.getStartDate()); //yyyyMMddHHmmss
                             jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
 
-                            pushOxygenEventCallBack(WatchConstants.BP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                            pushOxygenEventCallBack(WatchConstants.OXYGEN_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                         }
                     } catch (Exception e) {
                         //e.printStackTrace();

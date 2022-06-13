@@ -162,6 +162,7 @@ public class WatchConstants {
     public static final String STEPS_REAL_TIME = "stepsRealTime";
     public static final String HR_REAL_TIME = "heartRateRT";
     public static final String BP_RESULT = "bpResult";
+    public static final String OXYGEN_RESULT = "oxygenResult";
     public static final String TEMP_RESULT = "tempResult";
     public static final String HR_24_REAL_RESULT = "hr24RealResult";
 
