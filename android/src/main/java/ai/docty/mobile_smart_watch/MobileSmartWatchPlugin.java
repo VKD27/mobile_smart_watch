@@ -511,6 +511,16 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.HR_TEST_FINISHED, new JSONObject(), WatchConstants.SC_SUCCESS);
                             break;
 
+                        case ICallbackStatus.START_OXYGEN_COMMAND_OK: // 120
+                            jsonObject.put("status", status);
+                            pushOxygenEventCallBack(WatchConstants.OXYGEN_TEST_STARTED, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
+                        case ICallbackStatus.STOP_OXYGEN_COMMAND_OK: // 121
+                            jsonObject.put("status", status);
+                            pushOxygenEventCallBack(WatchConstants.OXYGEN_TEST_FINISHED, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
                         //after connections
                         case ICallbackStatus.SYNC_STATUS_24_HOUR_RATE_OPEN:  //175
                             // sync 24 hrs heart rate status
@@ -780,7 +790,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             jsonObject.put("startDate", "" + oxygenInfo.getStartDate()); //yyyyMMddHHmmss
                             jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
 
-                            pushOxygenEventCallBack(WatchConstants.OXYGEN_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                           // pushOxygenEventCallBack(WatchConstants.OXYGEN_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                         }
                     } catch (Exception e) {
                         //e.printStackTrace();
