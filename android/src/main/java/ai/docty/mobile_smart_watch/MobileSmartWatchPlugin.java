@@ -768,8 +768,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         mBluetoothLeService.setOxygenListener(new OxygenRealListener() {
             @Override
             public void onTestResult(int status, OxygenInfo oxygenInfo) {
-
-
+                Log.e("oxygenListener",  "status: " + status);
                 try {
                     JSONObject jsonObject = new JSONObject();
                     try {
