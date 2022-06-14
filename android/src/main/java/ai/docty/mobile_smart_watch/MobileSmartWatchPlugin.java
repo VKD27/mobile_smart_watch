@@ -739,6 +739,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
                         jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                         jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+
+                        jsonObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
+                        
                         Log.e("onTestResult", "object: " + jsonObject.toString());
                         //pushEventCallBack(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                         Log.e("onTestResult", "mUTESQLOperate: " + mUTESQLOperate.toString());
@@ -788,7 +791,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             jsonObject.put("calender", oxygenInfo.getCalendar());
                             jsonObject.put("value", "" + oxygenInfo.getOxygenValue());
                             jsonObject.put("startDate", "" + oxygenInfo.getStartDate()); //yyyyMMddHHmmss
-                            jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
+                            jsonObject.put("time", "" + GlobalMethods.getTimeByIntegerMin(oxygenInfo.getTime()));
 
                             pushOxygenEventCallBack(WatchConstants.OXYGEN_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                         }
@@ -2305,6 +2308,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         tempObj.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
                         tempObj.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                         tempObj.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+
+                        tempObj.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
                         Log.e("jsonObject", "object: " + tempObj.toString());
                         temperatureArray.put(tempObj);
                     }
@@ -2560,6 +2565,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 //                    object.put("surfaceTemp", "" + temperatureInfo.getBodySurfaceTemperature());
                     object.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                     object.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+                    object.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
+                   
                     Log.e("jsonObject", "object: " + object.toString());
                     jsonArray.put(object);
                 }
@@ -2592,7 +2599,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     object.put("calender", oxygenInfo.getCalendar());
                     object.put("value", "" + oxygenInfo.getOxygenValue());
                     object.put("startDate", "" + oxygenInfo.getStartDate()); //yyyyMMddHHmmss
-                    object.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
+                    object.put("time", "" + GlobalMethods.getTimeByIntegerMin(oxygenInfo.getTime()));
                     Log.e("oxyObject", "object: " + object.toString());
                     jsonArray.put(object);
                 }
@@ -2766,6 +2773,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
                         jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                         jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+
+                        jsonObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
+                        
                         jsonArray.put(jsonObject);
                     }
                     resultObject.put("data", jsonArray);
@@ -2945,6 +2955,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         temperatureObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
                         temperatureObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                         temperatureObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
+
+                        temperatureObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
                         temperatureArray.put(temperatureObject);
                     }
                     overAllJson.put("temperature", temperatureArray);
@@ -2958,7 +2970,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         oxygenObject.put("calender", oxygenInfo.getCalendar());
                         oxygenObject.put("value", "" + oxygenInfo.getOxygenValue());
                         oxygenObject.put("startDate", "" + oxygenInfo.getStartDate()); //yyyyMMddHHmmss
-                        oxygenObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
+                        oxygenObject.put("time", "" + GlobalMethods.getTimeByIntegerMin(oxygenInfo.getTime()));
                         oxygenArray.put(oxygenObject);
                     }
                     overAllJson.put("oxygen", oxygenArray);

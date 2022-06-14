@@ -1,6 +1,11 @@
 package ai.docty.mobile_smart_watch.util;
 
+import android.util.Log;
+
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -38,6 +43,25 @@ public class GlobalMethods {
         return String.format(Locale.getDefault(), "%02d:%02d", (hour - 1), min);
     }
 
+    public static String convertTimeToHHMm(String dateTime) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        try {
+            Date date = dateFormatter.parse(dateTime);
+            SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
+            assert date != null;
+            String displayValue = timeFormatter.format(date);
+            Log.e("convertDisplayValue>>", displayValue);
+            return displayValue;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+//        long s = seconds % 60;
+//        long m = (seconds / 60) % 60;
+//        long h = (seconds / (60 * 60)) % 24;
+//        return String.format(Locale.getDefault(),"%02d:%02d:%02d", h,m,s);
+    }
 
 
     public static String convertDoubleToStringWithDecimal(double infoValue) {
