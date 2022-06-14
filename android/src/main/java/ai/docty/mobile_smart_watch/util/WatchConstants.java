@@ -77,6 +77,7 @@ public class WatchConstants {
     public static final String FETCH_SLEEP_BY_DATE = "fetchSleepByDate";
     public static final String FETCH_BP_BY_DATE = "fetchBPByDate";
     public static final String FETCH_HR_BY_DATE = "fetchHRByDate";
+    public static final String FETCH_OXYGEN_BY_DATE = "fetchOxygenByDate";
     public static final String FETCH_24_HOUR_HR_BY_DATE = "fetch24HourHRDateByDate";
     public static final String FETCH_TEMP_BY_DATE = "fetchTemperatureByDate";
 

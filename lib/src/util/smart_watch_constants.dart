@@ -109,6 +109,7 @@ class SmartWatchConstants {
   static const String FETCH_SLEEP_BY_DATE = "fetchSleepByDate";
   static const String FETCH_BP_BY_DATE = "fetchBPByDate";
   static const String FETCH_HR_BY_DATE = "fetchHRByDate";
+  static const String FETCH_OXYGEN_BY_DATE = "fetchOxygenByDate";
   static const String FETCH_24_HOUR_HR_BY_DATE = "fetch24HourHRDateByDate";
   static const String FETCH_TEMP_BY_DATE = "fetchTemperatureByDate";
 

@@ -790,7 +790,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             jsonObject.put("startDate", "" + oxygenInfo.getStartDate()); //yyyyMMddHHmmss
                             jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
 
-                           // pushOxygenEventCallBack(WatchConstants.OXYGEN_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
+                            pushOxygenEventCallBack(WatchConstants.OXYGEN_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
                         }
                     } catch (Exception e) {
                         //e.printStackTrace();
@@ -1067,6 +1067,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             case WatchConstants.FETCH_HR_BY_DATE:
                 fetchHRByDate(call, result);
                 break;
+
+            case WatchConstants.FETCH_OXYGEN_BY_DATE:
+                fetchOxygenByDate(call, result);
+                break;
+                
             case WatchConstants.FETCH_24_HOUR_HR_BY_DATE:
                 fetch24HourHRDateByDate(call, result);
                 break;
@@ -2571,6 +2576,38 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void fetchOxygenByDate(MethodCall call, Result result) {
+        // providing proper list of the data on basis of the result.
+        try {
+            //  new SimpleDateFormat("yyyyMMdd", Locale.US)).format(var1) //20220212
+            String dateTime = call.argument("dateTime"); // always in "yyyyMMdd";
+            JSONObject resultJson = new JSONObject();
+            if (mUTESQLOperate != null) {
+                List<OxygenInfo> oxygenInfoList = mUTESQLOperate.queryOxygenDate(dateTime);
+                Log.e("oxygenInfoList", "oxygenInfoList: " + oxygenInfoList.size());
+                resultJson.put("status", WatchConstants.SC_SUCCESS);
+                JSONArray jsonArray = new JSONArray();
+                for (OxygenInfo oxygenInfo : oxygenInfoList) {
+                    JSONObject object = new JSONObject();
+                    object.put("calender", oxygenInfo.getCalendar());
+                    object.put("value", "" + oxygenInfo.getOxygenValue());
+                    object.put("startDate", "" + oxygenInfo.getStartDate()); //yyyyMMddHHmmss
+                    object.put("time", "" + GlobalMethods.convertIntToHHMmSs(oxygenInfo.getTime()));
+                    Log.e("oxyObject", "object: " + object.toString());
+                    jsonArray.put(object);
+                }
+                resultJson.put("data", jsonArray);
+                result.success(resultJson.toString());
+            } else {
+                result.success(resultJson.toString());
+            }
+        } catch (Exception exp) {
+            Log.e("fetchOxygenExp::", exp.getMessage());
+            // result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+    
+    
     //gathering individual data
     private void fetchAllStepsData(Result result) {
         // providing proper list of the data on basis of the result.

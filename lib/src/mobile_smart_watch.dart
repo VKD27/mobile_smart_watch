@@ -500,6 +500,23 @@ class MobileSmartWatch {
     }
   }
 
+  Future<Map<String, dynamic>> fetchOxygenByDate(String dateTime) async{
+    // dateTime = "yyyyMMdd" // 20220103
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    // state // deep sleep: 0, Light sleep: 1,  awake: 2
+    var params = {
+      "dateTime":dateTime,  // dateTime is mandatory to pass
+    };
+    var _result =  await _methodChannel.invokeMethod(SmartWatchConstants.FETCH_OXYGEN_BY_DATE, params);
+    print("oxy_reaponse>> $_result");
+    if (_result != null) {
+      Map<String, dynamic> response = jsonDecode(_result);
+      return response;
+    }else{
+      return {};
+    }
+  }
+
   Future<Map<String, dynamic>> fetchTemperatureByDate(String dateTime) async{
     // dateTime = "yyyyMMdd" // 20220103
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)

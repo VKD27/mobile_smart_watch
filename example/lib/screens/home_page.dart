@@ -320,7 +320,9 @@ class HomePageState extends State<HomePage> {
            SizedBox(
              height: 8,
            ),
-           Row(
+           Wrap(
+             alignment: WrapAlignment.center,
+             direction: Axis.horizontal,
              children: [
                TextButton(
                  onPressed: () async {
@@ -362,7 +364,9 @@ class HomePageState extends State<HomePage> {
                ),
              ],
            ),
-           Row(
+           Wrap(
+             alignment: WrapAlignment.center,
+             direction: Axis.horizontal,
              children: [
                TextButton(
                  onPressed: () async {
@@ -425,7 +429,9 @@ class HomePageState extends State<HomePage> {
                ],
              ),
            ),
-           Row(
+           Wrap(
+             alignment: WrapAlignment.center,
+             direction: Axis.horizontal,
              children: [
                TextButton(
                  onPressed: () async {
@@ -440,7 +446,6 @@ class HomePageState extends State<HomePage> {
                  }, child:  Text('Test Temp',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
-
                TextButton(
                  onPressed: () async {
                    // call this function on the dispose method of the screens.
