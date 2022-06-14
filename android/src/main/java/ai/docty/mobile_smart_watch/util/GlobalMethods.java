@@ -44,10 +44,12 @@ public class GlobalMethods {
     }
 
     public static String convertTimeToHHMm(String dateTime) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmm");
         try {
+            // Get date from string
             Date date = dateFormatter.parse(dateTime);
             SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
+            // Get time from date
             assert date != null;
             String displayValue = timeFormatter.format(date);
             Log.e("convertDisplayValue>>", displayValue);
