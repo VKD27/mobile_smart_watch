@@ -33,6 +33,7 @@ public class WatchConstants {
     public static final String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
     public static final String SET_USER_PARAMS = "setUserDetails";
     public static final String SET_24_HEART_RATE = "set24HeartRate";
+    public static final String SET_24_OXYGEN = "set24Oxygen";
     public static final String SET_24_TEMPERATURE_TEST = "set24TempTest";
     public static final String SET_WEATHER_INFO = "setWeatherInfo";
     public static final String SET_BAND_LANGUAGE = "setBandLanguage";
@@ -99,6 +100,7 @@ public class WatchConstants {
 
 
     public static final String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
+    public static final String SYNC_STATUS_24_HOUR_OXYGEN_OPEN = "syncStatus24OxyOpen";
     public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
     public static final String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
 

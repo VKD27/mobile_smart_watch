@@ -190,7 +190,12 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_24_HEART_RATE, params);
   }
 
-
+  Future<String> set24BloodOxygen(bool enable) async{
+    var params = {
+      "enable": enable?"true":"false", //true or false -- send true to enable the 24 hrs sync
+    };
+    return await _methodChannel.invokeMethod(SmartWatchConstants.SET_24_OXYGEN, params);
+  }
 
   Future<String> set24HrTemperatureTest(String interval, bool isEnabled) async{
     //Mandatory:: interval is always in minutes

@@ -528,6 +528,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             pushEventCallBack(WatchConstants.SYNC_STATUS_24_HOUR_RATE_OPEN, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
+                        case ICallbackStatus.QUERY_CURRENT_OXYGEN_COMMAND_OK:  //126
+                            // sync 24 hrs heart rate status
+                            jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.SYNC_STATUS_24_HOUR_OXYGEN_OPEN, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
                         case ICallbackStatus.SYNC_TEMPERATURE_AUTOMATICTEST_INTERVAL_COMMAND_OK: // 107
                             jsonObject.put("status", status);
                             pushEventCallBack(WatchConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonObject, WatchConstants.SC_SUCCESS);
@@ -978,6 +984,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
 
             case WatchConstants.SET_24_HEART_RATE:
                 set24HeartRate(call, result);
+                break;
+            case WatchConstants.SET_24_OXYGEN:
+                set24BloodOxygen(call, result);
                 break;
             case WatchConstants.SET_24_TEMPERATURE_TEST:
                 set24HrTemperatureTest(call, result);
@@ -1614,6 +1623,26 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             }
         } catch (Exception exp) {
             Log.e("findBandDeviceExp::", exp.getMessage());
+            //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+    private void set24BloodOxygen(MethodCall call, Result result) {
+        try {
+            String enable = call.argument("enable");
+            boolean isEnable = false;
+            assert enable != null;
+            if (enable.trim().toLowerCase().equalsIgnoreCase("true")) {
+                isEnable = true;
+            }
+            if (mWriteCommand != null) {
+                mWriteCommand.syncOxygenAutomaticTest(isEnable,24 *60);
+                result.success(WatchConstants.SC_INIT);
+            } else {
+                result.success(WatchConstants.SC_FAILURE);
+            }
+        } catch (Exception exp) {
+            Log.e("set24HeartRateExp::", exp.getMessage());
             //result.success(WatchConstants.SC_FAILURE);
         }
     }

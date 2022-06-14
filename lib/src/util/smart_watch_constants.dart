@@ -65,6 +65,7 @@ class SmartWatchConstants {
   static const String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
   static const String SET_USER_PARAMS = "setUserDetails";
   static const String SET_24_HEART_RATE = "set24HeartRate";
+  static const String SET_24_OXYGEN = "set24Oxygen";
   static const String SET_24_TEMPERATURE_TEST = "set24TempTest";
   static const String SET_WEATHER_INFO = "setWeatherInfo";
   static const String SET_BAND_LANGUAGE = "setBandLanguage";
@@ -132,6 +133,7 @@ class SmartWatchConstants {
 
 
   static const String SYNC_STATUS_24_HOUR_RATE_OPEN = "syncStatus24hrOpen";
+  static const String SYNC_STATUS_24_HOUR_OXYGEN_OPEN = "syncStatus24OxyOpen";
   static const String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
   static const String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
 
