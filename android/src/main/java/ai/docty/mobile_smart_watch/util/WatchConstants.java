@@ -103,6 +103,7 @@ public class WatchConstants {
     public static final String SYNC_STATUS_24_HOUR_OXYGEN_OPEN = "syncStatus24OxyOpen";
     public static final String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
     public static final String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
+    public static final String SYNC_STATUS_CURRENT_OXYGEN_CMD = "syncStatusCurrentOxyCmd";
 
     public static final String DND_OPENED = "dndOpened";
     public static final String DND_CLOSED = "dndClosed";

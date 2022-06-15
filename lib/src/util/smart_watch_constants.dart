@@ -136,6 +136,8 @@ class SmartWatchConstants {
   static const String SYNC_STATUS_24_HOUR_OXYGEN_OPEN = "syncStatus24OxyOpen";
   static const String SYNC_TEMPERATURE_24_HOUR_AUTOMATIC = "syncTemp24hrAutomatic";
   static const String SYNC_WEATHER_SUCCESS = "syncWeatherSuccess";
+  static const String SYNC_STATUS_CURRENT_OXYGEN_CMD = "syncStatusCurrentOxyCmd";
+
 
   static const String DND_OPENED = "dndOpened";
   static const String DND_CLOSED = "dndClosed";

@@ -531,6 +531,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         case ICallbackStatus.QUERY_CURRENT_OXYGEN_COMMAND_OK:  //126
                             // sync 24 hrs heart rate status
                             jsonObject.put("status", status);
+                            pushEventCallBack(WatchConstants.SYNC_STATUS_CURRENT_OXYGEN_CMD, jsonObject, WatchConstants.SC_SUCCESS);
+                            break;
+
+
+                        case ICallbackStatus.SET_OXYGEN_AUTOMATIC_TEST_COMMAND_OK:  //126
+                            // sync 24 hrs heart rate status
+                            jsonObject.put("status", status);
                             pushEventCallBack(WatchConstants.SYNC_STATUS_24_HOUR_OXYGEN_OPEN, jsonObject, WatchConstants.SC_SUCCESS);
                             break;
 
