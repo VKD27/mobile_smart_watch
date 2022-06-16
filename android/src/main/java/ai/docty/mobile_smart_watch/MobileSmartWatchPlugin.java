@@ -52,6 +52,7 @@ import com.yc.pedometer.sdk.SleepChangeListener;
 import com.yc.pedometer.sdk.StepChangeListener;
 import com.yc.pedometer.sdk.UTESQLOperate;
 import com.yc.pedometer.sdk.WriteCommandToBLE;
+import com.yc.pedometer.utils.BLEVersionUtils;
 import com.yc.pedometer.utils.BandLanguageUtil;
 import com.yc.pedometer.utils.CalendarUtils;
 import com.yc.pedometer.utils.GetFunctionList;
@@ -1010,6 +1011,10 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 getDeviceVersion(result);
                 break;
 
+            case WatchConstants.GET_DEVICE_DATA_INFO:
+                fetchDeviceDataInfo(call, result);
+                break;
+
             case WatchConstants.GET_DEVICE_BATTERY_STATUS:
                 getDeviceBatteryStatus(result);
                 break;
@@ -1887,6 +1892,37 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         } catch (Exception exp) {
             Log.e("set24HeartRateExp::", exp.getMessage());
             //result.success(WatchConstants.SC_FAILURE);
+        }
+    }
+
+
+    private void fetchDeviceDataInfo(MethodCall call, Result result) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            if (mUTESQLOperate != null) {
+                String bleName = BLEVersionUtils.getInstance(mContext).getBleVersionName();
+                String mac = BLEVersionUtils.getInstance(mContext).getBleMac();
+                String dpi = SPUtil.getInstance(mContext).getResolutionWidthHeight();
+                String maxCapacity = SPUtil.getInstance(mContext).getDialMaxDataSize();
+                int shape = SPUtil.getInstance(mContext).getDialScreenType();
+                int compatibleLevel = SPUtil.getInstance(mContext).getDialScreenCompatibleLevel();
+
+                jsonObject.put("status", WatchConstants.SC_SUCCESS);
+                jsonObject.put("bleName", bleName);
+                jsonObject.put("mac",mac);
+                jsonObject.put("dpi", dpi);
+                jsonObject.put("maxCapacity", maxCapacity);
+                jsonObject.put("shape", ""+shape);
+                jsonObject.put("compatible", ""+compatibleLevel);
+
+                result.success(jsonObject.toString());
+            } else {
+                jsonObject.put("status", WatchConstants.SC_FAILURE);
+                result.success(jsonObject.toString());
+            }
+        } catch (Exception exp) {
+            Log.e("fetchDeviceDInfoExp::", exp.getMessage());
+            //  result.success(WatchConstants.SC_FAILURE);
         }
     }
 

@@ -243,6 +243,16 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_DO_NOT_DISTURB, params);
   }
 
+  Future<Map<String, dynamic>> fetchDeviceDataInfo(String dateTime) async{
+    var _result =  await _methodChannel.invokeMethod(SmartWatchConstants.GET_DEVICE_DATA_INFO);
+    print("device_data_reaponse>> $_result");
+    if (_result != null) {
+      Map<String, dynamic> response = jsonDecode(_result);
+      return response;
+    }else{
+      return {};
+    }
+  }
 
   Future<Map<String, dynamic>> fetchOverAllByDate(String dateTime) async{
     var params = {

@@ -31,6 +31,7 @@ public class WatchConstants {
     public static final String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
     public static final String GET_DEVICE_VERSION = "fetchDeviceVersion";
     public static final String GET_DEVICE_BATTERY_STATUS = "fetchBatteryStatus";
+    public static final String GET_DEVICE_DATA_INFO = "fetchDeviceDataInfo";
     public static final String SET_USER_PARAMS = "setUserDetails";
     public static final String SET_24_HEART_RATE = "set24HeartRate";
     public static final String SET_24_OXYGEN = "set24Oxygen";
