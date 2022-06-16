@@ -1643,7 +1643,8 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                 isEnable = true;
             }
             if (mWriteCommand != null) {
-                mWriteCommand.syncOxygenAutomaticTest(isEnable,24 *60);
+                // 1hr *60
+                mWriteCommand.syncOxygenAutomaticTest(isEnable, 30);
                 result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
@@ -1878,7 +1879,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
             assert isOpen != null;
             boolean openEnabled = isOpen.toLowerCase().equalsIgnoreCase("true");
             if (mWriteCommand != null) {
-                mWriteCommand.syncTemperatureAutomaticTestInterval(openEnabled, interval * 60);
+                mWriteCommand.syncTemperatureAutomaticTestInterval(openEnabled, 30);
                 result.success(WatchConstants.SC_INIT);
             } else {
                 result.success(WatchConstants.SC_FAILURE);
