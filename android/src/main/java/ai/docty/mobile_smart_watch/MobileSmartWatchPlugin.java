@@ -96,7 +96,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private ActivityPluginBinding activityPluginBinding;
 
     private MethodChannel methodChannel;
-    private EventChannel eventChannel, bpEventChannel, oxygenEventChannel, tempEventChannel;
+    private EventChannel eventChannel, bpEventChannel, oxygenEventChannel, dialEventChannel, tempEventChannel;
     private MethodChannel mCallbackChannel;
 
     // Callbacks
@@ -165,6 +165,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         eventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_EVENT_CHANNEL);
         bpEventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_BP_TEST_CHANNEL);
         oxygenEventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_OXYGEN_TEST_CHANNEL);
+       // dialEventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_DIAL_EVENT_CHANNEL);
         tempEventChannel = new EventChannel(binaryMessenger, WatchConstants.SMART_TEMP_TEST_CHANNEL);
 
         mCallbackChannel = new MethodChannel(binaryMessenger, WatchConstants.SMART_CALLBACK);
@@ -173,6 +174,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         eventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
         bpEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
         oxygenEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
+        // dialEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
         tempEventChannel.setStreamHandler(new SmartStreamHandler(applicationContext));
 
         try {
@@ -1433,7 +1435,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         }).start();
     }
 
-    private Handler mHandlerMessage = new Handler() {
+    /*private Handler mHandlerMessage = new Handler() {
         public void handleMessage(Message msg) {
             Log.e("Msg_What_Handler: ", "" + msg.what);
             switch (msg.what) {
@@ -1443,7 +1445,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     break;
             }
         }
-    };
+    };*/
 
     private void disconnectBluDevice(Result result) {
         try {
@@ -1576,11 +1578,9 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     public void WatchSyncProgress(int progress) {
                         Log.e("WatchSyncProgress::", "" + progress);
                         try {
-
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("progress", progress);
-                            pushEventCallBack(WatchConstants.WATCH_DIAL_PROGRESS_STATUS, jsonObject, WatchConstants.SC_SUCCESS);
-
+                            pushDialFaceProgressCallBack(WatchConstants.WATCH_DIAL_PROGRESS_STATUS, jsonObject, WatchConstants.SC_SUCCESS);
                         } catch (Exception exp) {
                             Log.e("listenWatchJsonExp::", exp.getMessage());
                             //e.printStackTrace();
@@ -3173,11 +3173,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         eventChannel.setStreamHandler(null);
         bpEventChannel.setStreamHandler(null);
         oxygenEventChannel.setStreamHandler(null);
+        //dialEventChannel.setStreamHandler(null);
         tempEventChannel.setStreamHandler(null);
         methodChannel = null;
         eventChannel = null;
         bpEventChannel = null;
         oxygenEventChannel = null;
+        //dialEventChannel = null;
         tempEventChannel = null;
     }
 
@@ -3243,6 +3245,24 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
         mCallbacks.remove(callbackName);
         // Do additional stuff if required to cancel the listener
         result.success(null);
+    }
+
+    private void pushDialFaceProgressCallBack(final String result, final JSONObject data, final String status) {
+        uiThreadHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject args = new JSONObject();
+                    args.put("status", status);
+                    args.put("result", result);
+                    args.put("data", data);
+                    sendEventToDart(args, WatchConstants.SMART_EVENT_CHANNEL);
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                    Log.e("sendEventExp:", e.getMessage());
+                }
+            }
+        }, 1000);
     }
 
     private void pushEventCallBack(final String result, final JSONObject data, final String status) {
