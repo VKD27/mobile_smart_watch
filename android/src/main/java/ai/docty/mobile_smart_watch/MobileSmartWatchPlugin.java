@@ -552,7 +552,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         /*case ICallbackStatus.DO_NOT_DISTURB_OPEN: // 107
                             jsonObject.put("status", status);
                             pushEventCallBack(WatchConstants.DND_OPENED, jsonObject, WatchConstants.SC_SUCCESS);
-                            break;  `
+                            break;
 
                         case ICallbackStatus.DO_NOT_DISTURB_CLOSE: // 107
                             jsonObject.put("status", status);
@@ -3262,7 +3262,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     Log.e("sendEventExp:", e.getMessage());
                 }
             }
-        }, 1000);
+        }, 300);
     }
 
     private void pushEventCallBack(final String result, final JSONObject data, final String status) {
