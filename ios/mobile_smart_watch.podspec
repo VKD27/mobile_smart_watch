@@ -19,6 +19,8 @@ A new Flutter project.
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  #s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES'}
   s.swift_version = '5.0'
+  #s.swift_versions = ['5.0', '5.6']
   s.ios.vendored_frameworks = "**/iOS/UTESmartBandApi.framework"
 end
