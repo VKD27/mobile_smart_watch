@@ -222,6 +222,8 @@
 @property (nonatomic,assign) BOOL     isHasMoreSportType;
 /**
  *  ①The sports items (UTEDeviceSportModeWalking, UTEDeviceSportModeRunning, UTEDeviceSportModeMountaineering, UTEDeviceSportModeTreadmill.), accumulate the number of steps and calories generated, and then add them to the main interface of the device to display the number of steps and calories.
+ *  When isHasMoreSportType=YES, also need to sports items(UTEDeviceSportModeIndoorWalking, UTEDeviceSportModeIndoorRunning, UTEDeviceSportModeStepping, UTEDeviceSportModeOutdoorWalking, UTEDeviceSportModeTrailRunning, UTEDeviceSportModeParkour, UTEDeviceSportModeMarathon)
+ *
  *  However, the data (steps, calories) obtained by the application synchronously, rather than accumulating each other, so developers need to accumulate the data by themselves.
  *  In this way, the device can be consistent with the application's step count and calorie data.
  */
@@ -543,6 +545,47 @@
  *  ①Support Weather City
  */
 @property (nonatomic,assign) BOOL      isHasCustomWeatherCity;
+/**
+ *  ①Support Blood pressure is automatically activated
+ */
+@property (nonatomic,assign) BOOL      isHasAutoActiveBlood;
+/**
+ *  ①Support Weather humidity and UV
+ */
+@property (nonatomic,assign) BOOL      isHasWeatherHumidityUV;
+/**
+ *  ①Support Reboot
+ */
+@property (nonatomic,assign) BOOL      isHasReboot;
+/**
+ *  ①Support Sport icon list
+ */
+@property (nonatomic,assign) BOOL      isHasCustomSportIconList;
+/**
+ *  ①Support Menu icon list
+ */
+@property (nonatomic,assign) BOOL      isHasCustomMenuIconList;
+/**
+ *  ①Support Sport Target and  sport heart rate alert
+ */
+@property (nonatomic,assign) BOOL      isHasSportTargetHRM;
+/**
+ *  ①Support Siesta Time(do not disturb)
+ */
+@property (nonatomic,assign) BOOL      isHasCustomSiestaTimeNoDisturb;
+/**
+ *  ①Support Clock Title
+ *  The alarm clock has a label and can also read the device alarm clock information.
+ */
+@property (nonatomic,assign) BOOL      isHasClockTitle;
+/**
+ *  ①Support Bluetooth 3.0
+ */
+@property (nonatomic,assign) BOOL      isHasBluetooth3;
+/**
+ *  ①Support Clock Show or hidden
+ */
+@property (nonatomic,assign) BOOL      isHasClockShow;
 
 /**
  *  ①Support factory mode
@@ -690,9 +733,37 @@
  */
 @property (nonatomic,assign) UTEAlarmNum   num;
 /**
- *  Alarm vibration times Range 0 ~ 100
+ *  Alarm vibration times Range 0 ~ 100 . Defualt 5.
+ *  The more times, the more power the device consumes.
  */
 @property (nonatomic,assign) NSInteger     countVibrate;
+/**
+ *  Vibration Intensity. Range 1 ~ 3
+ *  Required: isHasClockTitle = YES
+ */
+@property (nonatomic,assign) NSInteger     vibrationIntensity;
+/**
+ *  Title. Defualt @"Alarm".  Maximum length 30
+ *  Required: isHasClockTitle = YES
+ */
+@property (nonatomic,copy  ) NSString      *title;
+/**
+ *  Valid once. If yes, UTEModelAlarm.week is invalid.
+ *  Required: isHasClockTitle = YES
+ */
+@property (nonatomic,assign) BOOL          once;
+/**
+ *  Record when an alarm is modified.  Format yyyy-MM-dd-HH-mm-ss
+ *  Required: isHasClockTitle = YES
+ *
+ *  Note: If nil, default record current time.
+ */
+@property (nonatomic,copy  ) NSString      *timeRecord;
+/**
+ *  If yes, Device will not display this clock
+ *  Required: isHasClockShow = YES
+ */
+@property (nonatomic,assign) BOOL          hidden;
 
 @end
 
@@ -858,7 +929,7 @@
  */
 @property (nonatomic,copy  ) NSString   *city;
 /**
- *  Up to 50 characters.
+ *  Up to 30 characters.
  *  Required isHasCustomWeatherCity=YES
  */
 @property (nonatomic,copy  ) NSString   *customCity;
@@ -886,6 +957,16 @@
  *  See method getUTEWeatherType:
  */
 @property (nonatomic,assign) UTEWeatherType  type;
+/**
+ *  Today weather humidity
+ *  Required isHasWeatherHumidityUV=YES
+ */
+@property (nonatomic,assign) NSInteger       humidity;
+/**
+ *  Today weather UV . Range 1~15
+ *  Required isHasWeatherHumidityUV=YES
+ */
+@property (nonatomic,assign) NSInteger       UV;
 
 @end
 
@@ -1142,11 +1223,11 @@
  *  UTEModelDeviceInfo
  */
 @interface UTEModelDeviceInfo : NSObject
-/**  Height UTEOptionUnitMeter  unit:cm   range <67,240>
+/**  Height UTEOptionUnitMeter  unit: cm   range <67,240>
  *
- *   Height UTEOptionUnitInch   unit:inch range <2.00,7.11> 2‘00“ ~ 7’11“ (11 hex)
- *   For example <2.00 , 2.01 ,2.02 ,2.03 ,2.04 ,2.05 ,2.06 ,2.07 ,2.08 ,2.09 ,2.10 ,2.11 ,3.00 ,3.01 ......., 7.11 >
- *   e.g. 5.10 is 5 feet 10 inches.
+ *   Height UTEOptionUnitInch   range < 2.00 , 7.11 > 2‘00“ ~ 7’11“  ,   means xxx feet xxx inches.
+ *   For example   5.10  ， 5.11   ,   6.00  ， 6.01   ， no 5.12   (because 1 foot equals 12 inches),  5.12  should be written as 6.00
+ *   e.g. 5.10  is 5 feet 10 inches.
  *
  *   If not modified, no assignment is required. However, the device that is successfully connected for the first time must be assigned a value, and SDK will save this as a temporary variable. If it is not set, the distance and calories may all be 0.
  */
@@ -1289,9 +1370,20 @@
  */
 @property (nonatomic,assign) NSInteger   duration;
 /**
- *   Do not disturb during lunch break (12:00 to 14:00 pm)
+ *   Do not disturb during Siesta  (fixed time 12:00 to 14:00 pm)
  */
 @property (nonatomic,assign) BOOL        enableSiesta;
+/**
+ *   e.g. @"13:21"
+ *
+ *   Required:  isHasCustomSiestaTimeNoDisturb = YES
+ */
+@property (nonatomic,copy) NSString     *siestaStartTime;
+/**
+ *   e.g. @"14:30"
+ *   Required:  isHasCustomSiestaTimeNoDisturb = YES
+ */
+@property (nonatomic,copy) NSString     *siestaEndTime;
 
 @end
 
@@ -1816,6 +1908,23 @@
 @property (nonatomic,assign) UTEDeviceRemindEnableType     Zalo;
 @property (nonatomic,assign) UTEDeviceRemindEnableType     Imo;
 @property (nonatomic,assign) UTEDeviceRemindEnableType     MicrosoftTeams;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     MicrosoftOutlook;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     Swiggy;
+
+@property (nonatomic,assign) UTEDeviceRemindEnableType     Zomato;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     Gpay;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     PhonePe;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     Hotstar;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     PrimeVideo;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     Flipkart;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     Amazon;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     Myntra;
+
+@property (nonatomic,assign) UTEDeviceRemindEnableType     NoiseFit;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     DailyHunt;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     Inshorts;
+@property (nonatomic,assign) UTEDeviceRemindEnableType     BookMyShow;
+
 
 //When isHasIconANCS=YES, supports all the above apps.
 
@@ -2179,6 +2288,13 @@
     If 'startIndex' is greater than 'amount', then it is 0.
  */
 @property (nonatomic,assign) NSUInteger              amount;
+/**
+    ③ Which group does this dial belong to.
+ 
+    Optional
+    ② From which group (See UTEModelDeviceDisplayGroupModel.ID)
+ */
+@property (nonatomic,assign) NSUInteger              groupID;
 
 /**
     ③ Preview image link
@@ -2211,6 +2327,33 @@
 
 @end
 
+
+@interface UTEModelDeviceDisplayGroupModel : NSObject
+/**
+    Group ID
+ */
+@property (nonatomic,assign) NSInteger               ID;
+/**
+    Group name
+ */
+@property (nonatomic,copy  ) NSString                *name;
+/**
+    Group sort number
+ */
+@property (nonatomic,assign) NSInteger               index;
+/**
+    How many dials are there in this group
+ */
+@property (nonatomic,assign) NSInteger               count;
+/**
+    The latest top 3 dials in this group
+ */
+@property (nonatomic,strong) NSArray<UTEModelDeviceDisplayModel *>  *array;
+
+
+@end
+
+
 /*!
  *  UTEModelSportHRMData
  *  Symbol ① Indicates that it has value only when the data is synchronized
@@ -2231,10 +2374,12 @@
 @property (nonatomic,copy  ) NSString                *timeEnd;
 /**
     ①② Only works for these modes ( UTEDeviceSportModeRunning/UTEDeviceSportModeTreadmill/UTEDeviceSportModeWalking/UTEDeviceSportModeMountaineering)
+ When isHasMoreSportType=YES, also supports modes(UTEDeviceSportModeIndoorWalking, UTEDeviceSportModeIndoorRunning, UTEDeviceSportModeStepping, UTEDeviceSportModeOutdoorWalking, UTEDeviceSportModeTrailRunning, UTEDeviceSportModeParkour, UTEDeviceSportModeMarathon)
  */
 @property (nonatomic,assign) NSInteger               steps;
 /**
     ①② Unit:km .Only works for these modes( UTEDeviceSportModeRunning/UTEDeviceSportModeTreadmill/UTEDeviceSportModeWalking/UTEDeviceSportModeMountaineering)
+ When isHasMoreSportType=YES, also supports modes(UTEDeviceSportModeIndoorWalking, UTEDeviceSportModeIndoorRunning, UTEDeviceSportModeStepping, UTEDeviceSportModeOutdoorWalking, UTEDeviceSportModeTrailRunning, UTEDeviceSportModeParkour, UTEDeviceSportModeMarathon)
  */
 @property (nonatomic,assign) CGFloat                 distance;
 /**
@@ -2335,20 +2480,20 @@
 /**
  *  Morning or afternoon e.g. AM.  Whether it exists, or show and hide
  */
-@property (nonatomic,assign) BOOL               AM_PM;
+@property (nonatomic,assign) BOOL               hasAM_PM;
 @property(nonatomic, strong) UIImage            *imgAM_PM;
 @property(nonatomic, assign) CGRect             rectAM_PM;
 /**
  *  Battery Icon
  */
-@property (nonatomic,assign) BOOL               iconBattery;
+@property (nonatomic,assign) BOOL               hasIconBattery;
 @property(nonatomic, strong) UIImage            *imgBattery;
 @property(nonatomic, assign) CGRect             rectBattery;
 /**
- *  Date e.g. 08/12  August 12
+ *  Date e.g. 08/12   is  August /12
  *  If you want to display 12/08 (August 12), you need to swap the coordinates of 0 and 1, 8 and 2.
  */
-@property (nonatomic,assign) BOOL               date;
+@property (nonatomic,assign) BOOL               hasDate;
 
 /** e.g. 08/12  From left to right, first digit ,  @"0"  */
 @property(nonatomic, strong) UIImage            *imgDate1;
@@ -2373,7 +2518,7 @@
 /**
  *  Time e.g. 09:58
  */
-@property (nonatomic,assign) BOOL               time;
+@property (nonatomic,assign) BOOL               hasTime;
 
 /** e.g. 09:58  From left to right, first digit  ,  @"0"  */
 @property(nonatomic, strong) UIImage            *imgTime1;
@@ -2398,19 +2543,19 @@
 /**
  *  Bluetooth Icon
  */
-@property (nonatomic,assign) BOOL               iconBluetooth;
+@property (nonatomic,assign) BOOL               hasIconBluetooth;
 @property(nonatomic, strong) UIImage            *imgBluetooth;
 @property(nonatomic, assign) CGRect             rectBluetooth;
 /**
  *  Step Icon
  */
-@property (nonatomic,assign) BOOL               iconStep;
+@property (nonatomic,assign) BOOL               hasIconStep;
 @property(nonatomic, strong) UIImage            *imgIconStep;
 @property(nonatomic, assign) CGRect             rectIconStep;
 /**
  *  Step e.g. 12085  Numbers are right aligned
  */
-@property (nonatomic,assign) BOOL               step;
+@property (nonatomic,assign) BOOL               hasStep;
 
 /** From left to right, first digit .   @"1" */
 @property(nonatomic, strong) UIImage            *imgStep1;
@@ -2435,26 +2580,26 @@
 /**
  *  The progress bar of the number of steps has a total of 10 equal parts.
  */
-@property (nonatomic,assign) BOOL               stepProgress;
+@property (nonatomic,assign) BOOL               hasStepProgress;
 @property(nonatomic, strong) UIImage            *imgStepProgress;
 @property(nonatomic, assign) CGRect             rectStepProgress;
 /**
  *  Week e.g. FRI
  */
-@property (nonatomic,assign) BOOL               week;
+@property (nonatomic,assign) BOOL               hasWeek;
 @property(nonatomic, strong) UIImage            *imgWeek;
 @property(nonatomic, assign) CGRect             rectWeek;
 
 /**
  *  Heart Rate Icon
  */
-@property (nonatomic,assign) BOOL               iconHRM;
+@property (nonatomic,assign) BOOL               hasIconHRM;
 @property(nonatomic, strong) UIImage            *imgIconHRM;
 @property(nonatomic, assign) CGRect             rectIconHRM;
 /**
  *  Heart Rate e.g. 120  Numbers are right aligned
  */
-@property (nonatomic,assign) BOOL               hrm;
+@property (nonatomic,assign) BOOL               hasHRM;
 
 /** From left to right, first digit .   @"1" */
 @property(nonatomic, strong) UIImage            *imgHRM1;
@@ -2497,10 +2642,13 @@
 */
 @property(nonatomic, strong) UIImage                *bg;
 /**
+    Text Color
+*/
+@property(nonatomic, strong) UIColor                *textColor;
+/**
     Image preview
 */
 @property (nonatomic,strong) UIImage                *imagePreview;
-
 /**
     Display Type. If 0, then it is undefined.
 */
@@ -2614,12 +2762,13 @@
 @interface UTEModelContactInfo : NSObject
 /**
  *  Contact Name.
- *  The maximum length is 10. If it exceeds, the first 20 characters will be automatically obtained.
+ *  The maximum length is 10. If it exceeds, the first 10 characters will be automatically obtained.
  */
 @property (nonatomic,copy  ) NSString      *name;
 /**
  *  Phone Number.
- *  The maximum length is 15. 
+ *  The maximum length is 15.
+ *  Note: Can only have numbers and symbols +
  */
 @property (nonatomic,copy  ) NSString      *number;
 
@@ -2791,18 +2940,18 @@
  */
 @interface UTEModelMPFInfo  : NSObject
 /**
- Invalid value :        -1
- Normal mood:       0
- Negative mood:     1
+ Invalid value :   -1
+ Normal mood:       1
+ Negative mood:     0
  Positive mood:     2
  */
 @property(nonatomic, assign) NSInteger      mood;
 /**
-    Value -1, Invalid value.
+    Value -1, Invalid value. e.g. 80
  */
 @property(nonatomic, assign) NSInteger      pressure;
 /**
-    Value -1, Invalid value.
+    Value -1, Invalid value. e.g. 80
  */
 @property(nonatomic, assign) NSInteger      fatigue;
 /**
@@ -2822,8 +2971,51 @@
  */
 @property (nonatomic,copy  ) NSString       *time;
 /**
- *  @"Meeting1"
+ *  Title cannot exceed 30 characters.   e.g. @"Lunch"
  */
 @property (nonatomic,copy  ) NSString       *title;
+
+@end
+
+/*!
+ *  UTEModelRegion
+ */
+@interface UTEModelRegion  : NSObject
+
+/**
+ *  The length of the region name cannot exceed 30 characters.
+ */
+@property (nonatomic,copy  ) NSString       *region;
+/**
+ *  TimeZone Range:  -12 ~ 12
+ */
+@property(nonatomic, assign) NSInteger      timeZone;
+
+@end
+
+/*!
+ *  UTEModelBluetooth3_0
+ */
+@interface UTEModelBluetooth3_0  : NSObject
+/**
+ *  Name
+ */
+@property (nonatomic,copy  ) NSString       *name;
+/**
+ *  Device has Bluetooth 3.0 turned on
+ */
+@property(nonatomic, assign) BOOL           open;
+/**
+ *  Has it been paired with the phone（Not now）
+ */
+@property(nonatomic, assign) BOOL           pair;
+/**
+ *  Is it connected
+ */
+@property(nonatomic, assign) BOOL           connect;
+/**
+ *  Device address
+ */
+@property (nonatomic,copy  ) NSString       *address;
 
 @end
