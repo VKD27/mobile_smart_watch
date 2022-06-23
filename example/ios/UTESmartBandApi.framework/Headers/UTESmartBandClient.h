@@ -145,10 +145,8 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
 @property (nonatomic,assign) BOOL         isScanRepeat;
 /**
  *  Scan devices without filtering, default NO.
- *  Note:
- *  1.If yes,filterName/filerServers/filerServersArray is invalid.
- *  2.Delegate uteManagerDiscoverDevices: will show all surrounding devices
- *  3.If an unsupported device is connected using method connectUTEModelDevices: , the SDK will not have any callback, please invoke method disConnectUTEModelDevices: to disconnect.
+ *  Note:If yes,filterName/filerServers/filerServersArray is invalid.
+ *  Delegate uteManagerDiscoverDevices: will show all surrounding devices
  */
 @property (nonatomic,assign) BOOL         isScanAllDevice;
 /**
@@ -262,25 +260,10 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
 /**
  *  @discussion Set alarm
  *
- *  @param array See UTEModelAlarm (Up to 3 , If isHasClockTitle = YES up to 5)
+ *  @param array See UTEModelAlarm (Up to 3)
  *  @param count Number of alarm vibrations (0-9); if the UTEModelAlarm attribute 'countVibrate' is not equal to 0, then 'countVibrate' will prevail.
- *
- *  Note: If isHasClockTitle = YES, To delete all alarms, please fill in the parameter array as nil .
  */
-- (BOOL)setUTEAlarmArray:(NSArray<UTEModelAlarm *> *_Nonnull)array vibrate:(NSInteger)count;
-
-/**
- *  @discussion Set alarm
- *
- *  Required: If isHasClockTitle = YES
- */
-- (BOOL)setUTEAlarmArray:(NSArray<UTEModelAlarm *> *_Nonnull)array vibrate:(NSInteger)count result:(void(^_Nullable)(BOOL success))result;
-
-/**
- *  @discussion Read device alarm information
- *  Required isHasClockTitle=Yes.
- */
-- (BOOL)readUTEAlarm:(void(^_Nullable)(NSArray<UTEModelAlarm *> * _Nullable array, BOOL success))result;
+- (void)setUTEAlarmArray:(NSArray<UTEModelAlarm *> *_Nonnull)array vibrate:(NSInteger)count;
 
 /**
  *  @discussion Sedentary reminder (12 to 14 noon and night sleep time, no reminder)
@@ -355,26 +338,6 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
 - (void)setUTESDKKey:(NSString *_Nonnull)key;
 
 /**
- *  @discussion Region
- *  Set the region where the SDK is located.
- *
- *  @param region  e.g. @"zh-Hans"  @"zh"
- *  The SDK will compare it to the system language.
- */
-- (void)setUTESDKRegion:(NSString *_Nonnull)region;
-
-/**
- *  @discussion Set Bluetooth3.0 key
- *  Required isHasBluetooth3=Yes
- *  
- *  See delegate  uteManagerReceiveBluetooth3Name:
- *
- *  @param key  Range: 1~99999999
- *  @param allow  Allow the device Bluetooth 3.0 to connect to the app
- */
-- (BOOL)setUTEBluetooth3_0Key:(NSInteger)key allowConnect:(BOOL)allow;
-
-/**
  *  @discussion Set User ID
  *  Required isHasUserID=Yes
  *  See delegate uteManagerUserIDStatus:
@@ -410,17 +373,16 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
 - (BOOL)readUTEDeviceUV:(void(^_Nullable)(NSInteger value))result;
 
 /**
- *  @discussion Check if the server has the latest firmware
+ *  @discussion Check if there is a new version of the firmware.
  *  Callback uteManagerDevicesSate:error:
  *  Note:Run the App once during debugging, you can access the server 5 times in a row, and then please run the App again to continue access.
- *  If SDKKey has never been set, please invoke setUTESDKKey: first.
  *
  *  @return It sends successfully or fails
  */
 - (BOOL)checkUTEFirmwareVersion;
 
 /**
- *  @discussion Check if the server has the latest firmware UI.
+ *  @discussion Check if there is a new version of the firmware UI.
  *  Callback uteManagerDevicesSate:error:
  *
  *  Required:isHasFirmwareUI = YES
@@ -428,7 +390,6 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
  *  @return It sends successfully or fails
  *
  *  Note:First invoke 'checkUTEFirmwareVersion' to check the firmware, if there is a new version, invoke 'beginUpdateFirmware' to upgrade. If there is no new version, invoke this method again to check the firmware UI.
- *  If SDKKey has never been set, please invoke setUTESDKKey: first.
  */
 - (BOOL)checkUTEFirmwareUIVersion;
 
@@ -550,10 +511,10 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
                            latitude:(double)latitude
                           longitude:(double)longitude
                             success:(void (^_Nullable)(UTEModelWeatherInfo * _Nullable data))success
-                            failure:(void (^_Nullable)(NSError * _Nullable error))failure NS_DEPRECATED(2_0, 2_0, 2_0, 2_0,"Currently not supported");
+                            failure:(void (^_Nullable)(NSError * _Nullable error))failure;
 
 /**
- *  @discussion Get the Dial that exists on the server
+ *  @discussion See what 'Dial' information the server can replace
  *
  *  @param sdkkey    KEY
  *  @param device    see UTEModelDeviceDisplayModel. Invoke readUTEDisplayInfoFormDevice:
@@ -565,23 +526,6 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
                              device:(UTEModelDeviceDisplayModel *_Nonnull)device
                             success:(void (^_Nullable)(NSArray<UTEModelDeviceDisplayModel *> *_Nullable))success
                             failure:(void (^_Nullable)(NSError *_Nullable))failure;
-
-/**
- *  @discussion Sort by group to get the Dial where the server exists
- *
- *  @param sdkkey    KEY
- *  @param device    see UTEModelDeviceDisplayModel. Invoke readUTEDisplayInfoFormDevice:
- 
- *  @param success success
- *  @param failure error
- *
- *  Note:
- *  1.Returns data in groups, with a maximum of 3 in each group by default.
- */
-- (void)getUTEDisplayInfoFormServerByGroup:(NSString *_Nonnull)sdkkey
-                                    device:(UTEModelDeviceDisplayModel *_Nonnull)device
-                                   success:(void (^_Nullable)(NSArray<UTEModelDeviceDisplayGroupModel *> *_Nullable))success
-                                   failure:(void (^_Nullable)(NSError *_Nullable))failure;
 
 /**
  *  @discussion Check if the server has these dials
@@ -649,7 +593,7 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
                                failure:(void (^_Nullable)(void))failure;
 
 /**
- *  @discussion Get customizable dial in the SDK built-in
+ *  @discussion Get customizable dial information.
  *  Required:isHasSwitchDialOnline=YES.
  *
  *  @param model see UTEModelDeviceDisplayModel. Invoke readUTEDisplayInfoFormDevice.
@@ -689,22 +633,6 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
  *  @return All dials. If it nil, there is no customizable dial OR There is a problem with the unzippedPath, please see the SDK log.
  */
 - (NSArray<UTEModelDialInfo *> *_Nullable)getUTECustomDialInfoFromUnzippedPath:(NSString *_Nonnull)unzippedPath defaultInfo:(UTEModelDeviceDisplayModel *_Nonnull)model;
-
-/**
- *  @discussion Modify the coordinates, show, and hide of dial elements
- *
- *  @param model  Invoke getUTECustomDialDefualtInfo:  OR getUTECustomDialInfoFromServer:device:success:failure
- *
- *  @param success  See UTEModelDialInfo
- *
- *  @param failure failure
- *
- *  Note: Only the coordinates (x,y) and BOOL properties in UTEModelDialInfo.status can be modified.
- *
- */
-- (void)changeUTEModelDialInfo:(UTEModelDialInfo *_Nonnull)model
-                       success:(void (^_Nullable)(UTEModelDialInfo * _Nullable dialInfo))success
-                       failure:(void (^_Nullable)(void))failure;
 
 /**
  *  @discussion Display and wearing style
@@ -870,31 +798,6 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
                                    vibrate:(NSInteger)count
                                     siesta:(BOOL)isSiesta;
 /**
- *  @discussion Drink water reminder
- *  Required:isHasDrinkWaterReminder=Yes
- *
- *  @param  open reminder switch
- *  @param  interval How long is the interval between each time (unit minutes,Range 10~240)
- *  @param  startTime Time range: start time (Format HH:mm e.g. 08:56)
- *  @param  endTime Time range: end time (Format HH:mm e.g. 21:05)
- *
- *  @param  count How many times the device vibrates. Range (1~20) It is recommended 5 times, too much vibration will reduce the battery power.
- *  @param  isSiesta If Yes, it means that there will be no reminder to drink water during the time period 12:00~14:00 (fixed time)
- *
- *  @param  siestaStartTime     Required:isHasCustomSiestaTimeNoDisturb=Yes
- *  @param  siestaEndTime           Required:isHasCustomSiestaTimeNoDisturb=Yes
- *
- *  @return It sends successfully or fails
- */
-- (BOOL)setUTEDeviceReminderDrinkWaterOpen:(BOOL)open
-                              intervalTime:(NSInteger)interval
-                                 startTime:(NSString *_Nonnull)startTime
-                                   endTime:(NSString *_Nonnull)endTime
-                                   vibrate:(NSInteger)count
-                                    siesta:(BOOL)isSiesta
-                           siestaStartTime:(NSString *_Nonnull)siestaStartTime
-                             siestaEndTime:(NSString *_Nonnull)siestaEndTime;
-/**
  *  @discussion Handwashing reminder
  *  Required:isHasHandWashing=Yes
  *
@@ -929,22 +832,18 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
  *
  *  @return It sends successfully or fails
  */
-- (BOOL)setUTEDeviceMeeting:(NSArray<UTEModelMeeting *> *_Nullable)array callback:(void (^_Nullable)(BOOL success))callback;
+- (BOOL)setUTEDeviceMeeting:(NSArray<UTEModelMeeting *> *_Nullable)array;
 
 /**
  *  @discussion World Clock
  *  Required:isHasTimeZone=Yes
  *
- *  @param array See UTEModelRegion.
- *  1.When filling in nil, delete all world clocks.
- *  2.Support up to 5.
- *  3.The order of the world clock follows the order in the array.
- *
- *  @param callback Whether the device has received valid data.
+ *  @param  timeZone    Range:  -12 ~ 12
+ *  @param  region       The length of the region name cannot exceed 20 characters.
  *
  *  @return It sends successfully or fails
  */
-- (BOOL)setUTEWorldClockTimeZone:(NSArray<UTEModelRegion *> *_Nullable)array callback:(void (^_Nullable)(BOOL success))callback;
+- (BOOL)setUTEWorldClockTimeZone:(NSInteger)timeZone region:(NSString *_Nonnull)region;
 
 /**
  *  @discussion Read device version
@@ -1117,16 +1016,6 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
  *  @return It sends successfully or fails
  */
 - (BOOL)readDeviceSupportAppListANCS:(void(^_Nullable)(NSArray<NSNumber *> * _Nullable arrayApp))result;
-
-/**
- *  @discussion Read MPF sensor name
- *  Required: isHasMPF=YES
- *
- *  @param result Sensor Name AND Whether the device displays Mood/Pressure/Fatigue interface.
- *
- *  @return It sends successfully or fails
- */
-- (BOOL)readDeviceSensorMPF:(void(^_Nullable)(NSString *_Nullable sensorName,BOOL haveMood,BOOL havePressure,BOOL haveFatigue))result;
 
 /**
  *  @discussion Test body fat
@@ -1484,47 +1373,7 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
  *  @return It sends successfully or fails
  */
 - (BOOL)setUTESportModelCurrentDisplay:(NSArray<NSNumber *> * _Nonnull)array callback:(void(^_Nullable)(BOOL success, NSInteger errorCode))callback;
-
-/**
- *  @discussion Sport  heart rate alert
- *  Required: isHasSportTargetHRM=YES
- *
- *  @param minHRMAlert Range 50~180
- *  @param maxHRMAlert Range 70~200
- *
- *  @return It sends successfully or fails
- */
-- (BOOL)setUTESportHRMAlert:(NSInteger)minHRMAlert alertMax:(NSInteger)maxHRMAlert open:(BOOL)open;
-
-/**
- *  @discussion Sport target distance
- *  Required: isHasSportTargetHRM=YES
- *
- *  @param distance Unit meter. Range 100~1000000
- *
- *  @return It sends successfully or fails
- */
-- (BOOL)setUTESportTargetDistance:(NSInteger)distance open:(BOOL)open;
-
-/**
- *  @discussion Sport target duration
- *  Required: isHasSportTargetHRM=YES
- *
- *  @param duration Unit seconds. Range 120~86400
- *
- *  @return It sends successfully or fails
- */
-- (BOOL)setUTESportTargetDuration:(NSInteger)duration open:(BOOL)open;
-
-/**
- *  @discussion Sport target calories
- *  Required: isHasSportTargetHRM=YES
- *
- *  @param calories Unit kcal. Range 50~10000
- *
- *  @return It sends successfully or fails
- */
-- (BOOL)setUTESportTargetCalories:(NSInteger)calories open:(BOOL)open;
+						
 
 /**
  *  @discussion Sync data(All sport data from a certain day to today)
@@ -1690,61 +1539,6 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
 - (BOOL)setRingtoneStatus:(BOOL)open;
 
 /**
- *  @discussion Set which sports icons are displayed
- *  Required:isHasCustomSportIconList = YES
- *  @param array See Enum UTEDeviceSportMode
- *  e.g. @[[NSNumber numberWithInteger:UTEDeviceSportModeRunning], [NSNumber numberWithInteger:UTEDeviceSportModeCycling]]
- *
- *  @return It sends successfully or fails
- *
- *  Note:The order in array is the order in which it is displayed.
- */
-- (BOOL)setSportIcons:(NSArray *_Nonnull)array callback:(void(^_Nullable)(BOOL success))callback;
-
-/**
- *  @discussion Get which sports icons are showing
- *  Required:isHasCustomSportIconList = YES
- *  @param callback See Enum UTEDeviceSportMode
- *
- *  e.g. @[[NSNumber numberWithInteger:UTEDeviceSportModeRunning], [NSNumber numberWithInteger:UTEDeviceSportModeCycling]]
- *
- *  @return It sends successfully or fails
- *
- *  Note:
- *  1.The order in array is the order in which it is displayed.
- *  2.arrayShow : How many icons are currently displayed on the device
- *  3.arrayHide : How many icons are hidden on the current device
- *  4.minShow : Indicates how many icons need to be displayed at least. If it is 0, it means that the device does not support this attribute.
- *  5.maxShow : Indicates how many icons can be displayed at most. If it is 0, it means that the device does not support this attribute.
- *
- */
-- (BOOL)readSportIconShow:(void(^_Nullable)(NSArray * _Nullable arrayShow ,NSArray * _Nullable arrayHide, BOOL success, NSInteger minShow, NSInteger maxShow))callback;
-
-/**
- *  @discussion Set which Menu icons are displayed
- *  Required:isHasCustomMenuIconList = YES
- *  @param array See Enum UTEMenuIcon
- *  e.g. @[[NSNumber numberWithInteger:UTEMenuIconStatus], [NSNumber numberWithInteger:UTEMenuIconSport]]
- *
- *  @return It sends successfully or fails
- *
- *  Note:The order in array is the order in which it is displayed.
- */
-- (BOOL)setMenuIcons:(NSArray *_Nonnull)array callback:(void(^_Nullable)(BOOL success))callback;
-
-/**
- *  @discussion Get which menu icons are showing
- *  Required:isHasCustomMenuIconList = YES
- *  @param callback See Enum UTEMenuIcon
- *  e.g. @[[NSNumber numberWithInteger:UTEMenuIconStatus], [NSNumber numberWithInteger:UTEMenuIconSport]]
- *
- *  @return It sends successfully or fails
- *
- *  Note:The order in array is the order in which it is displayed.
- */
-- (BOOL)readMenuIconShow:(void(^_Nullable)(NSArray * _Nullable arrayShow,NSArray * _Nullable arrayHide, BOOL success))callback;
-
-/**
  *  @discussion Modify Bluetooth name
  *  Required:isHasModifyBluetoothName=YES
  *
@@ -1780,20 +1574,34 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
  *  e.g. @"/var/mobile/Containers/Data/Application/xxxxx/SH0AV0000564.img"
  *
  *  @return Is the firmware valid. If Yes , You can invoke method beginUpdateFirmware to upgrade the firmware.
- *  if NO,Please do not upgrade the firmware, otherwise the device will freeze and become unusable.
 */
 - (BOOL)updateLocalFirmwareUrl:(NSString *_Nonnull)url;
 
 /**
  *  @discussion Current SDK version
  *
- *  @return e.g. @"2.14.7"
+ *  @return e.g. @"2.14.6"
  *
  *  Note:If it is a four digit such as @"2.3.10.8", then the last 8 is the 8th debug version.
  */
 - (NSString *_Nonnull)sdkVersion;
 
 #pragma mark - Factory Test
+/**
+ *  @discussion Calculate calories by distance
+ *
+ *  @param distance   unit km
+ *  @param dataType   Only fill in UTEDeviceSportModeWalking/UTEDeviceSportModeRunning/UTEDeviceSportModeCycling
+ *  @param infoWeight unit kg
+ *  @param infoSex    See  UTEDeviceInfoSex
+ *
+ *  @return unit kcal
+ */
++ (CGFloat)calculateCaloriesFromDistance:(CGFloat)distance
+                                dataType:(UTEDeviceSportMode)dataType
+                              infoWeight:(CGFloat)infoWeight
+                                 infoSex:(UTEDeviceInfoSex)infoSex;
+ 
 /**
  *  @discussion Test for light leakage
  *  Required:isHasFactoryLightLeakage = YES
@@ -1830,34 +1638,6 @@ typedef void(^cardApduResponseBlock)(NSData * _Nullable data,BOOL success);
 - (void)setUpdateRKSilent:(BOOL)silent key:(NSString *_Nonnull)key;
 
 #pragma mark - UTESmartBandClient Tool
-/**
- *  @discussion Calculate calories by distance
- *
- *  @param distance   unit km
- *  @param dataType   Only fill in UTEDeviceSportModeWalking/UTEDeviceSportModeRunning/UTEDeviceSportModeCycling
- *  @param infoWeight unit kg
- *  @param infoSex    See  UTEDeviceInfoSex
- *
- *  @return unit kcal
- */
-+ (CGFloat)calculateCaloriesFromDistance:(CGFloat)distance
-                                dataType:(UTEDeviceSportMode)dataType
-                              infoWeight:(CGFloat)infoWeight
-                                 infoSex:(UTEDeviceInfoSex)infoSex;
-/**
- *  @discussion Calculate distance by steps
- *
- *  @param dataType   Only fill in UTEDeviceSportModeWalking/UTEDeviceSportModeRunning
- *  @param infoHeight unit cm
- *  @param infoSex    See  UTEDeviceInfoSex
- *
- *  @return unit km
- */
-+ (CGFloat)calculateDistanceFromStep:(NSInteger)step
-                            dataType:(UTEDeviceSportMode)dataType
-                          infoHeight:(CGFloat)infoHeight
-                             infoSex:(UTEDeviceInfoSex)infoSex;
-
 /**
  *  @discussion Convert string to hexadecimal data
  *

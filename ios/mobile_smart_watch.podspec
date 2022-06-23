@@ -22,5 +22,5 @@ A new Flutter project.
   #s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES'}
   s.swift_version = '5.0'
   #s.swift_versions = ['5.0', '5.6']
-  s.ios.vendored_frameworks = "**/iOS/UTESmartBandApi.framework"
+  #s.ios.vendored_frameworks = "**/iOS/UTESmartBandApi.framework"
 end

@@ -12,7 +12,6 @@
 @class UTEModelDevices;
 @class UTEModelRunData;
 @class UTEDeviceSportModeInfo;
-@class UTEModelBluetooth3_0;
 
 #pragma mark - UTEManagerDelegate
 
@@ -37,17 +36,6 @@
  *
  *  @param devicesState See UTEDevicesSate
  *  @param error        See error.code(UTEErrorCode)
- *
- *  Note:In the following cases, enum UTEDevicesSateDisconnected will not be called when the device is disconnected.Because they have their own enumeration.
- *  1.When isSyncDevices = yes ,        device is disconnected, enum UTEDevicesSateSyncError will be called,                  error.code = UTEErrorCodeSyncDisconnect
- *  2.When isUpdateDevices = yes ,     device is disconnected, enum UTEDevicesSateUpdateError will be called,              error.code = UTEErrorCodeUpdateDisconnect
- *  3.When isHeartDetecting = yes ,     device is disconnected, enum UTEDevicesSateHeartDetectingError will be called,  error.code = UTEErrorCodeHeartingDisconnect
- *  4.When isBloodDetecting = yes ,     device is disconnected, enum UTEDevicesSateBloodDetectingError will be called, error.code = UTEErrorCodeBloodDisconnect
- *  5.When isBloodOxygenDetecting = yes , device is disconnected, enum UTEDevicesSateBloodOxygenDetectingError will be called, error.code = UTEErrorCodeBloodOxygenDisconnect
- *  6.When isBodyFatDetecting = yes , device is disconnected, enum UTEDevicesSateBodyFatFail will be called,                error.code = UTEErrorCodeDisconnect
- *  7.When isECGDetecting = yes ,       device is disconnected, enum UTEDevicesSateECGDetectingFail will be called,       error.code = UTEErrorCodeDisconnect
- *  8.When isMPFDetecting = yes ,       device is disconnected, enum UTEDevicesSateMPFDetectingFail will be called,        error.code = UTEErrorCodeDisconnect
- *  9.When isHRMCalibrating = yes ,     device is disconnected, enum UTEDevicesSateHRMCalibrateFail will be called,         error.code = UTEErrorCodeDisconnect
  */
 - (void)uteManagerDevicesSate:(UTEDevicesSate)devicesState error:(NSError *)error userInfo:(NSDictionary *)info;
 
@@ -243,14 +231,6 @@
  *  @param ver    version of the firmware e.g. @"U0008"
  */
 - (void)uteManagerReceiveFirmwareUI:(NSString *)ver;
-
-/**
- *  @discussion Received Device Bluetooth3.0 info
- *  @param model  See UTEModelBluetooth3_0
- *
- *  Required: isHasBluetooth3=YES.
- */
-- (void)uteManagerReceiveBluetooth3Info:(UTEModelBluetooth3_0 *)model;
 
 
 - (void)uteManagerFactoryTestButtonCallback:(NSInteger)totalButton currentBtnIndex:(NSInteger)index;
