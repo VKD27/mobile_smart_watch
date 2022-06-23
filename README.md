@@ -14,7 +14,7 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ## Flutter Plugin Implementation Steps
-Steps to be followed for flutter android implementaion.
+Steps to be followed for flutter android implementation.
 
 1. Make sure your flutter android application minSdkVersion is > = 18.
 2. Make sure the below permissions are added in the android manifest.xml file.
@@ -67,3 +67,17 @@ add 'tools:replace="android:label"' into <application> tag of android manifest
 ```
 dart pub global activate devtools -v 2.8.0 or flutter global activate devtools -v 2.8.0
 ```
+## IOS Development
+Xcode v13.2.1, OC+Swift
+* Xcode project configuration:
+1. Add library UTESmartBandApi.framework in the project dynamically into ios directory and make changes or configure the Runner Settings as follows
+   1.1 General->Frameworks,Libraries,and Embedded Content -> UTESmartBandApi.framework  for Embed & Sign
+   1.2 Build Settings -> Build Options -> Always Embed Swift Standard Libraries Set as Yes
+   1.3 Build Settings -> Build Phases -> Link Binary With Libraries -> UTESmartBandApi.framework for Required
+2. Update Pod File as below
+```
+use_frameworks!
+pod 'iOSDFULibrary'
+pod 'iOSOTARTK'
+```
+3. 

@@ -41,5 +41,20 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSBonjourServices</key>
+	<array>
+	    <string>_dartobservatory._tcp</string>
+        <string>_pdl-datastream._tcp</string>
+        <string>_printer._tcp</string>
+        <string>_ipp._tcp</string>
+    </array>
+	<key>UISupportedExternalAccessoryProtocols</key>
+    <string>Need UI Support External Access Usage</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>Need Local Network Usage</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Need BLE permission</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>Need BLE permission</string>
 </dict>
 </plist>
