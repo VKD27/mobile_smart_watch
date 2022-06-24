@@ -1,6 +1,7 @@
 name: mobile_smart_watch
 description: A new Flutter project.
 version: 0.0.1
+author: Vivek Kumar
 publish_to: 'none'
 homepage:
 
