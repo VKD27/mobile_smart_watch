@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		2213C8B32865D83600B207DC /* UTESmartBandApi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223DC51D28649EE300313A20 /* UTESmartBandApi.framework */; platformFilter = ios; };
 		227276552864A2F1009AE5EE /* UTESmartBandApi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 227276542864A2F1009AE5EE /* UTESmartBandApi.framework */; platformFilter = ios; };
 		227276562864A2F1009AE5EE /* UTESmartBandApi.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 227276542864A2F1009AE5EE /* UTESmartBandApi.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -36,9 +37,9 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		19DCC27A4D1695C9DA1A0299 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
-		223DC51D28649EE300313A20 /* UTESmartBandApi.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UTESmartBandApi.framework; path = ../../ios/UTESmartBandApi.framework; sourceTree = "<group>"; };
+		223DC51D28649EE300313A20 /* UTESmartBandApi.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UTESmartBandApi.framework; path = ../../../../Users/macos/StudioProjects/app_new/mobile_smart_watch/ios/UTESmartBandApi.framework; sourceTree = DEVELOPER_DIR; };
 		226F35BE4A89257CE54B435F /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		227276542864A2F1009AE5EE /* UTESmartBandApi.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UTESmartBandApi.framework; sourceTree = "<group>"; };
+		227276542864A2F1009AE5EE /* UTESmartBandApi.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UTESmartBandApi.framework; sourceTree = SOURCE_ROOT; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -60,6 +61,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE22FEF86AE629E2F64452C2 /* Pods_Runner.framework in Frameworks */,
+				2213C8B32865D83600B207DC /* UTESmartBandApi.framework in Frameworks */,
 				227276552864A2F1009AE5EE /* UTESmartBandApi.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
