@@ -609,13 +609,13 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.START_TEST_TEMP);
   }
 
-  void onDeviceCallbackData(Function callback) async {
+  /*void onDeviceCallbackData(Function callback) async {
     await startListening(callback as void Function(dynamic), SmartWatchConstants.SMART_CALLBACK);
   }
 
   void onCancelCallbackData() async {
    // stopListening(callback as void Function(), SmartWatchConstants.SMART_CALLBACK);
-  }
+  }*/
 
   Stream<dynamic> registerEventCallBackListeners(){
     return _eventChannel.receiveBroadcastStream();

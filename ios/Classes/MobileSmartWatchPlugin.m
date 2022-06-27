@@ -8,6 +8,9 @@
 #import "mobile_smart_watch-Swift.h"
 #endif
 
+//#import <UTESmartBandApi/UTESmartBandApi.h>
+//#endif
+
 @implementation MobileSmartWatchPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   [SwiftMobileSmartWatchPlugin registerWithRegistrar:registrar];
