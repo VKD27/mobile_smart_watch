@@ -2,14 +2,18 @@ import Flutter
 import UIKit
 import UTESmartBandApi
 
-public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStreamHandler{
+public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStreamHandler, UTEManagerDelegate{
     
     private var eventSink: FlutterEventSink?
     //private var callbackId :NSMutableDictionary
     
+    //smart band
+    var smartBandMgr = UTESmartBandClient.init()
+    
     override init() {
         //self.callbackId = NSMutableDictionary()
         super.init()
+        self.smartBandMgr = UTESmartBandClient.sharedInstance()
         //self.connectivityProvider.connectivityUpdateHandler = connectivityUpdateHandler
         print(GlobalConstants.GET_LAST_DEVICE_ADDRESS)
     }
@@ -45,8 +49,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         //result("iOS " + UIDevice.current.systemVersion)
         switch call.method {
+        case GlobalConstants.BLE_RE_INITIALIZE:
+            bleReInitialize(returnResult: result)
+           
         case "ios":
             result("iOS " + UIDevice.current.systemVersion)
+            
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -69,5 +77,10 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
         // connectivityProvider.stop()
         eventSink = nil
         return nil
+    }
+    
+    // SDK Methods Starts Here
+    public func bleReInitialize(returnResult: FlutterResult){
+       // return nil
     }
 }
