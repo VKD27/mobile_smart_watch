@@ -80,4 +80,4 @@ use_frameworks!
 pod 'iOSDFULibrary'
 pod 'iOSOTARTK'
 ```
-3. 
+3. Make sure this framework is not added into the Build Settings -> Build Phases -> Embed Frameworks as a (Copy Sign On)

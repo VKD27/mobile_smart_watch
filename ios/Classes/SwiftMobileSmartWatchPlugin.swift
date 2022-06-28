@@ -13,7 +13,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
     override init() {
         //self.callbackId = NSMutableDictionary()
         super.init()
-        //self.smartBandMgr = UTESmartBandClient.sharedInstance()
+        self.smartBandMgr = UTESmartBandClient.sharedInstance()
         //self.connectivityProvider.connectivityUpdateHandler = connectivityUpdateHandler
         print(GlobalConstants.GET_LAST_DEVICE_ADDRESS)
     }
@@ -51,10 +51,11 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
         switch call.method {
         case GlobalConstants.BLE_RE_INITIALIZE:
             bleReInitialize(returnResult: result)
-           
+        case GlobalConstants.CHECK_CONNECTION_STATUS:
+            result(self.smartBandMgr.connectedDevicesModel?.isConnected)
         case "ios":
             result("iOS " + UIDevice.current.systemVersion)
-            
+
         default:
             result(FlutterMethodNotImplemented)
         }
