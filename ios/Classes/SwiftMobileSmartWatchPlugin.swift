@@ -50,12 +50,13 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
         //result("iOS " + UIDevice.current.systemVersion)
         switch call.method {
         case GlobalConstants.BLE_RE_INITIALIZE:
-            bleReInitialize(returnResult: result)
+            self.bleReInitialize(returnResult: result)
         case GlobalConstants.CHECK_CONNECTION_STATUS:
-            result(self.smartBandMgr.connectedDevicesModel?.isConnected)
+            self.getCheckConnectionStatus(result: result)
+            
         case "ios":
             result("iOS " + UIDevice.current.systemVersion)
-
+            
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -82,6 +83,19 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
     
     // SDK Methods Starts Here
     public func bleReInitialize(returnResult: FlutterResult){
-       // return nil
+        // return nil
+    }
+    
+    private func getCheckConnectionStatus(result: FlutterResult) {
+        var connectResult : NSNumber = false
+        let connectedModel = self.smartBandMgr.connectedDevicesModel
+        if(connectedModel != nil){
+            let status = connectedModel!.isConnected
+            connectResult = status as NSNumber
+            //var b: Bool = ((connectedModel?.isConnected) != nil);
+            result(connectResult)
+        }else{
+            result(connectResult)
+        }
     }
 }
