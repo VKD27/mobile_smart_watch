@@ -13,7 +13,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
     override init() {
         //self.callbackId = NSMutableDictionary()
         super.init()
-        self.smartBandMgr = UTESmartBandClient.sharedInstance()
+        //self.smartBandMgr = UTESmartBandClient.sharedInstance()
         //self.connectivityProvider.connectivityUpdateHandler = connectivityUpdateHandler
         print(GlobalConstants.GET_LAST_DEVICE_ADDRESS)
     }
