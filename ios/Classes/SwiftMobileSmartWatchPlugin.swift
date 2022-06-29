@@ -138,7 +138,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     private func getCheckConnectionStatus(result: FlutterResult) {
         var connectResult : NSNumber? = false
         let connectedModel = self.smartBandMgr.connectedDevicesModel
-        if connectedModel != nil && connectedModel.isConnected {
+        if connectedModel != nil && connectedModel!.isConnected {
             //let status = connectedModel!.isConnected
             //connectResult = status as NSNumber
             connectResult = true
