@@ -2,13 +2,22 @@ import Flutter
 import UIKit
 import UTESmartBandApi
 
-public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStreamHandler, UTEManagerDelegate{
+public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStreamHandler, UTEManagerDelegate{
     
     private var eventSink: FlutterEventSink?
     //private var callbackId :NSMutableDictionary
     
     //smart band
+    public typealias findDevicesBlock = () -> Void
+    
     var smartBandMgr = UTESmartBandClient.init()
+    
+   // weak var uteManagerDelegate : UTEManagerDelegate?
+    
+    //weak var connectVc : SmartBandConnectedControl?
+    
+    open var mArrayDevices : [UTEModelDevices] = NSMutableArray.init() as! [UTEModelDevices]
+    open var findDevicesBlock : findDevicesBlock?
     
     override init() {
         //self.callbackId = NSMutableDictionary()
@@ -16,8 +25,47 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
         self.smartBandMgr = UTESmartBandClient.sharedInstance()
         //self.connectivityProvider.connectivityUpdateHandler = connectivityUpdateHandler
         print(GlobalConstants.GET_LAST_DEVICE_ADDRESS)
+        
+        //let funcState = self.uteManagerDelight.uteManagerDevicesSate?(<#T##self: UTEManagerDelegate##UTEManagerDelegate#>);
+        //funcState.
+        
+        //        self.uteManagerDelegate.uteManagerDiscover?(self: UTEManagerDelegate) -> (UTEModelDevices?)){
+        //
+        //        }
+        //
+        //        self.uteManagerDelegate.uteManagerDiscover?(self: modelDevices: UTEModelDevices!) -> {
+        //
+        //        }
+        
+        //let discover = uteManagerDelegate.uteManagerDiscover?(<#T##self: UTEManagerDelegate##UTEManagerDelegate#>)
+        
+        //        self.uteManagerDelegate.uteManagerDiscover(T##modelDevices: UTEModelDevices!##UTEModelDevices?) Void -> (
+        //
+        //        )
+        
+        //        self.uteManagerDiscover?(T##modelDevices: UTEModelDevices!##UTEModelDevices?){
+        //
+        //        }
+        
+//        self.uteManagerDelegate?.uteManagerDiscover?(T##modelDevices: UTEModelDevices!##UTEModelDevices?) { modelDevices in
+//
+//        }
+       
     }
     
+    // MARK: - UTEManagerDelegate
+    public func uteManagerDiscover(_ modelDevices: UTEModelDevices!) {
+        print(modelDevices!)
+        print("in discover is \(modelDevices!)")
+        print("Inside the discover callback ", modelDevices!)
+        print("****** data = \(String(describing: modelDevices))")
+    }
+    
+    public func uteManagerDevicesSate(_ devicesState: UTEDevicesSate, error: Error!, userInfo info: [AnyHashable : Any]! = [:]) {
+        print("****** devicesState = \(String(describing: devicesState))")
+        print("****** error = \(String(describing: error))")
+        print("****** userInfo = \(String(describing: info))")
+    }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let binaryMessenger = registrar.messenger()
@@ -44,6 +92,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
     public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
         eventSink = nil
         //connectivityProvider.stop()
+        
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -87,12 +136,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin,  FlutterStrea
     }
     
     private func getCheckConnectionStatus(result: FlutterResult) {
-        var connectResult : NSNumber = false
+        var connectResult : NSNumber? = false
         let connectedModel = self.smartBandMgr.connectedDevicesModel
-        if(connectedModel != nil){
-            let status = connectedModel!.isConnected
-            connectResult = status as NSNumber
-            //var b: Bool = ((connectedModel?.isConnected) != nil);
+        if connectedModel != nil && connectedModel.isConnected {
+            //let status = connectedModel!.isConnected
+            //connectResult = status as NSNumber
+            connectResult = true
             result(connectResult)
         }else{
             result(connectResult)
