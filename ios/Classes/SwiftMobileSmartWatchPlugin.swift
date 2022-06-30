@@ -11,7 +11,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     public typealias findDevicesBlock = () -> Void
     
     var smartBandMgr = UTESmartBandClient.init()
-    var smartBandTool  = SmartBandDelegateTool.init()
+   //var smartBandTool  = SmartBandDelegateTool.init()
     
    // weak var uteManagerDelegate : UTEManagerDelegate?
     
@@ -143,7 +143,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         //self.smartBandMgr.startScanDevices()
         //self.smartBandMgr.stopScanDevices()
         
-        self.smartBandMgr.delegate = self.smartBandTool
+        //self.smartBandMgr.delegate = self.smartBandTool
         
         returnResult(GlobalConstants.SC_RE_INIT)
     }
