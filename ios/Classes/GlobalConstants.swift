@@ -22,7 +22,7 @@ struct GlobalConstants {
     static let SC_NOT_SUPPORTED = "notSupported"
     
     // device connections
-    static let BLE_RE_INITIALIZE = "bleReInitialize"
+   // static let BLE_RE_INITIALIZE = "bleReInitialize"
     static let DEVICE_RE_INITIATE = "deviceReInitiate"
     static let DEVICE_INITIALIZE = "initDeviceConnection"
     static let START_DEVICE_SEARCH = "startDeviceSearch"
@@ -155,7 +155,7 @@ struct GlobalConstants {
     static let SMART_TEMP_TEST_CHANNEL = "smartTempTestChannel"
     
     //to listen for continuous call backs from the hardware device search
-    static let SMART_CALLBACK = "smartCallbacks"
+   // static let SMART_CALLBACK = "smartCallbacks"
     static let START_LISTENING = "startListening"
     static let SERVICE_LISTENING = "serviceListener"
     static let CALL_LISTENER = "callListener"

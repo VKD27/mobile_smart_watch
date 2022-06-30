@@ -11,6 +11,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     public typealias findDevicesBlock = () -> Void
     
     var smartBandMgr = UTESmartBandClient.init()
+    var smartBandTool  = SmartBandDelegateTool.init()
     
    // weak var uteManagerDelegate : UTEManagerDelegate?
     
@@ -96,10 +97,10 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        //result("iOS " + UIDevice.current.systemVersion)
+        print("IOS_HANDLER " + call.method)
         switch call.method {
-        case GlobalConstants.BLE_RE_INITIALIZE:
-            self.bleReInitialize(returnResult: result)
+        case GlobalConstants.DEVICE_RE_INITIATE:
+            self.deviceReInitialize(returnResult: result)
         case GlobalConstants.CHECK_CONNECTION_STATUS:
             self.getCheckConnectionStatus(result: result)
             
@@ -131,8 +132,20 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     // SDK Methods Starts Here
-    public func bleReInitialize(returnResult: FlutterResult){
+    public func deviceReInitialize(returnResult: FlutterResult){
+        self.smartBandMgr.initUTESmartBandClient()
+        self.smartBandMgr.debugUTELog = true
+        self.smartBandMgr.isScanRepeat = true
+        self.smartBandMgr.filerRSSI = -90
+        
+        print("sdk vsersion = \(self.smartBandMgr.sdkVersion())")
         // return nil
+        //self.smartBandMgr.startScanDevices()
+        //self.smartBandMgr.stopScanDevices()
+        
+        self.smartBandMgr.delegate = self.smartBandTool
+        
+        returnResult(GlobalConstants.SC_RE_INIT)
     }
     
     private func getCheckConnectionStatus(result: FlutterResult) {
