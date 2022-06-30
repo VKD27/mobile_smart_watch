@@ -155,7 +155,7 @@ struct GlobalConstants {
     static let SMART_TEMP_TEST_CHANNEL = "smartTempTestChannel"
     
     //to listen for continuous call backs from the hardware device search
-   // static let SMART_CALLBACK = "smartCallbacks"
+    static let SMART_CALLBACK = "smartCallbacks" //need to remove
     static let START_LISTENING = "startListening"
     static let SERVICE_LISTENING = "serviceListener"
     static let CALL_LISTENER = "callListener"
