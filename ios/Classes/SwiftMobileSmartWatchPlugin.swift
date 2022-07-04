@@ -160,7 +160,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         
         print("log sdk vsersion = \(self.smartBandMgr.sdkVersion())")
         // return nil
-        //self.smartBandMgr.startScanDevices()
+        self.smartBandMgr.startScanDevices()
         //self.smartBandMgr.stopScanDevices()
         
         //self.smartBandMgr.delegate = self.smartBandTool
