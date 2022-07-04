@@ -104,7 +104,11 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         
         case GlobalConstants.DEVICE_INITIALIZE:
             self.deviceInitialize(returnResult: result)
-
+            
+        case GlobalConstants.START_DEVICE_SEARCH:
+            self.searchForBTDevices(result: result)
+            
+            
         case GlobalConstants.CHECK_CONNECTION_STATUS:
             self.getCheckConnectionStatus(result: result)
             
@@ -154,18 +158,32 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     public func deviceInitialize(returnResult: FlutterResult){
         self.smartBandMgr.initUTESmartBandClient()
+       
         self.smartBandMgr.debugUTELog = true
+       
         self.smartBandMgr.isScanRepeat = true
-        self.smartBandMgr.filerRSSI = -90
+        
+        self.smartBandMgr.filerRSSI = -60
+        
+        self.smartBandMgr.filerServers = ["5533","2222","FEE7"]
         
         print("log sdk vsersion = \(self.smartBandMgr.sdkVersion())")
         // return nil
-        self.smartBandMgr.startScanDevices()
+        //self.smartBandMgr.startScanDevices()
         //self.smartBandMgr.stopScanDevices()
         
         //self.smartBandMgr.delegate = self.smartBandTool
-        
         returnResult(GlobalConstants.SC_INIT)
+    }
+    
+    public func searchForBTDevices(result: FlutterResult){
+        print("inseide device start scan")
+
+        DispatchQueue.main.async {
+            self.smartBandMgr.startScanDevices()
+        }
+        
+        result(GlobalConstants.SC_INIT)
     }
     
     private func getCheckConnectionStatus(result: FlutterResult) {
