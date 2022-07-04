@@ -101,6 +101,10 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         switch call.method {
         case GlobalConstants.DEVICE_RE_INITIATE:
             self.deviceReInitialize(returnResult: result)
+        
+        case GlobalConstants.DEVICE_INITIALIZE:
+            self.deviceInitialize(returnResult: result)
+
         case GlobalConstants.CHECK_CONNECTION_STATUS:
             self.getCheckConnectionStatus(result: result)
             
@@ -138,7 +142,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         self.smartBandMgr.isScanRepeat = true
         self.smartBandMgr.filerRSSI = -90
         
-        print("sdk vsersion = \(self.smartBandMgr.sdkVersion())")
+        print("re-sdk vsersion = \(self.smartBandMgr.sdkVersion())")
         // return nil
         //self.smartBandMgr.startScanDevices()
         //self.smartBandMgr.stopScanDevices()
@@ -146,6 +150,22 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         //self.smartBandMgr.delegate = self.smartBandTool
         
         returnResult(GlobalConstants.SC_RE_INIT)
+    }
+    
+    public func deviceInitialize(returnResult: FlutterResult){
+        self.smartBandMgr.initUTESmartBandClient()
+        self.smartBandMgr.debugUTELog = true
+        self.smartBandMgr.isScanRepeat = true
+        self.smartBandMgr.filerRSSI = -90
+        
+        print("log sdk vsersion = \(self.smartBandMgr.sdkVersion())")
+        // return nil
+        //self.smartBandMgr.startScanDevices()
+        //self.smartBandMgr.stopScanDevices()
+        
+        //self.smartBandMgr.delegate = self.smartBandTool
+        
+        returnResult(GlobalConstants.SC_INIT)
     }
     
     private func getCheckConnectionStatus(result: FlutterResult) {
