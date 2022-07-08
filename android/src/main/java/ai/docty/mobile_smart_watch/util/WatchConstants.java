@@ -18,6 +18,7 @@ public class WatchConstants {
     public static final String DEVICE_RE_INITIATE = "deviceReInitiate";
     public static final String DEVICE_INITIALIZE = "initDeviceConnection";
     public static final String START_DEVICE_SEARCH = "startDeviceSearch";
+    public static final String UPDATE_DEVICE_LIST = "updateDeviceSearchList";
     //  public static final String STOP_DEVICE_SEARCH = "stopDeviceSearch";
     public static final String BIND_DEVICE = "connectDevice";
     public static final String UNBIND_DEVICE = "disconnectDevice";

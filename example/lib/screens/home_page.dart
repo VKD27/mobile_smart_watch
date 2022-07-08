@@ -1,7 +1,9 @@
+//import 'dart:io';
+//import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_smart_watch/mobile_smart_watch.dart';
 import 'package:mobile_smart_watch_example/global/global.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -16,7 +18,7 @@ class HomePageState extends State<HomePage> {
   //
    List<SmartDeviceModel> smartDevicesList = [];
 
-  MobileSmartWatch _mobileSmartWatch = MobileSmartWatch();
+  final MobileSmartWatch _mobileSmartWatch = MobileSmartWatch();
 
   bool showProgress = false;
   bool deviceConnected = false;
@@ -33,6 +35,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    initialize();
     /*_mobileSmartWatch.onDeviceCallbackData((response) {
       print("onDeviceCallbackData1 res: " + response.toString());
       if (response['id'].toString() == SmartWatchConstants.SMART_CALLBACK) {
@@ -180,6 +183,55 @@ class HomePageState extends State<HomePage> {
 
     });
   }
+   Future<bool> locationPermissionsGranted() async {
+     var permission = await Permission.location.status;
+     if (permission.isPermanentlyDenied) {
+       await openAppSettings();
+     } else if (await Permission.location.request().isGranted) {
+       return true;
+     } else {
+       permission = await Permission.location.request();
+     }
+     return permission.isGranted;
+   }
+
+   Future<void> initialize() async {
+
+     // bool bluetoothStatus = await Permissions.bluetoothPermissionsGranted();
+     // debugPrint('bluetoothStatus>> $bluetoothStatus');
+     // if (bluetoothStatus) {
+     // myLocation = await GlobalMethods.fetchDeviceCurrentLocation(context);
+     // if (myLocation != null) {
+     // await _activityServiceProvider.setLocationCoOrdinates(myLocation.latitude, myLocation.longitude);
+     // if(Platform.isAndroid) {
+     //   AndroidDeviceInfo androidInfo  = await deviceInfo.androidInfo;
+     //   if(androidInfo.version.sdkInt! >= 31) {
+     //     statuses = await [Permission.bluetoothConnect, Permission.bluetoothScan, Permission.locationWhenInUse, Permission.location,].request();
+     //     // Permission.bluetoothAdvertise,
+     //   } else {
+     //     statuses = await [Permission.bluetooth, Permission.location].request();
+     //   }
+     // } else {
+     Map<Permission, PermissionStatus> statuses = await [Permission.bluetooth, Permission.location, Permission.locationAlways, Permission.locationWhenInUse].request();
+    // }
+     debugPrint('statuses>> $statuses');
+     if (await locationPermissionsGranted()) {
+       debugPrint('locationPermissionsGranted>> $statuses');
+     }
+     /*var bluPermission = await Permission.bluetooth.status;
+    debugPrint('permission>>  $bluPermission');
+
+    if (bluPermission.isDenied) {
+
+      var bluetoothConnect = await Permission.bluetoothConnect.request();
+      var bluetoothScan = await Permission.bluetoothScan.request();
+      var bluetoothAdvertise = await Permission.bluetoothAdvertise.request();
+      debugPrint('bluetoothConnect>>  $bluetoothConnect');
+      debugPrint('bluetoothConnect>>  $bluetoothScan');
+      debugPrint('bluetoothConnect>>  $bluetoothAdvertise');
+
+    }*/
+   }
 
   void callOnInitStateSync(){
     // if the device is connected then call the below methods
@@ -196,11 +248,11 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Mobile Smart Care'),
+        title: const Text('Mobile Smart Care'),
         elevation: 1.5,
         actions: [
           IconButton(
-            icon: Icon( Icons.refresh_outlined, color: Colors.white),
+            icon: const Icon( Icons.refresh_outlined, color: Colors.white),
             onPressed: () async {
               // refresh list
              // await fetchBluDevicesList();
@@ -261,16 +313,16 @@ class HomePageState extends State<HomePage> {
                      padding: const EdgeInsets.all(8.0),
                      child: ElevatedButton(
                        style: ElevatedButton.styleFrom(
-                         primary: Color(0xFF0BB8FC), // background
+                         primary: const Color(0xFF0BB8FC), // background
                          onPrimary: Colors.white, // foreground
-                         onSurface: Color(0xFFCCCCCC),
-                         textStyle: TextStyle(fontSize: 18.0),
+                         onSurface: const Color(0xFFCCCCCC),
+                         textStyle: const TextStyle(fontSize: 18.0),
                        ),
-                       onPressed: () {
+                       onPressed: () async {
                          // call this in the initstate in the app.
-                         callInitiation(context);
+                         await callInitiation(context);
                        },
-                       child: Text('Initialize SDK',
+                       child: const Text('Initialize SDK',
                            style: TextStyle(color: Colors.white)),
                      ),
                    ),
@@ -280,22 +332,22 @@ class HomePageState extends State<HomePage> {
                      padding: const EdgeInsets.all(8.0),
                      child: ElevatedButton(
                        style: ElevatedButton.styleFrom(
-                         primary: Color(0xFF0BB8FC), // background
+                         primary: const Color(0xFF0BB8FC), // background
                          onPrimary: Colors.white, // foreground
-                         onSurface: Color(0xFFCCCCCC),
-                         textStyle: TextStyle(fontSize: 18.0),
+                         onSurface: const Color(0xFFCCCCCC),
+                         textStyle: const TextStyle(fontSize: 18.0),
                        ),
                        onPressed: () async {
                          await disconnectDevice();
                        },
-                       child: Text('Disconnect', style: TextStyle(color: Colors.white)),
+                       child: const Text('Disconnect', style: TextStyle(color: Colors.white)),
                      ),
                    ),
                  ),
                ],
              ),
            ),
-           SizedBox(
+           const SizedBox(
              height: 8,
            ),
            Row(
@@ -303,7 +355,7 @@ class HomePageState extends State<HomePage> {
                TextButton(
                    onPressed: () async {
                      await setUserParams();
-                   }, child:  Text('SET USER UPDATE',
+                   }, child:  const Text('SET USER UPDATE',
                    style: TextStyle(color: Colors.blue,  decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.wavy)),
                ),
                TextButton(
@@ -312,12 +364,12 @@ class HomePageState extends State<HomePage> {
                    await syncOverAll();
                   // await fetchAllJudgement();
                    //await fetchOverAllByDate();
-                 }, child:  Text('GET BATTERY STATUS /Sync',
+                 }, child:  const Text('GET BATTERY STATUS /Sync',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
              ],
            ),
-           SizedBox(
+           const SizedBox(
              height: 8,
            ),
            Wrap(
@@ -329,37 +381,37 @@ class HomePageState extends State<HomePage> {
                    // if device is connected call this method in the initState after checking the device connection condition.
 
                    await fetchSyncStepsData();
-                 }, child:  Text('S_Steps',
+                 }, child:  const Text('S_Steps',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
                TextButton(
                  onPressed: () async {
                    await fetchSyncSleepData();
-                 }, child:  Text('S_Sleep',
+                 }, child:  const Text('S_Sleep',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
                TextButton(
                  onPressed: () async {
                    await syncBloodPressure();
-                 }, child:  Text('S_BP',
+                 }, child:  const Text('S_BP',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
                TextButton(
                  onPressed: () async {
                    await syncOxygen();
-                 }, child:  Text('S_OXY',
+                 }, child:  const Text('S_OXY',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
                TextButton(
                  onPressed: () async {
                    await syncHeartRate();
-                 }, child:  Text('S_HR',
+                 }, child:  const Text('S_HR',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
                TextButton(
                  onPressed: () async {
                    await syncTemperature();
-                 }, child:  Text('S_TEMP',
+                 }, child:  const Text('S_TEMP',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
              ],
@@ -371,26 +423,26 @@ class HomePageState extends State<HomePage> {
                TextButton(
                  onPressed: () async {
                    await startBloodPressure();
-                 }, child:  Text('Start BP',
+                 }, child:  const Text('Start BP',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
                TextButton(
                  onPressed: () async {
                    await stopBloodPressure();
-                 }, child:  Text('Stop BP',
+                 }, child:  const Text('Stop BP',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
                TextButton(
                  onPressed: () async {
                    // call this function on the dispose method of the screens.
                    await startHR();
-                 }, child:  Text('Start HR',
+                 }, child:  const Text('Start HR',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
                TextButton(
                  onPressed: () async {
                    await stopHR();
-                 }, child:  Text('Stop HR',
+                 }, child:  const Text('Stop HR',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
              ],
@@ -404,25 +456,25 @@ class HomePageState extends State<HomePage> {
                    onPressed: () async {
                      // call this function on the dispose method of the screens.
                      await fetchStepsByDate();
-                   }, child:  Text('F_StepsDT',
+                   }, child:  const Text('F_StepsDT',
                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                  ),
                  TextButton(
                    onPressed: () async {
                      await fetchSleepByDate();
-                   }, child:  Text('F_SleepDT',
+                   }, child:  const Text('F_SleepDT',
                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                  ),
                  TextButton(
                    onPressed: () async {
                      await fetchHeartRateByDate();
-                   }, child:  Text('F_HRDT',
+                   }, child:  const Text('F_HRDT',
                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                  ),
                  TextButton(
                    onPressed: () async {
                      await fetch24HourHRByDate();
-                   }, child:  Text('F_24HRDT',
+                   }, child:  const Text('F_24HRDT',
                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                  ),
 
@@ -436,21 +488,21 @@ class HomePageState extends State<HomePage> {
                TextButton(
                  onPressed: () async {
                    await fetchTemperatureByDate();
-                 }, child:  Text('F_TEMPDT',
+                 }, child:  const Text('F_TEMPDT',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
                TextButton(
                  onPressed: () async {
                    // if device is connected call this method in the initState after checking the device connection condition.
                    await startTempTest();
-                 }, child:  Text('Test Temp',
+                 }, child:  const Text('Test Temp',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dotted)),
                ),
                TextButton(
                  onPressed: () async {
                    // call this function on the dispose method of the screens.
                    await fetchAllTemperatureData();
-                 }, child:  Text('GetAll Temp',
+                 }, child:  const Text('GetAll Temp',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
              ],
@@ -461,14 +513,14 @@ class HomePageState extends State<HomePage> {
                  onPressed: () async {
                    // call this function on the dispose method of the screens.
                    await fetchAllStepsData();
-                 }, child:  Text('GetAll Steps',
+                 }, child:  const Text('GetAll Steps',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
                TextButton(
                  onPressed: () async {
                    // call this function on the dispose method of the screens.
                    await fetchAllSleepData();
-                 }, child:  Text('GetAll Sleep',
+                 }, child:  const Text('GetAll Sleep',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
              ],
@@ -479,7 +531,7 @@ class HomePageState extends State<HomePage> {
                  onPressed: () async {
                    // call this function on the dispose method of the screens.
                    await cancelCallback();
-                 }, child:  Text('Cancel CallBacks',
+                 }, child:  const Text('Cancel CallBacks',
                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.dashed)),
                ),
              ],
@@ -537,7 +589,7 @@ class HomePageState extends State<HomePage> {
 
   Widget showDeviceContainer(List<SmartDeviceModel> deviceList) {
     if (showProgress) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     } else {
       if (deviceList.length > 0) {
         return Container(
@@ -546,7 +598,7 @@ class HomePageState extends State<HomePage> {
           child: ListView.separated(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             separatorBuilder: (BuildContext context, int index) => const Divider(),
             itemCount: deviceList.length,
             itemBuilder: (BuildContext context, int index) {
@@ -623,11 +675,11 @@ class HomePageState extends State<HomePage> {
   Widget _deviceItem(int index) {
     SmartDeviceModel device = smartDevicesList[index];
     return Container(
-      margin: EdgeInsets.all(1.0),
+      margin: const EdgeInsets.all(1.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         color: Colors.white,
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black,
             blurRadius: 1.0,
@@ -817,7 +869,7 @@ class HomePageState extends State<HomePage> {
     List<SmartStepsModel> smartList = [];
     if (json.length != 0) {
       json.forEach((element) {
-        smartList.add(new SmartStepsModel.fromJson(element));
+        smartList.add(SmartStepsModel.fromJson(element));
       });
     }
     return smartList;
@@ -894,7 +946,7 @@ class HomePageState extends State<HomePage> {
     List<dynamic> responseData = resultData['data'];
     List<SmartSleepModel> sleepList =[];
     for (var data in responseData) {
-      sleepList.add(new SmartSleepModel.fromJson(data));
+      sleepList.add(SmartSleepModel.fromJson(data));
     }
     print("sleepList>> ${sleepList.length}");
 

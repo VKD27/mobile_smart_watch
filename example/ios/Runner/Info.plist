@@ -56,5 +56,33 @@
     <string>Need BLE permission</string>
     <key>NSBluetoothPeripheralUsageDescription</key>
     <string>Need BLE permission</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>NSCalendarsUsageDescription</string>
+    <key>NSCameraUsageDescription</key>
+    <string>NSCameraUsageDescription</string>
+    <key>NSContactsUsageDescription</key>
+    <string>NSContactsUsageDescription</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Need Location permission</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Need Location permission</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Need Location permission</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>NSMicrophoneUsageDescription</string>
+    <key>NSMotionUsageDescription</key>
+    <string>NSMotionUsageDescription</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>NSPhotoLibraryUsageDescription</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>NSSpeechRecognitionUsageDescription</string>
+    <key>UIBackgroundModes</key>
+    <array>
+    	<string>fetch</string>
+    	<string>processing</string>
+    	<string>remote-notification</string>
+    </array>
+    <key>UIFileSharingEnabled</key>
+    <true/>
 </dict>
 </plist>

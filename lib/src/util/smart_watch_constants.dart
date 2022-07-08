@@ -50,6 +50,7 @@ class SmartWatchConstants {
   static const String DEVICE_RE_INITIATE = "deviceReInitiate";
   static const String DEVICE_INITIALIZE = "initDeviceConnection";
   static const String START_DEVICE_SEARCH = "startDeviceSearch";
+  static const UPDATE_DEVICE_LIST = "updateDeviceSearchList";
   static const String STOP_DEVICE_SEARCH = "stopDeviceSearch";
   static const String BIND_DEVICE = "connectDevice";
   static const String UNBIND_DEVICE = "disconnectDevice";

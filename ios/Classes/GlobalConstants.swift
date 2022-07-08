@@ -26,6 +26,7 @@ struct GlobalConstants {
     static let DEVICE_RE_INITIATE = "deviceReInitiate"
     static let DEVICE_INITIALIZE = "initDeviceConnection"
     static let START_DEVICE_SEARCH = "startDeviceSearch"
+    static let UPDATE_DEVICE_LIST = "updateDeviceSearchList"
     //  static let STOP_DEVICE_SEARCH = "stopDeviceSearch"
     static let BIND_DEVICE = "connectDevice"
     static let UNBIND_DEVICE = "disconnectDevice"
