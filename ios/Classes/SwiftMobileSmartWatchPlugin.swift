@@ -206,12 +206,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         print("inseide device start scan")
         self.registerDeviceCallback()
     
+        //print(self.smartBandMgr.isScanRepeat)
+        //self.smartBandMgr.isScanRepeat = true
         print(self.smartBandMgr.isScanRepeat)
-        self.smartBandMgr.isScanRepeat = true
-        print(self.smartBandMgr.isScanRepeat)
-        
+        self.smartBandTool.mArrayDevices.removeAll()
        // DispatchQueue.main.async {
-            self.smartBandMgr.startScanDevices()
+        self.smartBandMgr.startScanDevices()
             
 //            self.smartBandTool.getDevicesList = {(mArrayDevices : [UTEModelDevices]) in
 //                print("count in update>> \(mArrayDevices.count)")
