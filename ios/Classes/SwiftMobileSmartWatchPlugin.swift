@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 import UTESmartBandApi
 
-public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStreamHandler{
+class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStreamHandler{
     
     private var eventSink: FlutterEventSink?
     //private var callbackId :NSMutableDictionary
@@ -97,7 +97,13 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         case GlobalConstants.START_DEVICE_SEARCH:
             self.searchForBTDevices(result: result)
             
-            
+        case GlobalConstants.BIND_DEVICE:
+            self.connectBluDevice(call: call,result: result)
+        case GlobalConstants.UNBIND_DEVICE:
+            self.disconnectBluDevice(result: result);
+        case GlobalConstants.SET_USER_PARAMS:
+            self.setUserParams(call: call, result: result);
+                       
         case GlobalConstants.CHECK_CONNECTION_STATUS:
             self.getCheckConnectionStatus(result: result)
             
@@ -245,7 +251,23 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         result(jsonString)
     }
     
-    private func getCheckConnectionStatus(result: FlutterResult) {
+    func connectBluDevice(call: FlutterMethodCall, result: FlutterResult){
+        let arguments = call.arguments;
+        print("connect_arguments  \(String(describing: arguments))")
+    }
+    
+    func disconnectBluDevice(result: FlutterResult) {
+        
+    }
+    
+    func setUserParams(call: FlutterMethodCall, result: FlutterResult) {
+        let arguments = call.arguments;
+        print("user_arguments \(String(describing: arguments))")
+        
+    }
+        
+    
+    func getCheckConnectionStatus(result: FlutterResult) {
         var connectResult : NSNumber? = false
         let connectedModel = self.smartBandMgr.connectedDevicesModel
         if connectedModel != nil && connectedModel!.isConnected {
