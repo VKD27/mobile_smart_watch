@@ -88,8 +88,8 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         print("IOS_HANDLER " + call.method)
         switch call.method {
-//        case GlobalConstants.DEVICE_RE_INITIATE:
-//            self.deviceReInitialize(returnResult: result)
+            //        case GlobalConstants.DEVICE_RE_INITIATE:
+            //            self.deviceReInitialize(returnResult: result)
             
         case GlobalConstants.DEVICE_INITIALIZE:
             self.deviceInitialize(result: result)
@@ -103,7 +103,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             self.disconnectBluDevice(result: result);
         case GlobalConstants.SET_USER_PARAMS:
             self.setUserParams(call: call, result: result);
-                       
+            
         case GlobalConstants.CHECK_CONNECTION_STATUS:
             self.getCheckConnectionStatus(result: result)
             
@@ -196,45 +196,45 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             self.listDevices = mArrayDevices
             var deviceData : [Any] = [];
             //DispatchQueue.main.async {
-                
-                self.listDevices.forEach{model in
-                    let jsonObject = ["name": model.name as NSString, "address": model.advertisementAddress.uppercased() as NSString,"rssi": model.rssi as NSInteger,"identifier": model.identifier as NSString,"bondState":"","alias":""] as [String : Any]
-                    deviceData.append(jsonObject)
-                }
-                print(deviceData);
-                self.pushEventCallBack(result: GlobalConstants.UPDATE_DEVICE_LIST, status: GlobalConstants.SC_SUCCESS, sendData: deviceData)
-                
-           // }
+            
+            self.listDevices.forEach{model in
+                let jsonObject = ["name": model.name as NSString, "address": model.advertisementAddress.uppercased() as NSString,"rssi": model.rssi as NSInteger,"identifier": model.identifier as NSString,"bondState":"","alias":""] as [String : Any]
+                deviceData.append(jsonObject)
+            }
+            print(deviceData);
+            self.pushEventCallBack(result: GlobalConstants.UPDATE_DEVICE_LIST, status: GlobalConstants.SC_SUCCESS, sendData: deviceData)
+            
+            // }
         }
     }
     
     public func searchForBTDevices(result: FlutterResult){
         print("inseide device start scan")
         self.registerDeviceCallback()
-    
+        
         //print(self.smartBandMgr.isScanRepeat)
         //self.smartBandMgr.isScanRepeat = true
         print(self.smartBandMgr.isScanRepeat)
         self.smartBandTool.mArrayDevices.removeAll()
-       // DispatchQueue.main.async {
+        // DispatchQueue.main.async {
         self.smartBandMgr.startScanDevices()
-            
-//            self.smartBandTool.getDevicesList = {(mArrayDevices : [UTEModelDevices]) in
-//                print("count in update>> \(mArrayDevices.count)")
-//                self.listDevices = mArrayDevices
-//                var deviceData : [Any] = [];
-//                //DispatchQueue.main.async {
-//
-//                    self.listDevices.forEach{model in
-//                        let jsonObject = ["name": model.name as NSString, "address": model.advertisementAddress.uppercased() as NSString,"rssi": model.rssi as NSInteger,"identifier": model.identifier as NSString,"bondState":"","alias":""] as [String : Any]
-//                        deviceData.append(jsonObject)
-//                    }
-//                    print(deviceData);
-//                    self.pushEventCallBack(result: GlobalConstants.UPDATE_DEVICE_LIST, status: GlobalConstants.SC_SUCCESS, sendData: deviceData)
-//
-//                //}
-//            }
-       // }
+        
+        //            self.smartBandTool.getDevicesList = {(mArrayDevices : [UTEModelDevices]) in
+        //                print("count in update>> \(mArrayDevices.count)")
+        //                self.listDevices = mArrayDevices
+        //                var deviceData : [Any] = [];
+        //                //DispatchQueue.main.async {
+        //
+        //                    self.listDevices.forEach{model in
+        //                        let jsonObject = ["name": model.name as NSString, "address": model.advertisementAddress.uppercased() as NSString,"rssi": model.rssi as NSInteger,"identifier": model.identifier as NSString,"bondState":"","alias":""] as [String : Any]
+        //                        deviceData.append(jsonObject)
+        //                    }
+        //                    print(deviceData);
+        //                    self.pushEventCallBack(result: GlobalConstants.UPDATE_DEVICE_LIST, status: GlobalConstants.SC_SUCCESS, sendData: deviceData)
+        //
+        //                //}
+        //            }
+        // }
         
         
         
@@ -260,13 +260,29 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             
             print("connect_arguments_address  \(String(describing: address))")
             print("connect_arguments_address  \(String(describing: name))")
+            
+            
+            if self.smartBandTool.mArrayDevices.count == 0 {
+                self.smartBandMgr.startScanDevices()
+                return
+            }else{
+                let index = self.smartBandTool.mArrayDevices.firstIndex(where: {$0.advertisementAddress.uppercased() == address?.uppercased()}) ?? nil
+                
+                print("connect_index  \(String(describing: index))")
+                
+                if index != nil {
+                    let model = self.smartBandTool.mArrayDevices[index!]
+                    print("connect_with  \(String(describing: model.name))")
+                    self.smartBandMgr.connect(model)
+                }
+            }
+            
+            
+        }else {
+            result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
         }
-        
-       
-        //NSString address = args["address"]
-        
-        print("recent_list_update>> \(self.listDevices.count)")
-      // print("connect_arguments_address  \(address)")
+        //print("recent_list_update>> \(self.listDevices.count)")
+        // print("connect_arguments_address  \(address)")
     }
     
     func disconnectBluDevice(result: FlutterResult) {
@@ -274,11 +290,33 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func setUserParams(call: FlutterMethodCall, result: FlutterResult) {
-        let arguments = call.arguments;
-        print("user_arguments \(String(describing: arguments))")
+        //let arguments = call.arguments;
+        //print("user_arguments \(String(describing: arguments))")
+        
+        if let args = call.arguments as? Dictionary<String, Any>{
+            print("user_params_arguments \(String(describing: args))")
+            
+            let age = args["age"] as? String
+            let height = args["height"] as? String
+            let weight = args["weight"] as? String
+            let gender = args["gender"] as? String
+            let steps = args["steps"] as? String
+            let isCelsius = args["isCelsius"] as? String
+            let screenOffTime = args["screenOffTime"] as? String
+            let isChineseLang = args["isChineseLang"] as? String
+            let raiseHandWakeUp = args["raiseHandWakeUp"] as? String
+            
+            print("user1 age =\(String(describing: age)) height =\(String(describing: height)) weight =\(String(describing: weight)) ")
+            print("user2 gender =\(String(describing: gender)) steps =\(String(describing: steps)) isCelsius =\(String(describing: isCelsius)) ")
+            print("user3 screenOffTime =\(String(describing: screenOffTime)) isChineseLang =\(String(describing: isChineseLang)) raiseHandWakeUp =\(String(describing: raiseHandWakeUp)) ")
+            
+            
+        }else {
+            result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
+        }
         
     }
-        
+    
     
     func getCheckConnectionStatus(result: FlutterResult) {
         var connectResult : NSNumber? = false
