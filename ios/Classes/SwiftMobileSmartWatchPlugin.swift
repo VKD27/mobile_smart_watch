@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 import UTESmartBandApi
 
-class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStreamHandler{
+public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStreamHandler{
     
     private var eventSink: FlutterEventSink?
     //private var callbackId :NSMutableDictionary
