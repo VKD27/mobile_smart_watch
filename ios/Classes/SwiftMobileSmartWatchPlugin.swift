@@ -252,8 +252,21 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func connectBluDevice(call: FlutterMethodCall, result: FlutterResult){
-        let arguments = call.arguments;
-        print("connect_arguments  \(String(describing: arguments))")
+        if let args = call.arguments as? Dictionary<String, Any>{
+            print("connect_arguments  \(String(describing: args))")
+            
+            let address = args["address"] as? String
+            let name = args["name"] as? String
+            
+            print("connect_arguments_address  \(String(describing: address))")
+            print("connect_arguments_address  \(String(describing: name))")
+        }
+        
+       
+        //NSString address = args["address"]
+        
+        print("recent_list_update>> \(self.listDevices.count)")
+      // print("connect_arguments_address  \(address)")
     }
     
     func disconnectBluDevice(result: FlutterResult) {
