@@ -80,147 +80,156 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
 //            }
 //            break
         case .connected:
-            print("IOS Device Connected")
+            print("IOS_STATE:: Device Connected")
             if self.manageStateCallback != nil {
                 self.manageStateCallback!(GlobalConstants.DEVICE_CONNECTED);
             }
             break
             
         case .disconnected:
-            print("IOS Device DisConnected")
+            print("IOS_STATE:: Device DisConnected")
             if self.manageStateCallback != nil {
                 self.manageStateCallback!(GlobalConstants.DEVICE_DISCONNECTED);
             }
             break
             
         case .connectingError:
-            <#code#>
+            print("IOS_STATE:: Device connectingError")
+            break
         case .syncBegin:
-            <#code#>
+            print("IOS_STATE:: Device syncBegin")
+            break
         case .syncSuccess:
-            <#code#>
+            print("IOS_STATE:: Device syncSuccess")
+            break
         case .syncError:
-            <#code#>
+            print("IOS_STATE:: Device syncError")
+            break
         case .heartDetectingStart:
-            <#code#>
+            print("IOS_STATE:: Device heartDetectingStart")
+            break
         case .heartDetectingProcess:
-            <#code#>
+            print("IOS_STATE:: Device heartDetectingProcess")
+            break
         case .heartDetectingStop:
-            <#code#>
+            print("IOS_STATE:: Device heartDetectingStop")
+            break
         case .heartDetectingError:
-            <#code#>
+            print("IOS_STATE:: Device heartDetectingError")
+            break
         case .heartCurrentValue:
-            <#code#>
+            print("IOS_STATE:: Device heartCurrentValue")
+            break
         case .bloodDetectingStart:
-            <#code#>
+            break
         case .bloodDetectingProcess:
-            <#code#>
+            break
         case .bloodDetectingStop:
-            <#code#>
+            break
         case .bloodDetectingError:
-            <#code#>
+            break
         case .bloodOxygenDetectingStart:
-            <#code#>
+            break
         case .bloodOxygenDetectingProcess:
-            <#code#>
+            break
         case .bloodOxygenDetectingStop:
-            <#code#>
+            break
         case .bloodOxygenDetectingError:
-            <#code#>
+            break
         case .respirationDetectingStart:
-            <#code#>
+            break
         case .respirationDetectingProcess:
-            <#code#>
+            break
         case .respirationDetectingStop:
-            <#code#>
+            break
         case .respirationDetectingError:
-            <#code#>
+            break
         case .checkFirmwareError:
-            <#code#>
+            break
         case .updateHaveNewVersion:
-            <#code#>
+            break
         case .updateNoNewVersion:
-            <#code#>
+            break
         case .updateBegin:
-            <#code#>
+            break
         case .updateSuccess:
-            <#code#>
+            break
         case .updateError:
-            <#code#>
+            break
         case .cardApduError:
-            <#code#>
+            break
         case .passwordState:
-            <#code#>
+            break
         case .step:
-            <#code#>
+            break
         case .sleep:
-            <#code#>
+            break
         case .other:
-            <#code#>
+            break
         case .UV:
-            <#code#>
+            break
         case .hrmCalibrateStart:
-            <#code#>
+            break
         case .hrmCalibrateFail:
-            <#code#>
+            break
         case .hrmCalibrateComplete:
-            <#code#>
+            break
         case .hrmCalibrateDefault:
-            <#code#>
+            break
         case .raiseHandCalibrateStart:
-            <#code#>
+            break
         case .raiseHandCalibrateFail:
-            <#code#>
+            break
         case .raiseHandCalibrateComplete:
-            <#code#>
+            break
         case .raiseHandCalibrateDefault:
-            <#code#>
+            break
         case .bodyFatStart:
-            <#code#>
+            break
         case .bodyFatStop:
-            <#code#>
+            break
         case .bodyFatStateIn:
-            <#code#>
+            break
         case .bodyFatStateOut:
-            <#code#>
+            break
         case .bodyFatFail:
-            <#code#>
+            break
         case .bodyFatComplete:
-            <#code#>
+            break
         case .ecgDetectingStart:
-            <#code#>
+            break
         case .ecgDetectingProcess:
-            <#code#>
+            break
         case .ecgDetectingFail:
-            <#code#>
+            break
         case .ecgDetectingComplete:
-            <#code#>
+            break
         case .ecgDetectingStatusBothHand:
-            <#code#>
+            break
         case .ecgDetectingStatusOneHand:
-            <#code#>
+            break
         case .bodyTempNormal:
-            <#code#>
+            break
         case .bodyTempCurrent:
-            <#code#>
+            break
         case .bodyTempAlarm:
-            <#code#>
+            break
         case .drop:
-            <#code#>
+            break
         case .bloodCalibrateStart:
-            <#code#>
+            break
         case .bloodCalibrateStop:
-            <#code#>
+            break
         case .bloodCalibrateComplete:
-            <#code#>
+            break
         case .bloodCalibrateFail:
-            <#code#>
+            break
         case .bloodCalibrateReset:
-            <#code#>
+            break
         case .mpfDetectingStart:
-            <#code#>
+            break
         case .mpfDetectingStop:
-            <#code#>
+            break
         case .mpfDetectingComplete:
             break
         case .mpfDetectingFail:
