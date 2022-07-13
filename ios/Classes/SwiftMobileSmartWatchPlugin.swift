@@ -27,6 +27,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         self.smartBandMgr.delegate = self.smartBandTool
         //self.connectivityProvider.connectivityUpdateHandler = connectivityUpdateHandler
         print(GlobalConstants.GET_LAST_DEVICE_ADDRESS)
+        self.registerDeviceCallback()
         
         //let funcState = self.uteManagerDelight.uteManagerDevicesSate?(<#T##self: UTEManagerDelegate##UTEManagerDelegate#>);
         //funcState.
@@ -107,6 +108,28 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             
         case GlobalConstants.CHECK_CONNECTION_STATUS:
             self.getCheckConnectionStatus(result: result)
+            
+        case GlobalConstants.GET_LAST_DEVICE_ADDRESS:
+            self.getLastConnectedAddress(result: result)
+            
+        case GlobalConstants.SET_24_HEART_RATE:
+            self.set24HeartRate(call: call,result: result)
+            
+        case GlobalConstants.SET_24_OXYGEN:
+            self.set24BloodOxygen(call: call,result: result)
+            
+        case GlobalConstants.SET_24_TEMPERATURE_TEST:
+            self.set24HrTemperatureTest(call: call,result: result)
+            
+        case GlobalConstants.SET_WEATHER_INFO:
+            self.setSevenDaysWeatherInfo(call: call,result: result)
+            
+        case GlobalConstants.SET_BAND_LANGUAGE:
+            self.setDeviceBandLanguage(call: call, result: result)
+            
+        case GlobalConstants.GET_DEVICE_VERSION:
+            self.getDeviceVersion(result: result)
+            
             
         case "ios":
             result("iOS " + UIDevice.current.systemVersion)
@@ -216,8 +239,8 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     public func searchForBTDevices(result: FlutterResult){
-        print("inseide device start scan")
-        self.registerDeviceCallback()
+        //print("inseide device start scan")
+        //self.registerDeviceCallback()
         
         //print(self.smartBandMgr.isScanRepeat)
         //self.smartBandMgr.isScanRepeat = true
@@ -289,14 +312,14 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             let weightStr = args["weight"] as? String
             let genderStr = args["gender"] as? String
             let stepsStr = args["steps"] as? String
-            let isCelsiusStr = args["isCelsius"] as? String
+            //let isCelsiusStr = args["isCelsius"] as? String
             let screenOffTimeStr = args["screenOffTime"] as? String
-            let isChineseLangStr = args["isChineseLang"] as? String
+           // let isChineseLangStr = args["isChineseLang"] as? String
             let raiseHandWakeUpStr = args["raiseHandWakeUp"] as? String
             
-            print("user1 age =\(String(describing: ageStr)) height =\(String(describing: heightStr)) weight =\(String(describing: weightStr))")
-            print("user2 gender =\(String(describing: genderStr)) steps =\(String(describing: stepsStr)) isCelsius =\(String(describing: isCelsiusStr))")
-            print("user3 screenOffTime =\(String(describing: screenOffTimeStr)) isChineseLang =\(String(describing: isChineseLangStr)) raiseHandWakeUp =\(String(describing: raiseHandWakeUpStr)) ")
+            //print("user1 age =\(String(describing: ageStr)) height =\(String(describing: heightStr)) weight =\(String(describing: weightStr))")
+           // print("user2 gender =\(String(describing: genderStr)) steps =\(String(describing: stepsStr)) isCelsius =\(String(describing: isCelsiusStr))")
+           // print("user3 screenOffTime =\(String(describing: screenOffTimeStr)) isChineseLang =\(String(describing: isChineseLangStr)) raiseHandWakeUp =\(String(describing: raiseHandWakeUpStr)) ")
             
             //EN:Turn off scan
             self.smartBandMgr.stopScanDevices()
@@ -356,16 +379,13 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             infoModel.handlight = handLight
             self.smartBandMgr.setUTEInfoModel(infoModel)
            
-            print("information_set_returning")
+            //print("information_set_returning")
             result(GlobalConstants.SC_INIT)
-            
         }else {
             result(GlobalConstants.SC_FAILURE)
             // result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
         }
-        
     }
-    
     
     func getCheckConnectionStatus(result: FlutterResult) {
         var connectResult : NSNumber? = false
@@ -378,5 +398,79 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         }else{
             result(connectResult)
         }
+    }
+    
+    func getLastConnectedAddress(result: FlutterResult) {
+        var connectAddress = "";
+        let connectedModel = self.smartBandMgr.connectedDevicesModel
+        if connectedModel != nil {
+            //let status = connectedModel!.isConnected
+            //connectResult = status as NSNumber
+            connectAddress = connectedModel!.advertisementAddress
+            result(connectAddress)
+        }else{
+            result(connectAddress)
+        }
+    }
+    
+    func getDeviceVersion(result: FlutterResult) {
+       // self.smartBandMgr.readUTEDeviceVersion()
+    }
+    
+    
+    func set24HeartRate(call: FlutterMethodCall, result: FlutterResult) {
+        if let args = call.arguments as? Dictionary<String, Any>{
+            let enableStr = args["enable"] as? String
+            
+            if enableStr?.lowercased() == "true" {
+                self.smartBandMgr.setUTEOption(UTEOption.open24HourHRM)
+            }else {
+                self.smartBandMgr.setUTEOption(UTEOption.close24HourHRM)
+            }
+            
+            //self.smartBandMgr.connectedDevicesModel?.isHas24HourHRM
+            print("24_hrm_status \(String(describing: self.smartBandMgr.connectedDevicesModel?.isHas24HourHRM))")
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
+    }
+    
+    func set24BloodOxygen(call: FlutterMethodCall, result: FlutterResult) {
+        if let args = call.arguments as? Dictionary<String, Any>{
+            let enableStr = args["enable"] as? String
+            
+            if enableStr?.lowercased() == "true" {
+                self.smartBandMgr.setBloodOxygenAutoTest(true, time: UTECommonTestTime.time1Hour)
+            }else {
+                self.smartBandMgr.setBloodOxygenAutoTest(false, time: UTECommonTestTime.time1Hour)
+            }
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
+    }
+    
+    func set24HrTemperatureTest(call: FlutterMethodCall, result: FlutterResult) {
+        if let args = call.arguments as? Dictionary<String, Any>{
+            let enableStr = args["enable"] as? String
+            
+            if enableStr?.lowercased() == "true" {
+                self.smartBandMgr.setBodyTemperatureAutoTest(true, time: UTECommonTestTime.time1Hour)
+            }else {
+                self.smartBandMgr.setBodyTemperatureAutoTest(false, time: UTECommonTestTime.time1Hour)
+            }
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
+    }
+    
+    func setSevenDaysWeatherInfo(call: FlutterMethodCall, result: FlutterResult) {
+        
+    }
+    
+    func setDeviceBandLanguage(call: FlutterMethodCall, result: FlutterResult) {
+        
     }
 }

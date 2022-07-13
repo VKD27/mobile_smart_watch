@@ -1877,7 +1877,7 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
     private void set24HrTemperatureTest(MethodCall call, Result result) {
         try {
             String inter = call.argument("interval");
-            String isOpen = call.argument("isOpen");
+            String isOpen = call.argument("enable");
             assert inter != null;
             int interval = Integer.parseInt(inter);
 

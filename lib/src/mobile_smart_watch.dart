@@ -204,7 +204,7 @@ class MobileSmartWatch {
     // calculations are done, inside the plugin, internally
     var params = {
       "interval": interval, //interval is always in minutes
-      "isOpen": isEnabled ? "true":"false",
+      "enable": isEnabled ? "true":"false",
     };
     return await _methodChannel.invokeMethod(SmartWatchConstants.SET_24_TEMPERATURE_TEST, params);
   }

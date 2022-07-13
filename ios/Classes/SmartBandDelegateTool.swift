@@ -120,121 +120,181 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         case .heartCurrentValue:
             print("IOS_STATE:: Device heartCurrentValue")
             break
+            
+            
         case .bloodDetectingStart:
+            print("IOS_STATE:: Device bloodDetectingStart")
             break
         case .bloodDetectingProcess:
+            print("IOS_STATE:: Device bloodDetectingProcess")
             break
         case .bloodDetectingStop:
+            print("IOS_STATE:: Device bloodDetectingStop")
             break
         case .bloodDetectingError:
+            print("IOS_STATE:: Device bloodDetectingError")
             break
         case .bloodOxygenDetectingStart:
+            print("IOS_STATE:: Device bloodOxygenDetectingStart")
             break
         case .bloodOxygenDetectingProcess:
+            print("IOS_STATE:: Device bloodOxygenDetectingProcess")
             break
         case .bloodOxygenDetectingStop:
+            print("IOS_STATE:: Device bloodOxygenDetectingStop")
             break
         case .bloodOxygenDetectingError:
+            print("IOS_STATE:: Device bloodOxygenDetectingError")
             break
         case .respirationDetectingStart:
+            print("IOS_STATE:: Device respirationDetectingStart")
             break
         case .respirationDetectingProcess:
+            print("IOS_STATE:: Device respirationDetectingProcess")
             break
         case .respirationDetectingStop:
+            print("IOS_STATE:: Device respirationDetectingStop")
             break
         case .respirationDetectingError:
+            print("IOS_STATE:: Device respirationDetectingError")
             break
         case .checkFirmwareError:
+            print("IOS_STATE:: Device checkFirmwareError")
             break
         case .updateHaveNewVersion:
+            print("IOS_STATE:: Device updateHaveNewVersion")
             break
         case .updateNoNewVersion:
+            print("IOS_STATE:: Device updateNoNewVersion")
             break
         case .updateBegin:
+            print("IOS_STATE:: Device updateBegin")
             break
         case .updateSuccess:
+            print("IOS_STATE:: Device updateSuccess")
             break
         case .updateError:
+            print("IOS_STATE:: Device updateError")
             break
         case .cardApduError:
+            print("IOS_STATE:: Device cardApduError")
             break
         case .passwordState:
+            print("IOS_STATE:: Device passwordState")
             break
         case .step:
+            print("IOS_STATE:: Device step")
             break
         case .sleep:
+            print("IOS_STATE:: Device sleep")
             break
         case .other:
+            print("IOS_STATE:: Device other")
             break
         case .UV:
+            print("IOS_STATE:: Device UV")
             break
         case .hrmCalibrateStart:
+            print("IOS_STATE:: hrmCalibrateStart")
             break
         case .hrmCalibrateFail:
+            print("IOS_STATE:: hrmCalibrateFail")
             break
         case .hrmCalibrateComplete:
+            print("IOS_STATE:: hrmCalibrateComplete")
             break
         case .hrmCalibrateDefault:
+            print("IOS_STATE:: hrmCalibrateDefault")
             break
         case .raiseHandCalibrateStart:
+            print("IOS_STATE:: raiseHandCalibrateStart")
             break
         case .raiseHandCalibrateFail:
+            print("IOS_STATE:: raiseHandCalibrateFail")
             break
         case .raiseHandCalibrateComplete:
+            print("IOS_STATE:: raiseHandCalibrateComplete")
             break
         case .raiseHandCalibrateDefault:
+            print("IOS_STATE:: raiseHandCalibrateDefault")
             break
         case .bodyFatStart:
+            print("IOS_STATE:: bodyFatStart")
             break
         case .bodyFatStop:
+            print("IOS_STATE:: bodyFatStop")
             break
         case .bodyFatStateIn:
+            print("IOS_STATE:: bodyFatStateIn")
             break
         case .bodyFatStateOut:
+            print("IOS_STATE:: bodyFatStateOut")
             break
         case .bodyFatFail:
+            print("IOS_STATE:: bodyFatFail")
             break
         case .bodyFatComplete:
+            print("IOS_STATE:: bodyFatComplete")
             break
         case .ecgDetectingStart:
+            print("IOS_STATE:: ecgDetectingStart")
             break
         case .ecgDetectingProcess:
+            print("IOS_STATE:: ecgDetectingProcess")
             break
         case .ecgDetectingFail:
+            print("IOS_STATE:: ecgDetectingFail")
             break
         case .ecgDetectingComplete:
+            print("IOS_STATE:: ecgDetectingComplete")
             break
         case .ecgDetectingStatusBothHand:
+            print("IOS_STATE:: ecgDetectingStatusBothHand")
             break
         case .ecgDetectingStatusOneHand:
+            print("IOS_STATE:: ecgDetectingStatusOneHand")
             break
         case .bodyTempNormal:
+            print("IOS_STATE:: bodyTempNormal")
             break
         case .bodyTempCurrent:
+            print("IOS_STATE:: bodyTempCurrent")
             break
         case .bodyTempAlarm:
+            print("IOS_STATE:: bodyTempAlarm")
             break
         case .drop:
+            print("IOS_STATE:: Device drop")
             break
         case .bloodCalibrateStart:
+            print("IOS_STATE:: bloodCalibrateStart")
             break
         case .bloodCalibrateStop:
+            print("IOS_STATE:: bloodCalibrateStop")
             break
         case .bloodCalibrateComplete:
+            print("IOS_STATE:: bloodCalibrateComplete")
             break
         case .bloodCalibrateFail:
+            print("IOS_STATE:: bloodCalibrateFail")
             break
         case .bloodCalibrateReset:
+            print("IOS_STATE:: bloodCalibrateReset")
             break
         case .mpfDetectingStart:
+            print("IOS_STATE:: mpfDetectingStart")
             break
         case .mpfDetectingStop:
+            print("IOS_STATE:: mpfDetectingStop")
             break
         case .mpfDetectingComplete:
+            print("IOS_STATE:: mpfDetectingComplete")
             break
         case .mpfDetectingFail:
+            print("IOS_STATE:: mpfDetectingFail")
             break
         @unknown default:
+            print("IOS_STATE:: Default Case")
             break
         }
     }
