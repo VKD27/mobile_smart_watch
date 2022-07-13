@@ -55,7 +55,6 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         
     }
     
-    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let binaryMessenger = registrar.messenger()
         let instance = SwiftMobileSmartWatchPlugin()
@@ -99,8 +98,10 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             
         case GlobalConstants.BIND_DEVICE:
             self.connectBluDevice(call: call,result: result)
+            
         case GlobalConstants.UNBIND_DEVICE:
             self.disconnectBluDevice(result: result);
+            
         case GlobalConstants.SET_USER_PARAMS:
             self.setUserParams(call: call, result: result);
             
@@ -155,6 +156,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         self.smartBandMgr.delegate = self.smartBandTool
         self.smartBandMgr.isScanRepeat = true
         self.smartBandMgr.filerRSSI = -90
+        self.smartBandMgr.filerServers = ["5533","2222","FEE7"]
         
         print("re-sdk vsersion = \(self.smartBandMgr.sdkVersion())")
         self.smartBandMgr.delegate = self.smartBandTool
@@ -167,14 +169,13 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         returnResult(GlobalConstants.SC_RE_INIT)
     }
     
-    public func deviceInitialize(result: FlutterResult){
+    func deviceInitialize(result: FlutterResult){
         //do {
         //self.smartBandMgr.initUTESmartBandClient()
         self.smartBandMgr.debugUTELog = true
         self.smartBandMgr.isScanRepeat = true
-        self.smartBandMgr.filerRSSI = -80
+        self.smartBandMgr.filerRSSI = -90
         self.smartBandMgr.filerServers = ["5533","2222","FEE7"]
-        
         print("log sdk vsersion = \(self.smartBandMgr.sdkVersion())")
         
         //self.smartBandMgr.delegate = self.smartBandTool
@@ -206,6 +207,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             
             // }
         }
+        
+        self.smartBandTool.manageStateCallback = {(resultant :String) in
+            print("main>> resultant>> \(resultant)")
+            
+            self.pushEventCallBack(result: resultant, status: GlobalConstants.SC_SUCCESS, sendData: [])
+        }
     }
     
     public func searchForBTDevices(result: FlutterResult){
@@ -219,28 +226,6 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         // DispatchQueue.main.async {
         self.smartBandMgr.startScanDevices()
         
-        //            self.smartBandTool.getDevicesList = {(mArrayDevices : [UTEModelDevices]) in
-        //                print("count in update>> \(mArrayDevices.count)")
-        //                self.listDevices = mArrayDevices
-        //                var deviceData : [Any] = [];
-        //                //DispatchQueue.main.async {
-        //
-        //                    self.listDevices.forEach{model in
-        //                        let jsonObject = ["name": model.name as NSString, "address": model.advertisementAddress.uppercased() as NSString,"rssi": model.rssi as NSInteger,"identifier": model.identifier as NSString,"bondState":"","alias":""] as [String : Any]
-        //                        deviceData.append(jsonObject)
-        //                    }
-        //                    print(deviceData);
-        //                    self.pushEventCallBack(result: GlobalConstants.UPDATE_DEVICE_LIST, status: GlobalConstants.SC_SUCCESS, sendData: deviceData)
-        //
-        //                //}
-        //            }
-        // }
-        
-        
-        
-        // self.smartBandTool.getDevicesList
-        
-        //let jsonObject = createJSONObject(firstName: "firstName", middleName: "middleName", lastName: "lastName", age: 21, weight: 82)
         let jsonObject: [String: Any] = [
             "status" : GlobalConstants.SC_SUCCESS,
             "data": []
@@ -252,6 +237,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func connectBluDevice(call: FlutterMethodCall, result: FlutterResult){
+        var bleResult : NSNumber? = false
         if let args = call.arguments as? Dictionary<String, Any>{
             print("connect_arguments  \(String(describing: args))")
             
@@ -265,54 +251,117 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             if self.smartBandTool.mArrayDevices.count == 0 {
                 self.smartBandMgr.startScanDevices()
                 return
-            }else{
+            } else{
                 let index = self.smartBandTool.mArrayDevices.firstIndex(where: {$0.advertisementAddress.uppercased() == address?.uppercased()}) ?? nil
                 
-                print("connect_index  \(String(describing: index))")
+                print("connect_index \(String(describing: index))")
                 
                 if index != nil {
                     let model = self.smartBandTool.mArrayDevices[index!]
                     print("connect_with  \(String(describing: model.name))")
                     self.smartBandMgr.connect(model)
+                    bleResult = true;
+                    result(bleResult)
+                }else{
+                    result(bleResult)
                 }
             }
-            
-            
-        }else {
-            result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
+        } else {
+            result(bleResult)
+            //result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
         }
-        //print("recent_list_update>> \(self.listDevices.count)")
-        // print("connect_arguments_address  \(address)")
     }
     
     func disconnectBluDevice(result: FlutterResult) {
+        let devices = UTEModelDevices.init()
+        //devices.identifier = self.devicesID as String?
+        print("devices \(String(describing: devices.name))")
+        //self.smartBandMgr.disConnect(devices)
         
     }
     
     func setUserParams(call: FlutterMethodCall, result: FlutterResult) {
-        //let arguments = call.arguments;
-        //print("user_arguments \(String(describing: arguments))")
-        
         if let args = call.arguments as? Dictionary<String, Any>{
             print("user_params_arguments \(String(describing: args))")
             
-            let age = args["age"] as? String
-            let height = args["height"] as? String
-            let weight = args["weight"] as? String
-            let gender = args["gender"] as? String
-            let steps = args["steps"] as? String
-            let isCelsius = args["isCelsius"] as? String
-            let screenOffTime = args["screenOffTime"] as? String
-            let isChineseLang = args["isChineseLang"] as? String
-            let raiseHandWakeUp = args["raiseHandWakeUp"] as? String
+            let ageStr = args["age"] as? String
+            let heightStr = args["height"] as? String
+            let weightStr = args["weight"] as? String
+            let genderStr = args["gender"] as? String
+            let stepsStr = args["steps"] as? String
+            let isCelsiusStr = args["isCelsius"] as? String
+            let screenOffTimeStr = args["screenOffTime"] as? String
+            let isChineseLangStr = args["isChineseLang"] as? String
+            let raiseHandWakeUpStr = args["raiseHandWakeUp"] as? String
             
-            print("user1 age =\(String(describing: age)) height =\(String(describing: height)) weight =\(String(describing: weight)) ")
-            print("user2 gender =\(String(describing: gender)) steps =\(String(describing: steps)) isCelsius =\(String(describing: isCelsius)) ")
-            print("user3 screenOffTime =\(String(describing: screenOffTime)) isChineseLang =\(String(describing: isChineseLang)) raiseHandWakeUp =\(String(describing: raiseHandWakeUp)) ")
+            print("user1 age =\(String(describing: ageStr)) height =\(String(describing: heightStr)) weight =\(String(describing: weightStr))")
+            print("user2 gender =\(String(describing: genderStr)) steps =\(String(describing: stepsStr)) isCelsius =\(String(describing: isCelsiusStr))")
+            print("user3 screenOffTime =\(String(describing: screenOffTimeStr)) isChineseLang =\(String(describing: isChineseLangStr)) raiseHandWakeUp =\(String(describing: raiseHandWakeUpStr)) ")
             
+            //EN:Turn off scan
+            self.smartBandMgr.stopScanDevices()
+            //EN:Set device time
+            self.smartBandMgr.setUTEOption(UTEOption.syncTime)
+            //EN:Set device unit: meters or inches
+            // self.smartBandMgr.setUTEOption(UTEOption.unitInch)
+            self.smartBandMgr.setUTEOption(UTEOption.unitMeter)
+            
+            
+            var heightFloat: CGFloat?
+            var weightFloat: CGFloat?
+
+            if let doubleValue = Double(heightStr ?? "0.0") {
+                heightFloat = CGFloat(doubleValue)
+            }
+            
+            if let doubleValue = Double(weightStr ?? "0.0") {
+                weightFloat = CGFloat(doubleValue)
+            }
+            
+            let age = Int(ageStr ?? "0")
+            
+            let genderSex : UTEDeviceInfoSex
+            if genderStr?.lowercased() == "female" {
+                genderSex = UTEDeviceInfoSex.female
+            }else if genderStr?.lowercased() == "male"{
+                genderSex =  UTEDeviceInfoSex.male
+            }else{
+                genderSex = UTEDeviceInfoSex.default
+            }
+            
+            let stepsTarget = Int(stepsStr ?? "8000")
+            
+            let screenLightTime = Int(screenOffTimeStr ?? "6")
+            
+            var handLight = 0
+            if raiseHandWakeUpStr?.lowercased() == "true" {
+                handLight = 1
+            } else if raiseHandWakeUpStr?.lowercased() == "false" {
+                handLight = -1
+            }else{
+                handLight = 0
+            }
+            
+            print("values_after H=\(String(describing: heightFloat)) W=\(String(describing: weightFloat)) A=\(String(describing: age)) G=\(String(describing: genderSex)) T=\(String(describing: stepsTarget)) SL=\(String(describing: screenLightTime)) HL=\(String(describing: handLight))")
+            
+            let infoModel = UTEModelDeviceInfo.init()
+            infoModel.heigh = heightFloat!
+            infoModel.weight = weightFloat!
+            infoModel.age = age!
+            infoModel.sex = genderSex
+            infoModel.sportTarget = stepsTarget!
+            // light  (unit second), range<5,60>
+            infoModel.lightTime = screenLightTime!
+            // Hand Light 1 is open, -1 is close, 0 is default
+            infoModel.handlight = handLight
+            self.smartBandMgr.setUTEInfoModel(infoModel)
+           
+            print("information_set_returning")
+            result(GlobalConstants.SC_INIT)
             
         }else {
-            result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
+            result(GlobalConstants.SC_FAILURE)
+            // result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
         }
         
     }

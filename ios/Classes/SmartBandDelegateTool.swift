@@ -10,6 +10,10 @@ import UTESmartBandApi
 
 class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
     
+    public typealias manageStateCallback = (String) -> Void
+    open var manageStateCallback : manageStateCallback?
+    
+    
     public typealias getDevicesList = (Array<UTEModelDevices>) -> Void
     open var getDevicesList : getDevicesList?
     
@@ -41,10 +45,10 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         }
         
         if !sameDevices {
-//            print("***Scanned device name11=\(String(describing: modelDevices.name)) id=\(String(describing: modelDevices.identifier))")
-//            print("***Scanned device name22=\(String(describing: modelDevices.address)) str=\(String(describing: modelDevices.addressStr))")
-//            print("***Scanned device name33=\(String(describing: modelDevices.description)) rssi=\(String(describing: modelDevices.rssi))")
-//            print("***Scanned device name44=\(String(describing: modelDevices.advertisementData)) addr=\(String(describing: modelDevices.advertisementAddress))")
+            //            print("***Scanned device name11=\(String(describing: modelDevices.name)) id=\(String(describing: modelDevices.identifier))")
+            //            print("***Scanned device name22=\(String(describing: modelDevices.address)) str=\(String(describing: modelDevices.addressStr))")
+            //            print("***Scanned device name33=\(String(describing: modelDevices.description)) rssi=\(String(describing: modelDevices.rssi))")
+            //            print("***Scanned device name44=\(String(describing: modelDevices.advertisementData)) addr=\(String(describing: modelDevices.advertisementAddress))")
             if modelDevices.name.lowercased().contains("docty") || modelDevices.name.lowercased().contains("kmo4") {
                 self.mArrayDevices.append(modelDevices)
                 if self.getDevicesList != nil {
@@ -59,6 +63,171 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         print("****** devicesState = \(String(describing: devicesState))")
         print("****** error = \(String(describing: error))")
         print("****** userInfo = \(String(describing: info))")
+        if error != nil {
+            let code = (error! as NSError).code
+            let msg = (error! as NSError).domain
+            print("***error code=\(code),msg=\(msg)")
+        }
+        switch devicesState {
+            
+//        case UTEDevicesSate.connected:
+//            break
+//        case UTEDevicesSate.disconnected:
+//            if error != nil {
+//                print("***Device disconnected abnormally=\(String(describing: error))")
+//            }else{
+//                print("***Device disconnected normally connectedDevicesModel=\(String(describing: self.smartBandMgr.connectedDevicesModel))")
+//            }
+//            break
+        case .connected:
+            print("IOS Device Connected")
+            if self.manageStateCallback != nil {
+                self.manageStateCallback!(GlobalConstants.DEVICE_CONNECTED);
+            }
+            break
+            
+        case .disconnected:
+            print("IOS Device DisConnected")
+            if self.manageStateCallback != nil {
+                self.manageStateCallback!(GlobalConstants.DEVICE_DISCONNECTED);
+            }
+            break
+            
+        case .connectingError:
+            <#code#>
+        case .syncBegin:
+            <#code#>
+        case .syncSuccess:
+            <#code#>
+        case .syncError:
+            <#code#>
+        case .heartDetectingStart:
+            <#code#>
+        case .heartDetectingProcess:
+            <#code#>
+        case .heartDetectingStop:
+            <#code#>
+        case .heartDetectingError:
+            <#code#>
+        case .heartCurrentValue:
+            <#code#>
+        case .bloodDetectingStart:
+            <#code#>
+        case .bloodDetectingProcess:
+            <#code#>
+        case .bloodDetectingStop:
+            <#code#>
+        case .bloodDetectingError:
+            <#code#>
+        case .bloodOxygenDetectingStart:
+            <#code#>
+        case .bloodOxygenDetectingProcess:
+            <#code#>
+        case .bloodOxygenDetectingStop:
+            <#code#>
+        case .bloodOxygenDetectingError:
+            <#code#>
+        case .respirationDetectingStart:
+            <#code#>
+        case .respirationDetectingProcess:
+            <#code#>
+        case .respirationDetectingStop:
+            <#code#>
+        case .respirationDetectingError:
+            <#code#>
+        case .checkFirmwareError:
+            <#code#>
+        case .updateHaveNewVersion:
+            <#code#>
+        case .updateNoNewVersion:
+            <#code#>
+        case .updateBegin:
+            <#code#>
+        case .updateSuccess:
+            <#code#>
+        case .updateError:
+            <#code#>
+        case .cardApduError:
+            <#code#>
+        case .passwordState:
+            <#code#>
+        case .step:
+            <#code#>
+        case .sleep:
+            <#code#>
+        case .other:
+            <#code#>
+        case .UV:
+            <#code#>
+        case .hrmCalibrateStart:
+            <#code#>
+        case .hrmCalibrateFail:
+            <#code#>
+        case .hrmCalibrateComplete:
+            <#code#>
+        case .hrmCalibrateDefault:
+            <#code#>
+        case .raiseHandCalibrateStart:
+            <#code#>
+        case .raiseHandCalibrateFail:
+            <#code#>
+        case .raiseHandCalibrateComplete:
+            <#code#>
+        case .raiseHandCalibrateDefault:
+            <#code#>
+        case .bodyFatStart:
+            <#code#>
+        case .bodyFatStop:
+            <#code#>
+        case .bodyFatStateIn:
+            <#code#>
+        case .bodyFatStateOut:
+            <#code#>
+        case .bodyFatFail:
+            <#code#>
+        case .bodyFatComplete:
+            <#code#>
+        case .ecgDetectingStart:
+            <#code#>
+        case .ecgDetectingProcess:
+            <#code#>
+        case .ecgDetectingFail:
+            <#code#>
+        case .ecgDetectingComplete:
+            <#code#>
+        case .ecgDetectingStatusBothHand:
+            <#code#>
+        case .ecgDetectingStatusOneHand:
+            <#code#>
+        case .bodyTempNormal:
+            <#code#>
+        case .bodyTempCurrent:
+            <#code#>
+        case .bodyTempAlarm:
+            <#code#>
+        case .drop:
+            <#code#>
+        case .bloodCalibrateStart:
+            <#code#>
+        case .bloodCalibrateStop:
+            <#code#>
+        case .bloodCalibrateComplete:
+            <#code#>
+        case .bloodCalibrateFail:
+            <#code#>
+        case .bloodCalibrateReset:
+            <#code#>
+        case .mpfDetectingStart:
+            <#code#>
+        case .mpfDetectingStop:
+            <#code#>
+        case .mpfDetectingComplete:
+            break
+        case .mpfDetectingFail:
+            break
+        @unknown default:
+            break
+        }
     }
     
     func uteManagerExtraIsAble(_ isAble: Bool) {
