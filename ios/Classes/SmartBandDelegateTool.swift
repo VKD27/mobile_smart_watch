@@ -60,25 +60,16 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
     
     
     func uteManagerDevicesSate(_ devicesState: UTEDevicesSate, error: Error!, userInfo info: [AnyHashable : Any]! = [:]) {
-        print("****** devicesState = \(String(describing: devicesState))")
-        print("****** error = \(String(describing: error))")
-        print("****** userInfo = \(String(describing: info))")
+        print("uteManagerDevicesSate = \(String(describing: devicesState))")
+        print("error = \(String(describing: error))")
+        print("userInfo = \(String(describing: info))")
+        
         if error != nil {
             let code = (error! as NSError).code
             let msg = (error! as NSError).domain
             print("***error code=\(code),msg=\(msg)")
         }
         switch devicesState {
-            
-//        case UTEDevicesSate.connected:
-//            break
-//        case UTEDevicesSate.disconnected:
-//            if error != nil {
-//                print("***Device disconnected abnormally=\(String(describing: error))")
-//            }else{
-//                print("***Device disconnected normally connectedDevicesModel=\(String(describing: self.smartBandMgr.connectedDevicesModel))")
-//            }
-//            break
         case .connected:
             print("IOS_STATE:: Device Connected")
             if self.manageStateCallback != nil {
@@ -120,7 +111,6 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         case .heartCurrentValue:
             print("IOS_STATE:: Device heartCurrentValue")
             break
-            
             
         case .bloodDetectingStart:
             print("IOS_STATE:: Device bloodDetectingStart")
@@ -299,6 +289,11 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         }
     }
     
+    func uteManageUTEOptionCallBack(_ callback: UTECallBack) {
+        print("uteManageUTEOptionCallBack rawValue=\(String(describing: callback.rawValue)) hashValue=\(String(describing: callback.hashValue))")
+        
+    }
+    
     func uteManagerExtraIsAble(_ isAble: Bool) {
         if isAble {
             print("***Successfully turn on the additional functions of the device")
@@ -306,14 +301,16 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             print("***Failed to open the extra functions of the device, the device is actively disconnected, please reconnect the device")
         }
     }
+    
     func uteManagerReceiveTodaySteps(_ runData: UTEModelRunData!) {
-        print("***Today time=\(String(describing: runData.time))，Total steps=\(runData.totalSteps),Total distance=\(runData.distances),Total calories=\(runData.calories),Current hour steps=\(runData.hourSteps)")
+        print("Today time=\(String(describing: runData.time))，Total steps=\(runData.totalSteps),Total distance=\(runData.distances),Total calories=\(runData.calories),Current hour steps=\(runData.hourSteps)")
     }
     
     func uteManagerReceiveTodaySport(_ dict: [AnyHashable : Any]!) {
         let walk : UTEModelSportWalkRun = dict[kUTEQuerySportWalkRunData] as! UTEModelSportWalkRun
         print("sport device step=\(walk.stepsTotal)")
     }
+   
     func uteManagerUTEIbeaconOption(_ option: UTEIbeaconOption, value: String!) {
         print("ibeacon value = \(String(describing: value))")
     }
@@ -324,7 +321,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
     
     func uteManagerBluetoothState(_ bluetoothState: UTEBluetoothState) {
         
-        print("****** bluetoothState = \(String(describing: bluetoothState))")
+        print("uteManagerBluetoothState = \(String(describing: bluetoothState))")
         
         if bluetoothState == UTEBluetoothState.close {
             // if self.alertView != nil {
