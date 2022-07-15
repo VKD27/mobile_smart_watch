@@ -73,16 +73,14 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         case .connected:
             print("IOS_STATE:: Device Connected")
             if self.manageStateCallback != nil {
-                let jsonSendData = {}
-                self.manageStateCallback!(GlobalConstants.DEVICE_CONNECTED, jsonSendData);
+                self.manageStateCallback!(GlobalConstants.DEVICE_CONNECTED, []);
             }
             break
             
         case .disconnected:
             print("IOS_STATE:: Device DisConnected")
-            if self.manageStateCallback != nil {
-                let jsonSendData = {}
-                self.manageStateCallback!(GlobalConstants.DEVICE_DISCONNECTED, jsonSendData);
+            if self.manageStateCallback != nil {              
+                self.manageStateCallback!(GlobalConstants.DEVICE_DISCONNECTED, []);
             }
             break
             

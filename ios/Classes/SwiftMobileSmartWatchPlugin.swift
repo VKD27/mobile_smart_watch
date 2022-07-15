@@ -311,9 +311,9 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             let weightStr = args["weight"] as? String
             let genderStr = args["gender"] as? String
             let stepsStr = args["steps"] as? String
-            //let isCelsiusStr = args["isCelsius"] as? String
+            let isCelsiusStr = args["isCelsius"] as? String
             let screenOffTimeStr = args["screenOffTime"] as? String
-           // let isChineseLangStr = args["isChineseLang"] as? String
+            let isChineseLangStr = args["isChineseLang"] as? String
             let raiseHandWakeUpStr = args["raiseHandWakeUp"] as? String
             
             //print("user1 age =\(String(describing: ageStr)) height =\(String(describing: heightStr)) weight =\(String(describing: weightStr))")
@@ -376,6 +376,31 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             infoModel.lightTime = screenLightTime!
             // Hand Light 1 is open, -1 is close, 0 is default
             infoModel.handlight = handLight
+            
+            
+            var isChinese : Bool = false
+            var isCelFah : Bool = false
+            
+            if isChineseLangStr?.lowercased() == "true" {
+                isChinese = true
+            }else{
+                isChinese = true
+            }
+            
+            if isCelsiusStr?.lowercased() == "true" {
+                isCelFah = false
+            }else{
+                isCelFah = true
+            }
+            
+            if self.smartBandMgr.connectedDevicesModel!.isHasSwitchCH_EN {
+                infoModel.languageIsChinese = isChinese
+            }
+            
+            if self.smartBandMgr.connectedDevicesModel!.isHasSwitchTempUnit {
+                infoModel.isFahrenheit = isCelFah
+            }
+            
             self.smartBandMgr.setUTEInfoModel(infoModel)
            
             //print("information_set_returning")
@@ -502,7 +527,22 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func setDeviceBandLanguage(call: FlutterMethodCall, result: FlutterResult) {
-        
+        if let args = call.arguments as? Dictionary<String, Any>{
+            let langStr = args["lang"] as? String
+            
+            if self.smartBandMgr.connectedDevicesModel!.isHasLanguageSwitchDirectly {
+                if langStr?.lowercased() == "es" {
+                    self.smartBandMgr.setUTELanguageSwitchDirectly(UTEDeviceLanguage.spanish)
+                }else{
+                    self.smartBandMgr.setUTELanguageSwitchDirectly(UTEDeviceLanguage.english)
+                }
+                result(GlobalConstants.SC_INIT)
+            }else{
+                result(GlobalConstants.SC_FAILURE)
+            }
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
     }
 }
 
