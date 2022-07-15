@@ -10,7 +10,7 @@ import UTESmartBandApi
 
 class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
     
-    public typealias manageStateCallback = (String) -> Void
+    public typealias manageStateCallback = (String, Any) -> Void
     open var manageStateCallback : manageStateCallback?
     
     
@@ -73,14 +73,16 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         case .connected:
             print("IOS_STATE:: Device Connected")
             if self.manageStateCallback != nil {
-                self.manageStateCallback!(GlobalConstants.DEVICE_CONNECTED);
+                let jsonSendData = {}
+                self.manageStateCallback!(GlobalConstants.DEVICE_CONNECTED, jsonSendData);
             }
             break
             
         case .disconnected:
             print("IOS_STATE:: Device DisConnected")
             if self.manageStateCallback != nil {
-                self.manageStateCallback!(GlobalConstants.DEVICE_DISCONNECTED);
+                let jsonSendData = {}
+                self.manageStateCallback!(GlobalConstants.DEVICE_DISCONNECTED, jsonSendData);
             }
             break
             
@@ -292,6 +294,49 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
     func uteManageUTEOptionCallBack(_ callback: UTECallBack) {
         print("uteManageUTEOptionCallBack rawValue=\(String(describing: callback.rawValue)) hashValue=\(String(describing: callback.hashValue))")
         
+        switch callback.rawValue {
+        case 1:
+            // user profile updated successfully, Set height, weight, brightness, etc.
+            if self.manageStateCallback != nil {
+                let jsonSendData = {}
+                self.manageStateCallback!(GlobalConstants.UPDATE_DEVICE_PARAMS, jsonSendData);
+            }
+            break
+        case 96:
+            // open 24-hour heart rate test
+            var status = false
+            if (self.smartBandMgr.connectedDevicesModel != nil){
+                status = self.smartBandMgr.connectedDevicesModel!.isHas24HourHRM
+            }
+            print("24_hr_sync_status \(status)")
+            if self.manageStateCallback != nil {
+                let jsonSendData: [String: Any] = [
+                    "status" : status
+                ]
+                self.manageStateCallback!(GlobalConstants.SYNC_STATUS_24_HOUR_RATE_OPEN, jsonSendData);
+            }
+            break
+        case 107:
+            // Body Temperature AutoTest Open - send true
+            if self.manageStateCallback != nil {
+                let jsonSendData: [String: Any] = [
+                    "status" : true
+                ]
+                self.manageStateCallback!(GlobalConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonSendData);
+            }
+            break
+        case 108:
+            // Body Temperature AutoTest Close -  send false
+            if self.manageStateCallback != nil {
+                let jsonSendData: [String: Any] = [
+                    "status" : false
+                ]
+                self.manageStateCallback!(GlobalConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonSendData);
+            }
+            break
+        default:
+            break
+        }
     }
     
     func uteManagerExtraIsAble(_ isAble: Bool) {
@@ -310,7 +355,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         let walk : UTEModelSportWalkRun = dict[kUTEQuerySportWalkRunData] as! UTEModelSportWalkRun
         print("sport device step=\(walk.stepsTotal)")
     }
-   
+    
     func uteManagerUTEIbeaconOption(_ option: UTEIbeaconOption, value: String!) {
         print("ibeacon value = \(String(describing: value))")
     }

@@ -158,7 +158,6 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         DispatchQueue.main.async {
             let resultData = try! JSONSerialization.data(withJSONObject: jsonSendObj)
             let jsonString = String(data: resultData, encoding: .utf8)!
-            
             self.eventSink?(jsonString)
         }
     }
@@ -231,10 +230,10 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             // }
         }
         
-        self.smartBandTool.manageStateCallback = {(resultant :String) in
+        self.smartBandTool.manageStateCallback = {(resultant :String, data : Any) in
             print("main>> resultant>> \(resultant)")
             
-            self.pushEventCallBack(result: resultant, status: GlobalConstants.SC_SUCCESS, sendData: [])
+            self.pushEventCallBack(result: resultant, status: GlobalConstants.SC_SUCCESS, sendData: data)
         }
     }
     
@@ -467,10 +466,48 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func setSevenDaysWeatherInfo(call: FlutterMethodCall, result: FlutterResult) {
+        // let resultData = try! JSONSerialization.data(withJSONObject: jsonSendObj)
         
+        if let args = call.arguments as? Dictionary<String, Any>{
+            let dataStr = args["data"] as? String
+            print("dataStr: \(String(describing: dataStr))")
+            
+            let data = dataStr?.data(using: .utf8)!
+            
+            do {
+                if let jsonArray = try JSONSerialization.jsonObject(with: data!, options : .allowFragments) as? [Dictionary<String,Any>]
+                {
+                   print(jsonArray) // use the json here
+                    
+                   // let mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
+                   
+                    //let todayWeather = UTEModelWeather();
+                    //todayWeather.city = "Hyd"
+                    //todayWeather
+                    
+                    
+                   // self.smartBandMgr.sendUTESevenWeather(mArrayWeather)
+                    //result(GlobalConstants.SC_INIT)
+                } else {
+                    print("bad json")
+                }
+            } catch let error as NSError {
+                print("error",error)
+                print("\(error.localizedDescription)")
+                result(GlobalConstants.SC_FAILURE)
+            }
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
     }
     
     func setDeviceBandLanguage(call: FlutterMethodCall, result: FlutterResult) {
         
     }
 }
+
+
+//struct WeatherInfo: HandyJSON {
+//    var name: String?
+//    var type: AnimalType?
+//}
