@@ -500,9 +500,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             let data = dataStr?.data(using: .utf8)!
             
             do {
-                if let jsonArray = try JSONSerialization.jsonObject(with: data!, options : .allowFragments) as? [Dictionary<String,Any>]
+                if let jsonArray = try JSONSerialization.jsonObject(with: data!, options : .allowFragments) as? NSDictionary
                 {
                    print(jsonArray) // use the json here
+                    
+                    let cityName = jsonArray["cityName"] as? String
+                    print("cityName: \(String(describing: cityName))")
                     
                    // let mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
                    
@@ -517,7 +520,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                     print("bad json")
                 }
             } catch let error as NSError {
-                print("error",error)
+                print("NSerror",error)
                 print("\(error.localizedDescription)")
                 result(GlobalConstants.SC_FAILURE)
             }
@@ -543,6 +546,10 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         }else{
             result(GlobalConstants.SC_FAILURE)
         }
+        
+//        self.smartBandMgr.readDeviceLanguage { (language) in
+//
+//        }
     }
 }
 
