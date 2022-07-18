@@ -331,6 +331,15 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 self.manageStateCallback!(GlobalConstants.SYNC_TEMPERATURE_24_HOUR_AUTOMATIC, jsonSendData);
             }
             break
+        case 76:
+            // received------7-day weather setting
+            if self.manageStateCallback != nil {
+                let jsonSendData: [String: Any] = [
+                    "status" : true
+                ]
+                self.manageStateCallback!(GlobalConstants.SYNC_WEATHER_SUCCESS, jsonSendData);
+            }
+            break
         default:
             break
         }
