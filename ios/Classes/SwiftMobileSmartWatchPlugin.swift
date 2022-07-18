@@ -28,32 +28,6 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         //self.connectivityProvider.connectivityUpdateHandler = connectivityUpdateHandler
         print(GlobalConstants.GET_LAST_DEVICE_ADDRESS)
         self.registerDeviceCallback()
-        
-        //let funcState = self.uteManagerDelight.uteManagerDevicesSate?(<#T##self: UTEManagerDelegate##UTEManagerDelegate#>);
-        //funcState.
-        
-        //        self.uteManagerDelegate.uteManagerDiscover?(self: UTEManagerDelegate) -> (UTEModelDevices?)){
-        //
-        //        }
-        //
-        //        self.uteManagerDelegate.uteManagerDiscover?(self: modelDevices: UTEModelDevices!) -> {
-        //
-        //        }
-        
-        //let discover = uteManagerDelegate.uteManagerDiscover?(<#T##self: UTEManagerDelegate##UTEManagerDelegate#>)
-        
-        //        self.uteManagerDelegate.uteManagerDiscover(T##modelDevices: UTEModelDevices!##UTEModelDevices?) Void -> (
-        //
-        //        )
-        
-        //        self.uteManagerDiscover?(T##modelDevices: UTEModelDevices!##UTEModelDevices?){
-        //
-        //        }
-        
-        //        self.uteManagerDelegate?.uteManagerDiscover?(T##modelDevices: UTEModelDevices!##UTEModelDevices?) { modelDevices in
-        //
-        //        }
-        
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -129,7 +103,26 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             
         case GlobalConstants.GET_DEVICE_VERSION:
             self.getDeviceVersion(result: result)
+        
+        //sync calls
+        case GlobalConstants.GET_SYNC_STEPS:
+            self.syncAllStepsData(result: result)
+        case GlobalConstants.GET_SYNC_SLEEP:
+            self.syncAllSleepData(result: result)
             
+        case GlobalConstants.GET_SYNC_RATE:
+            self.syncRateData(result: result)
+        case GlobalConstants.GET_SYNC_BP:
+            self.syncBloodPressure(result: result)
+            
+        case GlobalConstants.GET_SYNC_OXYGEN:
+            self.syncOxygenSaturation(result: result)
+        case GlobalConstants.GET_SYNC_TEMPERATURE:
+            self.syncBodyTemperature(result: result)
+            
+        //fetchoveralldata
+        case GlobalConstants.FETCH_OVERALL_DEVICE_DATA:
+            self.fetchOverAllDeviceData(result: result)
             
         case "ios":
             result("iOS " + UIDevice.current.systemVersion)
@@ -317,8 +310,8 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             let raiseHandWakeUpStr = args["raiseHandWakeUp"] as? String
             
             //print("user1 age =\(String(describing: ageStr)) height =\(String(describing: heightStr)) weight =\(String(describing: weightStr))")
-           // print("user2 gender =\(String(describing: genderStr)) steps =\(String(describing: stepsStr)) isCelsius =\(String(describing: isCelsiusStr))")
-           // print("user3 screenOffTime =\(String(describing: screenOffTimeStr)) isChineseLang =\(String(describing: isChineseLangStr)) raiseHandWakeUp =\(String(describing: raiseHandWakeUpStr)) ")
+            // print("user2 gender =\(String(describing: genderStr)) steps =\(String(describing: stepsStr)) isCelsius =\(String(describing: isCelsiusStr))")
+            // print("user3 screenOffTime =\(String(describing: screenOffTimeStr)) isChineseLang =\(String(describing: isChineseLangStr)) raiseHandWakeUp =\(String(describing: raiseHandWakeUpStr)) ")
             
             //EN:Turn off scan
             self.smartBandMgr.stopScanDevices()
@@ -331,7 +324,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             
             var heightFloat: CGFloat?
             var weightFloat: CGFloat?
-
+            
             if let doubleValue = Double(heightStr ?? "0.0") {
                 heightFloat = CGFloat(doubleValue)
             }
@@ -402,7 +395,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             }
             
             self.smartBandMgr.setUTEInfoModel(infoModel)
-           
+            
             //print("information_set_returning")
             result(GlobalConstants.SC_INIT)
         }else {
@@ -438,7 +431,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func getDeviceVersion(result: FlutterResult) {
-       // self.smartBandMgr.readUTEDeviceVersion()
+        // self.smartBandMgr.readUTEDeviceVersion()
     }
     
     
@@ -532,13 +525,14 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         if code >= 500 && code <= 502 {
             return UTEWeatherType.mistHaze
         }
-       
+        
         if code >= 503 && code <= 508 {
             return UTEWeatherType.sandstorm
         }else{
             return UTEWeatherType.overcast
         }
     }
+    
     func setSevenDaysWeatherInfo(call: FlutterMethodCall, result: FlutterResult) {
         // let resultData = try! JSONSerialization.data(withJSONObject: jsonSendObj)
         
@@ -551,7 +545,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             do {
                 if let jsonArray = try JSONSerialization.jsonObject(with: data!, options : .allowFragments) as? NSDictionary
                 {
-                   print(jsonArray) // use the json here
+                    print(jsonArray) // use the json here
                     
                     let cityName = jsonArray["cityName"] as? String
                     
@@ -574,7 +568,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                     let sixthDayTmpMin = jsonArray["sixthDayTmpMin"] as? Int
                     let seventhDayTmpMax = jsonArray["seventhDayTmpMax"] as? Int
                     let seventhDayTmpMin = jsonArray["seventhDayTmpMin"] as? Int
-                 
+                    
                     let todayWeather = UTEModelWeather();
                     todayWeather.city = cityName
                     todayWeather.type = self.getWeatherType(code: Int(todayWeatherCode!)!)
@@ -629,7 +623,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                     print("cityName: \(String(describing: cityName))")
                     
                     var mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
-                   
+                    
                     mArrayWeather.append(todayWeather)
                     mArrayWeather.append(secondWeather)
                     mArrayWeather.append(thirdWeather)
@@ -638,6 +632,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                     mArrayWeather.append(sixthWeather)
                     mArrayWeather.append(seventhWeather)
                     
+                    self.smartBandTool.weatherSync = 0
                     self.smartBandMgr.sendUTESevenWeather(mArrayWeather)
                     result(GlobalConstants.SC_INIT)
                 } else {
@@ -664,6 +659,10 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                 }else{
                     self.smartBandMgr.setUTELanguageSwitchDirectly(UTEDeviceLanguage.english)
                 }
+                
+                self.smartBandMgr.readDeviceLanguage { (language) in
+                    print("read_lang>> rawValue: \(language.rawValue) hashValue: \(language.hashValue) value: \(language)")
+                }
                 result(GlobalConstants.SC_INIT)
             }else{
                 result(GlobalConstants.SC_FAILURE)
@@ -672,10 +671,110 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             result(GlobalConstants.SC_FAILURE)
         }
         
-//        self.smartBandMgr.readDeviceLanguage { (language) in
-//
-//        }
+        //        self.smartBandMgr.readDeviceLanguage { (language) in
+        //
+        //        }
     }
+    
+    //sync related
+    func syncAllStepsData(result: FlutterResult) {
+            if self.smartBandMgr.connectedDevicesModel!.isConnected {
+                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.steps)
+                }else{
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllStepsData)
+                }
+                result(GlobalConstants.SC_INIT)
+            }else{
+                result(GlobalConstants.SC_FAILURE)
+            }
+        
+    }
+    
+    func syncAllSleepData(result: FlutterResult) {
+            if self.smartBandMgr.connectedDevicesModel!.isConnected {
+                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.sleep)
+                }else{
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
+                }
+                result(GlobalConstants.SC_INIT)
+            }else{
+                result(GlobalConstants.SC_FAILURE)
+            }
+        
+    }
+    
+    func syncRateData(result: FlutterResult) {
+            if self.smartBandMgr.connectedDevicesModel!.isConnected {
+                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM)
+                }else{
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
+                }
+                result(GlobalConstants.SC_INIT)
+            }else{
+                result(GlobalConstants.SC_FAILURE)
+            }
+        
+    }
+    func syncBloodPressure(result: FlutterResult) {
+            if self.smartBandMgr.connectedDevicesModel!.isConnected {
+                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.blood)
+                }else{
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
+                }
+                result(GlobalConstants.SC_INIT)
+            }else{
+                result(GlobalConstants.SC_FAILURE)
+            }
+        
+    }
+    
+    func syncOxygenSaturation(result: FlutterResult) {
+            if self.smartBandMgr.connectedDevicesModel!.isConnected {
+                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.bloodOxygen)
+                }else{
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
+                }
+                result(GlobalConstants.SC_INIT)
+            }else{
+                result(GlobalConstants.SC_FAILURE)
+            }
+        
+    }
+    
+    func syncBodyTemperature(result: FlutterResult) {
+            if self.smartBandMgr.connectedDevicesModel!.isConnected {
+                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
+                }else{
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
+                }
+                result(GlobalConstants.SC_INIT)
+            }else{
+                result(GlobalConstants.SC_FAILURE)
+            }
+        
+    }
+    
+    func fetchOverAllDeviceData(result: FlutterResult) {
+//            if self.smartBandMgr.connectedDevicesModel!.isConnected {
+//                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+//                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
+//                }else{
+//                    self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
+//                }
+//                result(GlobalConstants.SC_INIT)
+//            }else{
+//                result(GlobalConstants.SC_FAILURE)
+//            }
+        
+    }
+    
+    
 }
 
 

@@ -23,6 +23,8 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
     var passwordType : UTEPasswordType?
     //weak var connectVc : SmartBandConnectedControl?
     
+    open var weatherSync : Int = 0
+    
     override init() {
         super.init()
         self.smartBandMgr = UTESmartBandClient.sharedInstance()
@@ -92,6 +94,26 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             break
         case .syncSuccess:
             print("IOS_STATE:: Device syncSuccess")
+            
+            let deviceInfo = info! as NSDictionary
+            
+            let arrayRun : NSArray? = deviceInfo[kUTEQueryRunData] as? NSArray
+            let arraySleep : NSArray? = deviceInfo[kUTEQuerySleepData] as? NSArray
+            let arraySleepDayByDay : NSArray? = deviceInfo[kUTEQuerySleepDataDayByDay] as? NSArray
+            let arrayHRM : NSArray? = deviceInfo[kUTEQueryHRMData] as? NSArray
+            let arrayBlood : NSArray? = deviceInfo[kUTEQueryBloodData] as? NSArray
+            let arraySport : NSArray? = deviceInfo[kUTEQuerySportWalkRunData] as? NSArray
+            
+            let arrayTemperature : NSArray? = info[kUTEQueryBodyTemperature] as? NSArray
+            
+            print("arrayRun=\(String(describing: arrayRun))")
+            print("arraySleep=\(String(describing: arraySleep))")
+            print("arrayTemperature=\(String(describing: arrayTemperature))")
+            print("arraySleepDayByDay=\(String(describing: arraySleepDayByDay))")
+            print("arrayHRM=\(String(describing: arrayHRM))")
+            print("arrayBlood=\(String(describing: arrayBlood))")
+            print("arraySport=\(String(describing: arraySport))")
+            
             break
         case .syncError:
             print("IOS_STATE:: Device syncError")
@@ -333,12 +355,17 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             break
         case 76:
             // received------7-day weather setting
-            if self.manageStateCallback != nil {
-                let jsonSendData: [String: Any] = [
-                    "status" : true
-                ]
-                self.manageStateCallback!(GlobalConstants.SYNC_WEATHER_SUCCESS, jsonSendData);
+            if weatherSync == 0 {
+                if self.manageStateCallback != nil {
+                    let jsonSendData: [String: Any] = [
+                        "status" : true
+                    ]
+                    self.manageStateCallback!(GlobalConstants.SYNC_WEATHER_SUCCESS, jsonSendData);
+                }
+            }else{
+                self.weatherSync+=1
             }
+            print("weatherSyncCount>> \(weatherSync)")
             break
         default:
             break
