@@ -7,6 +7,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return HomePageState();
@@ -37,7 +39,7 @@ class HomePageState extends State<HomePage> {
     super.initState();
     initialize();
     /*_mobileSmartWatch.onDeviceCallbackData((response) {
-      print("onDeviceCallbackData1 res: " + response.toString());
+      debugPrint("onDeviceCallbackData1 res: " + response.toString());
       if (response['id'].toString() == SmartWatchConstants.SMART_CALLBACK) {
         // only 3 params, result is return resultant, status is success/failure, & data is json object of multiple data
         String result = response['result'].toString();
@@ -55,9 +57,9 @@ class HomePageState extends State<HomePage> {
           case SmartWatchConstants.BATTERY_STATUS:
             // data contains only "deviceVersion"," batteryStatus" returns as String
             // String deviceVersion = jsonData['deviceVersion'].toString();
-            print('inside battery status');
+            debugPrint('inside battery status');
             String batteryStat = jsonData['batteryStatus'].toString();
-            //print('inside battery status');
+            //debugPrint('inside battery status');
             setState(() {
               batteryStatus = batteryStat + "%";
             });
@@ -66,7 +68,7 @@ class HomePageState extends State<HomePage> {
           case SmartWatchConstants.DEVICE_CONNECTED:
             // data object will be empty always
             if (status == SmartWatchConstants.SC_SUCCESS) {
-              print('inside device connect status');
+              debugPrint('inside device connect status');
               // then the device is successfully connected.
               setState(() {
                 deviceConnected = true;
@@ -98,7 +100,7 @@ class HomePageState extends State<HomePage> {
           case SmartWatchConstants.STEPS_REAL_TIME:
           // real time sync as well as the daily sync
             if (status == SmartWatchConstants.SC_SUCCESS) {
-              print('inside steps real time');
+              debugPrint('inside steps real time');
               String steps = jsonData['steps'].toString();
               String distance = jsonData['distance'].toString();
               String calories = jsonData['calories'].toString();
@@ -113,7 +115,7 @@ class HomePageState extends State<HomePage> {
           case SmartWatchConstants.HR_REAL_TIME:
           // real time sync as well as the daily sync
             if (status == SmartWatchConstants.SC_SUCCESS) {
-              print('inside hr real time');
+              debugPrint('inside hr real time');
               String hr = jsonData['hr'].toString();
               setState(() {
                 heartRate = hr; // always bpm
@@ -124,7 +126,7 @@ class HomePageState extends State<HomePage> {
           case SmartWatchConstants.TEMP_RESULT:
           // real time sync as well as the daily sync
             if (status == SmartWatchConstants.SC_SUCCESS) {
-              print('inside temperature result');
+              debugPrint('inside temperature result');
               String inCelsius = jsonData['inCelsius'].toString();
               String inFahrenheit = jsonData['inFahrenheit'].toString();
               String startDate = jsonData['startDate'].toString();
@@ -140,7 +142,7 @@ class HomePageState extends State<HomePage> {
           case SmartWatchConstants.BP_RESULT:
           // real time sync as well as the daily sync
             if (status == SmartWatchConstants.SC_SUCCESS) {
-              print('inside bp result');
+              debugPrint('inside bp result');
               String high = jsonData['high'].toString();
               String low = jsonData['low'].toString();
               setState(() {
@@ -153,7 +155,7 @@ class HomePageState extends State<HomePage> {
 
           case SmartWatchConstants.CALLBACK_EXCEPTION:
             // something went wrong, which falls in the exception
-              print('callbackException occurred.');
+              debugPrint('callbackException occurred.');
             break;
           default:
             break;
@@ -162,23 +164,23 @@ class HomePageState extends State<HomePage> {
     });*/
 
     /*_mobileSmartWatch.registerCallBackListeners((response){
-      print("registerCallBackListeners>>" + response.toString());
+      debugPrint("registerCallBackListeners>>" + response.toString());
     });*/
 
     _mobileSmartWatch.registerEventCallBackListeners().listen((event) {
-      print("registerCallBackListeners>>" + event.toString());
+      debugPrint("registerCallBackListeners>>" + event.toString());
      /* String hr = jsonData['hr'].toString();
       setState(() {
         heartRate = hr; // always bpm
       });*/
     }, onError: (dynamic error){
-      print("registerCallBackError>> ${error}");
+      debugPrint("registerCallBackError>> $error");
     });
 
     _mobileSmartWatch.receiveEventListeners(onData: (eventData) {
-      print("on onData eventData: $eventData");
+      debugPrint("on onData eventData: $eventData");
     },onError: (dynamic error){
-      print("on error occured: $error");
+      debugPrint("on error occured: $error");
     },onDone :() {
 
     });
@@ -198,7 +200,7 @@ class HomePageState extends State<HomePage> {
    Future<void> initialize() async {
 
      // bool bluetoothStatus = await Permissions.bluetoothPermissionsGranted();
-     // debugPrint('bluetoothStatus>> $bluetoothStatus');
+     // debugdebugPrint('bluetoothStatus>> $bluetoothStatus');
      // if (bluetoothStatus) {
      // myLocation = await GlobalMethods.fetchDeviceCurrentLocation(context);
      // if (myLocation != null) {
@@ -219,16 +221,16 @@ class HomePageState extends State<HomePage> {
        debugPrint('locationPermissionsGranted>> $statuses');
      }
      /*var bluPermission = await Permission.bluetooth.status;
-    debugPrint('permission>>  $bluPermission');
+    debugdebugPrint('permission>>  $bluPermission');
 
     if (bluPermission.isDenied) {
 
       var bluetoothConnect = await Permission.bluetoothConnect.request();
       var bluetoothScan = await Permission.bluetoothScan.request();
       var bluetoothAdvertise = await Permission.bluetoothAdvertise.request();
-      debugPrint('bluetoothConnect>>  $bluetoothConnect');
-      debugPrint('bluetoothConnect>>  $bluetoothScan');
-      debugPrint('bluetoothConnect>>  $bluetoothAdvertise');
+      debugdebugPrint('bluetoothConnect>>  $bluetoothConnect');
+      debugdebugPrint('bluetoothConnect>>  $bluetoothScan');
+      debugdebugPrint('bluetoothConnect>>  $bluetoothAdvertise');
 
     }*/
    }
@@ -550,7 +552,7 @@ class HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     margin: const EdgeInsets.all(8.0),
-                    child: Text('$deviceMessage'),
+                    child: Text(deviceMessage),
                   ),
                   Container(
                     margin: const EdgeInsets.all(8.0),
@@ -591,7 +593,7 @@ class HomePageState extends State<HomePage> {
     if (showProgress) {
       return const Center(child: CircularProgressIndicator());
     } else {
-      if (deviceList.length > 0) {
+      if (deviceList.isNotEmpty) {
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
           //padding: const EdgeInsets.all(2.0),
@@ -697,12 +699,12 @@ class HomePageState extends State<HomePage> {
          /*subtitle:  Divider(
           color: Colors.grey,
         ),*/
-        leading: Icon(
+        leading: const Icon(
           Icons.bluetooth_audio_outlined,
           color: Colors.black,
         ),
-        title: Text('${device.name}'),
-        subtitle: Text('${device.address}'),
+        title: Text(device.name),
+        subtitle: Text(device.address),
       ),
     );
 
@@ -724,7 +726,7 @@ class HomePageState extends State<HomePage> {
     // check all the permissions
     // bool status = await checkAllPermissions();
     String initResult = await _mobileSmartWatch.initializeDeviceConnection();
-    print('initResult $initState');
+    debugPrint('initResult $initState');
     if (initResult != null) {
       if (initResult.toString() == SmartWatchConstants.BLE_NOT_SUPPORTED) {
         Global.showAlertDialog(context, "Bluetooth 4.0",
@@ -744,9 +746,9 @@ class HomePageState extends State<HomePage> {
       showProgress = true;
     });
     List<SmartDeviceModel> deviceList = await _mobileSmartWatch.startSearchingDevices();
-    print('fetchBluDevicesList $deviceList');
+    debugPrint('fetchBluDevicesList $deviceList');
 
-    if (deviceList.length > 0) {
+    if (deviceList.isNotEmpty) {
       setState(() {
         showProgress = false;
         smartDevicesList = deviceList;
@@ -763,7 +765,7 @@ class HomePageState extends State<HomePage> {
 
   Future<void> connectDevice(SmartDeviceModel device) async {
     bool startDeviceSearch = await _mobileSmartWatch.connectDevice(device);
-    print('connectDevice>> $startDeviceSearch');
+    debugPrint('connectDevice>> $startDeviceSearch');
     if (!startDeviceSearch) {
       // device.address;
       // device.name;
@@ -792,13 +794,13 @@ class HomePageState extends State<HomePage> {
        "raiseHandWakeUp": "true", //true or false -- send true to wake up bright light switch
      };
      String resultStatus = await _mobileSmartWatch.setUserParameters(userData);
-     print('resultStatus>> $resultStatus');
+     debugPrint('resultStatus>> $resultStatus');
      // resultStatus ==  SC_NOT_SUPPORTED  (device not supported) or SC_INIT (write command initiated)or SC_FAILURE
    }
 
   Future<void> disconnectDevice() async {
     bool deviceDisconnected = await _mobileSmartWatch.disconnectDevice();
-    print('disconnectDevice>> $deviceDisconnected');
+    debugPrint('disconnectDevice>> $deviceDisconnected');
     setState(() {
      // deviceConnected = false;
       deviceMessage = "Device Disconnected";
@@ -807,21 +809,21 @@ class HomePageState extends State<HomePage> {
 
    Future<void> syncOverAll() async {
      // String stepsStatus = await _mobileSmartWatch.syncStepsData();
-     // print('syncStepsStatus>> $stepsStatus');
+     // debugPrint('syncStepsStatus>> $stepsStatus');
      String sleepStatus = await _mobileSmartWatch.syncSleepData();
-     print('syncSleepStatus>> $sleepStatus');
+     debugPrint('syncSleepStatus>> $sleepStatus');
    }
 
    Future<void> fetchBatteryNVersion() async {
      String batteryStatus = await _mobileSmartWatch.getBatteryStatus();
      String deviceVersion = await _mobileSmartWatch.getDeviceVersion();
-     print('batteryStatus>> $batteryStatus');
-     print('deviceVersion>> $deviceVersion');
+     debugPrint('batteryStatus>> $batteryStatus');
+     debugPrint('deviceVersion>> $deviceVersion');
    }
 
    Future<void> fetchSyncStepsData() async{
      String stepsStatus = await _mobileSmartWatch.syncStepsData();
-     print('syncStepsStatus>> $stepsStatus');
+     debugPrint('syncStepsStatus>> $stepsStatus');
    }
 
    Future<void> fetchAllJudgement() async{
@@ -836,7 +838,7 @@ class HomePageState extends State<HomePage> {
      }else if (status == SmartWatchConstants.SC_FAILURE){
        // someting went wrong
      }
-     print('resultJudgeData>> $resultJudgeData');
+     debugPrint('resultJudgeData>> $resultJudgeData');
    }
 
 
@@ -845,16 +847,16 @@ class HomePageState extends State<HomePage> {
      String status = resultJudgeData['status'].toString();
      if (status == SmartWatchConstants.SC_SUCCESS) {
        Map<String, dynamic> data = resultJudgeData['data'];
-       print('steps data>> ${data['steps']}');
-       print('sleep data>> ${data['sleep']}');
-       print('hr data>> ${data['hr']}');
-       print('hr24 data>> ${data['hr24']}');
-       print('bp data>> ${data['bp']}');
-       print('temperature data>> ${data['temperature']}');
+       debugPrint('steps data>> ${data['steps']}');
+       debugPrint('sleep data>> ${data['sleep']}');
+       debugPrint('hr data>> ${data['hr']}');
+       debugPrint('hr24 data>> ${data['hr24']}');
+       debugPrint('bp data>> ${data['bp']}');
+       debugPrint('temperature data>> ${data['temperature']}');
 
       // SmartStepsModel model  = new  SmartStepsModel.fromJson(data['steps']);
        List<SmartStepsModel> smartList = convertDataToList(data['steps']['data']);
-       print('smartList data>> ${smartList}');
+       debugPrint('smartList data>> $smartList');
 
      }else if (status == SmartWatchConstants.SC_DISCONNECTED) {
        // device got diconnected.
@@ -862,7 +864,7 @@ class HomePageState extends State<HomePage> {
      }else if (status == SmartWatchConstants.SC_FAILURE){
        // someting went wrong
      }
-     print('resultOverAllDayData>> $resultJudgeData');
+     debugPrint('resultOverAllDayData>> $resultJudgeData');
    }
 
    List<SmartStepsModel> convertDataToList(var json) {
@@ -877,42 +879,42 @@ class HomePageState extends State<HomePage> {
 
   Future<void> fetchSyncSleepData() async{
      String stepsStatus = await _mobileSmartWatch.syncSleepData();
-     print('syncSleepStatus>> $stepsStatus');
+     debugPrint('syncSleepStatus>> $stepsStatus');
    }
 
    Future<void>  startBloodPressure() async {
      String startBPStatus = await _mobileSmartWatch.startBloodPressure();
-     print('startBloodPressure>> $startBPStatus');
+     debugPrint('startBloodPressure>> $startBPStatus');
    }
    Future<void>  stopBloodPressure() async {
      String stopBPStatus = await _mobileSmartWatch.stopBloodPressure();
-     print('stopBloodPressure>> $stopBPStatus');
+     debugPrint('stopBloodPressure>> $stopBPStatus');
    }
    Future<void> syncBloodPressure() async {
      String syncBPStatus = await _mobileSmartWatch.syncBloodPressure();
-     print('syncBloodPressure>> $syncBPStatus');
+     debugPrint('syncBloodPressure>> $syncBPStatus');
    }
    Future<void> syncOxygen() async {
      String syncBPStatus = await _mobileSmartWatch.syncOxygenSaturation();
-     print('syncOxygen>> $syncBPStatus');
+     debugPrint('syncOxygen>> $syncBPStatus');
    }
    Future<void> syncTemperature() async {
      String syncTempStatus = await _mobileSmartWatch.syncTemperature();
-     print('syncTemperature>> $syncTempStatus');
+     debugPrint('syncTemperature>> $syncTempStatus');
    }
 
    Future<void> syncHeartRate() async {
      String syncBPStatus = await _mobileSmartWatch.syncRateData();
-     print('syncHeartRate>> $syncBPStatus');
+     debugPrint('syncHeartRate>> $syncBPStatus');
    }
 
    Future<void> startHR() async {
      String startBPStatus = await _mobileSmartWatch.startHR();
-     print('startHR>> $startBPStatus');
+     debugPrint('startHR>> $startBPStatus');
    }
    Future<void> stopHR() async {
      String stopBPStatus = await _mobileSmartWatch.stopHR();
-     print('stopHR>> $stopBPStatus');
+     debugPrint('stopHR>> $stopBPStatus');
    }
 
    Future<void> fetchStepsByDate() async{
@@ -948,7 +950,7 @@ class HomePageState extends State<HomePage> {
     for (var data in responseData) {
       sleepList.add(SmartSleepModel.fromJson(data));
     }
-    print("sleepList>> ${sleepList.length}");
+    debugPrint("sleepList>> ${sleepList.length}");
 
     setState(() {
       sleepTimings = "Total: "+total+", Light: "+light+", deep: "+deep+", awake: "+awake+", beginTime: "+beginTime+", endTime: "+endTime;
@@ -985,8 +987,8 @@ class HomePageState extends State<HomePage> {
     var location = await Permission.locationWhenInUse.status;
     var bluetooth = await Permission.bluetooth.status;
 
-    print('location $location');
-    print('bluetooth $bluetooth');
+    debugPrint('location $location');
+    debugPrint('bluetooth $bluetooth');
 
     if (location.isGranted && bluetooth.isGranted) {
       return true;

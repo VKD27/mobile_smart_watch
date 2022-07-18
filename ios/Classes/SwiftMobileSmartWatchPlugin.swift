@@ -491,24 +491,53 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func getWeatherType(code: Int) -> (UTEWeatherType) {
-        if code == 100{
-            
+        print("inside_code>> \(String(describing: code))")
+        if code == 100 || code == 900{
+            return UTEWeatherType.sunny
         }
-        return UTEWeatherType.cloudy
-        return UTEWeatherType.sunny
-        return UTEWeatherType.overcast
-        return UTEWeatherType.shower
+        if code >= 101 && code <= 103 {
+            return UTEWeatherType.cloudy
+        }
+        if code == 104{
+            return UTEWeatherType.overcast
+        }
+        if code >= 200 && code <= 213{
+            return UTEWeatherType.wind
+        }
         
-        return UTEWeatherType.rainSnow
-        return UTEWeatherType.lightRain
-        return UTEWeatherType.pouring
+        if code == 300 || code == 301 {
+            return UTEWeatherType.shower
+        }
         
-        return UTEWeatherType.thunderStorm
+        if code >= 302 && code <= 304 {
+            return UTEWeatherType.thunderStorm
+        }
         
-        return UTEWeatherType.snow
-        return UTEWeatherType.sandstorm
-        return UTEWeatherType.mistHaze
-        return UTEWeatherType.wind
+        if code == 305 {
+            return UTEWeatherType.lightRain
+        }
+        
+        if code >= 306 && code <= 309 {
+            return UTEWeatherType.rainSnow
+        }
+        
+        if code >= 310 && code <= 313 {
+            return UTEWeatherType.pouring
+        }
+        
+        if code >= 400 && code <= 407 {
+            return UTEWeatherType.snow
+        }
+        
+        if code >= 500 && code <= 502 {
+            return UTEWeatherType.mistHaze
+        }
+       
+        if code >= 503 && code <= 508 {
+            return UTEWeatherType.sandstorm
+        }else{
+            return UTEWeatherType.overcast
+        }
     }
     func setSevenDaysWeatherInfo(call: FlutterMethodCall, result: FlutterResult) {
         // let resultData = try! JSONSerialization.data(withJSONObject: jsonSendObj)
@@ -533,8 +562,19 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                     let todayPm25 = jsonArray["todayPm25"] as? Int
                     let todayAqi = jsonArray["todayAqi"] as? Int
                     
-                    //let number = Int(todayWeatherCode!)
-    
+                    let secondDayTmpMax = jsonArray["secondDayTmpMax"] as? Int
+                    let secondDayTmpMin = jsonArray["secondDayTmpMin"] as? Int
+                    let thirdDayTmpMax = jsonArray["thirdDayTmpMax"] as? Int
+                    let thirdDayTmpMin = jsonArray["thirdDayTmpMin"] as? Int
+                    let fourthDayTmpMax = jsonArray["fourthDayTmpMax"] as? Int
+                    let fourthDayTmpMin = jsonArray["fourthDayTmpMin"] as? Int
+                    let fifthDayTmpMax = jsonArray["fifthDayTmpMax"] as? Int
+                    let fifthDayTmpMin = jsonArray["fifthDayTmpMin"] as? Int
+                    let sixthDayTmpMax = jsonArray["sixthDayTmpMax"] as? Int
+                    let sixthDayTmpMin = jsonArray["sixthDayTmpMin"] as? Int
+                    let seventhDayTmpMax = jsonArray["seventhDayTmpMax"] as? Int
+                    let seventhDayTmpMin = jsonArray["seventhDayTmpMin"] as? Int
+                 
                     let todayWeather = UTEModelWeather();
                     todayWeather.city = cityName
                     todayWeather.type = self.getWeatherType(code: Int(todayWeatherCode!)!)
@@ -545,30 +585,64 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                     todayWeather.aqi  = todayAqi!
                     
                     let secondDayWeatherCode = jsonArray["secondDayWeatherCode"] as? String
+                    let secondWeather = UTEModelWeather();
+                    secondWeather.city = cityName
+                    secondWeather.type = self.getWeatherType(code: Int(secondDayWeatherCode!)!)
+                    secondWeather.temperatureMax = secondDayTmpMax!
+                    secondWeather.temperatureMin = secondDayTmpMin!
                     
                     let thirdDayWeatherCode = jsonArray["thirdDayWeatherCode"] as? String
+                    let thirdWeather = UTEModelWeather();
+                    thirdWeather.city = cityName
+                    thirdWeather.type = self.getWeatherType(code: Int(thirdDayWeatherCode!)!)
+                    thirdWeather.temperatureMax = thirdDayTmpMax!
+                    thirdWeather.temperatureMin = thirdDayTmpMin!
                     
                     let fourthDayWeatherCode = jsonArray["fourthDayWeatherCode"] as? String
+                    let fourthWeather = UTEModelWeather();
+                    fourthWeather.city = cityName
+                    fourthWeather.type = self.getWeatherType(code: Int(fourthDayWeatherCode!)!)
+                    fourthWeather.temperatureMax = fourthDayTmpMax!
+                    fourthWeather.temperatureMin = fourthDayTmpMin!
                     
                     let fifthDayWeatherCode = jsonArray["fifthDayWeatherCode"] as? String
+                    let fifthhWeather = UTEModelWeather();
+                    fifthhWeather.city = cityName
+                    fifthhWeather.type = self.getWeatherType(code: Int(fifthDayWeatherCode!)!)
+                    fifthhWeather.temperatureMax = fifthDayTmpMax!
+                    fifthhWeather.temperatureMin = fifthDayTmpMin!
                     
                     let sixthDayWeatherCode = jsonArray["sixthDayWeatherCode"] as? String
+                    let sixthWeather = UTEModelWeather();
+                    sixthWeather.city = cityName
+                    sixthWeather.type = self.getWeatherType(code: Int(sixthDayWeatherCode!)!)
+                    sixthWeather.temperatureMax = sixthDayTmpMax!
+                    sixthWeather.temperatureMin = sixthDayTmpMin!
                     
                     let seventhDayWeatherCode = jsonArray["seventhDayWeatherCode"] as? String
+                    let seventhWeather = UTEModelWeather();
+                    seventhWeather.city = cityName
+                    seventhWeather.type = self.getWeatherType(code: Int(seventhDayWeatherCode!)!)
+                    seventhWeather.temperatureMax = seventhDayTmpMax!
+                    seventhWeather.temperatureMin = seventhDayTmpMin!
                     
                     print("cityName: \(String(describing: cityName))")
                     
-                    let mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
+                    var mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
                    
-                    //let todayWeather = UTEModelWeather();
-                    //todayWeather.city = "Hyd"
-                    //todayWeather
+                    mArrayWeather.append(todayWeather)
+                    mArrayWeather.append(secondWeather)
+                    mArrayWeather.append(thirdWeather)
+                    mArrayWeather.append(fourthWeather)
+                    mArrayWeather.append(fifthhWeather)
+                    mArrayWeather.append(sixthWeather)
+                    mArrayWeather.append(seventhWeather)
                     
-                    
-                   // self.smartBandMgr.sendUTESevenWeather(mArrayWeather)
-                    //result(GlobalConstants.SC_INIT)
+                    self.smartBandMgr.sendUTESevenWeather(mArrayWeather)
+                    result(GlobalConstants.SC_INIT)
                 } else {
                     print("bad json")
+                    result(GlobalConstants.SC_FAILURE)
                 }
             } catch let error as NSError {
                 print("NSerror",error)
