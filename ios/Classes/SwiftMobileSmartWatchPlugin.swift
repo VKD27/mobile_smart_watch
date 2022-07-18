@@ -490,6 +490,26 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         }
     }
     
+    func getWeatherType(code: Int) -> (UTEWeatherType) {
+        if code == 100{
+            
+        }
+        return UTEWeatherType.cloudy
+        return UTEWeatherType.sunny
+        return UTEWeatherType.overcast
+        return UTEWeatherType.shower
+        
+        return UTEWeatherType.rainSnow
+        return UTEWeatherType.lightRain
+        return UTEWeatherType.pouring
+        
+        return UTEWeatherType.thunderStorm
+        
+        return UTEWeatherType.snow
+        return UTEWeatherType.sandstorm
+        return UTEWeatherType.mistHaze
+        return UTEWeatherType.wind
+    }
     func setSevenDaysWeatherInfo(call: FlutterMethodCall, result: FlutterResult) {
         // let resultData = try! JSONSerialization.data(withJSONObject: jsonSendObj)
         
@@ -505,9 +525,40 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                    print(jsonArray) // use the json here
                     
                     let cityName = jsonArray["cityName"] as? String
+                    
+                    let todayWeatherCode = jsonArray["todayWeatherCode"] as? String
+                    let todayTmpCurrent = jsonArray["todayTmpCurrent"] as? Int
+                    let todayTmpMax = jsonArray["todayTmpMax"] as? Int
+                    let todayTmpMin = jsonArray["todayTmpMin"] as? Int
+                    let todayPm25 = jsonArray["todayPm25"] as? Int
+                    let todayAqi = jsonArray["todayAqi"] as? Int
+                    
+                    //let number = Int(todayWeatherCode!)
+    
+                    let todayWeather = UTEModelWeather();
+                    todayWeather.city = cityName
+                    todayWeather.type = self.getWeatherType(code: Int(todayWeatherCode!)!)
+                    todayWeather.temperatureCurrent = todayTmpCurrent!
+                    todayWeather.temperatureMax = todayTmpMax!
+                    todayWeather.temperatureMin = todayTmpMin!
+                    todayWeather.pm25 = todayPm25!
+                    todayWeather.aqi  = todayAqi!
+                    
+                    let secondDayWeatherCode = jsonArray["secondDayWeatherCode"] as? String
+                    
+                    let thirdDayWeatherCode = jsonArray["thirdDayWeatherCode"] as? String
+                    
+                    let fourthDayWeatherCode = jsonArray["fourthDayWeatherCode"] as? String
+                    
+                    let fifthDayWeatherCode = jsonArray["fifthDayWeatherCode"] as? String
+                    
+                    let sixthDayWeatherCode = jsonArray["sixthDayWeatherCode"] as? String
+                    
+                    let seventhDayWeatherCode = jsonArray["seventhDayWeatherCode"] as? String
+                    
                     print("cityName: \(String(describing: cityName))")
                     
-                   // let mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
+                    let mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
                    
                     //let todayWeather = UTEModelWeather();
                     //todayWeather.city = "Hyd"

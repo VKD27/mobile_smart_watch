@@ -295,7 +295,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         switch callback.rawValue {
         case 1:
             // user profile updated successfully, Set height, weight, brightness, etc.
-            if self.manageStateCallback != nil {            
+            if self.manageStateCallback != nil {
                 self.manageStateCallback!(GlobalConstants.UPDATE_DEVICE_PARAMS, []);
             }
             break
