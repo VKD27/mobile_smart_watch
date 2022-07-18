@@ -91,6 +91,9 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             break
         case .syncBegin:
             print("IOS_STATE:: Device syncBegin")
+            if self.manageStateCallback != nil {
+                self.manageStateCallback!(GlobalConstants.SYNC_STEPS_FINISH, []);
+            }
             break
         case .syncSuccess:
             print("IOS_STATE:: Device syncSuccess")
@@ -360,6 +363,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                     let jsonSendData: [String: Any] = [
                         "status" : true
                     ]
+                    self.weatherSync+=1
                     self.manageStateCallback!(GlobalConstants.SYNC_WEATHER_SUCCESS, jsonSendData);
                 }
             }else{
