@@ -123,6 +123,12 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 }
             }
             
+            if arraySleep != nil  || arraySleepDayByDay != nil{
+                if self.manageStateCallback != nil {
+                    self.manageStateCallback!(GlobalConstants.SYNC_SLEEP_FINISH, []);
+                }
+            }
+            
             break
         case .syncError:
             print("IOS_STATE:: Device syncError")
