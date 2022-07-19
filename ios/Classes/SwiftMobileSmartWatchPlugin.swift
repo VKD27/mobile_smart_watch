@@ -681,8 +681,10 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             if self.smartBandMgr.connectedDevicesModel!.isConnected {
                 if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
                     self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.steps)
+                    print("syncAllStepsData>> Inside IF")
                 }else{
                     self.smartBandMgr.setUTEOption(UTEOption.syncAllStepsData)
+                    print("syncAllStepsData>> Inside ELSE")
                 }
                 result(GlobalConstants.SC_INIT)
             }else{
