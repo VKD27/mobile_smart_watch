@@ -104,6 +104,8 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             let arraySleep : NSArray? = deviceInfo[kUTEQuerySleepData] as? NSArray
             let arraySleepDayByDay : NSArray? = deviceInfo[kUTEQuerySleepDataDayByDay] as? NSArray
             let arrayHRM : NSArray? = deviceInfo[kUTEQueryHRMData] as? NSArray
+            let array24HRM : NSArray? = deviceInfo[kUTEQuery24HRMData] as? NSArray
+            
             let arrayBlood : NSArray? = deviceInfo[kUTEQueryBloodData] as? NSArray
             let arraySport : NSArray? = deviceInfo[kUTEQuerySportWalkRunData] as? NSArray
             
@@ -128,6 +130,13 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                     self.manageStateCallback!(GlobalConstants.SYNC_SLEEP_FINISH, []);
                 }
             }
+            
+            if arrayHRM != nil  || array24HRM != nil{
+                if self.manageStateCallback != nil {
+                    self.manageStateCallback!(GlobalConstants.SYNC_24_HOUR_RATE_FINISH, []);
+                }
+            }
+            
             
             break
         case .syncError:
@@ -389,6 +398,10 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
         default:
             break
         }
+    }
+    
+    func uteManagerReceiveHRMMaxValue(_ max: Int, minValue min: Int, averageValue average: Int) {
+        print("uteManagerReceiveHRMMaxValue MAX=\(max) MIN=\(min) AVG=\(average) ")
     }
     
     func uteManagerExtraIsAble(_ isAble: Bool) {
