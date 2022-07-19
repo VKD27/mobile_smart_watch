@@ -146,7 +146,8 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         ]
         
         print("jsonSendObj>> \(jsonSendObj)")
-        DispatchQueue.main.async {
+        //DispatchQueue.main.async {
+        DispatchQueue.global().async {
             let resultData = try! JSONSerialization.data(withJSONObject: jsonSendObj)
             let jsonString = String(data: resultData, encoding: .utf8)!
             self.eventSink?(jsonString)
@@ -399,7 +400,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                 group.leave()
             }
             group.wait()
-            print("information_set_returning")
+            //print("information_set_returning")
             result(GlobalConstants.SC_INIT)
         }else {
             result(GlobalConstants.SC_FAILURE)
@@ -441,13 +442,13 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     func set24HeartRate(call: FlutterMethodCall, result: FlutterResult) {
         if let args = call.arguments as? Dictionary<String, Any>{
             let enableStr = args["enable"] as? String
-            
+            DispatchQueue.global().async {
             if enableStr?.lowercased() == "true" {
                 self.smartBandMgr.setUTEOption(UTEOption.open24HourHRM)
             }else {
                 self.smartBandMgr.setUTEOption(UTEOption.close24HourHRM)
             }
-            
+            }
             //self.smartBandMgr.connectedDevicesModel?.isHas24HourHRM
             print("24_hrm_status \(String(describing: self.smartBandMgr.connectedDevicesModel?.isHas24HourHRM))")
             result(GlobalConstants.SC_INIT)
@@ -459,11 +460,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     func set24BloodOxygen(call: FlutterMethodCall, result: FlutterResult) {
         if let args = call.arguments as? Dictionary<String, Any>{
             let enableStr = args["enable"] as? String
-            
+            DispatchQueue.global().async {
             if enableStr?.lowercased() == "true" {
                 self.smartBandMgr.setBloodOxygenAutoTest(true, time: UTECommonTestTime.time1Hour)
             }else {
                 self.smartBandMgr.setBloodOxygenAutoTest(false, time: UTECommonTestTime.time1Hour)
+            }
             }
             result(GlobalConstants.SC_INIT)
         }else{
@@ -474,11 +476,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     func set24HrTemperatureTest(call: FlutterMethodCall, result: FlutterResult) {
         if let args = call.arguments as? Dictionary<String, Any>{
             let enableStr = args["enable"] as? String
-            
+            DispatchQueue.global().async {
             if enableStr?.lowercased() == "true" {
                 self.smartBandMgr.setBodyTemperatureAutoTest(true, time: UTECommonTestTime.time1Hour)
             }else {
                 self.smartBandMgr.setBodyTemperatureAutoTest(false, time: UTECommonTestTime.time1Hour)
+            }
             }
             result(GlobalConstants.SC_INIT)
         }else{
@@ -487,7 +490,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func getWeatherType(code: Int) -> (UTEWeatherType) {
-        print("inside_code>> \(String(describing: code))")
+        //print("inside_code>> \(String(describing: code))")
         if code == 100 || code == 900{
             return UTEWeatherType.sunny
         }
@@ -671,21 +674,30 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     func setDeviceBandLanguage(call: FlutterMethodCall, result: FlutterResult) {
         if let args = call.arguments as? Dictionary<String, Any>{
             let langStr = args["lang"] as? String
-            
-            if self.smartBandMgr.connectedDevicesModel!.isHasLanguageSwitchDirectly {
-                if langStr?.lowercased() == "es" {
-                    self.smartBandMgr.setUTELanguageSwitchDirectly(UTEDeviceLanguage.spanish)
+            var returnResult = ""
+            let group = DispatchGroup()
+            group.enter()
+            DispatchQueue.global().async {
+                if self.smartBandMgr.connectedDevicesModel!.isHasLanguageSwitchDirectly {
+                    if langStr?.lowercased() == "es" {
+                        self.smartBandMgr.setUTELanguageSwitchDirectly(UTEDeviceLanguage.spanish)
+                    }else{
+                        self.smartBandMgr.setUTELanguageSwitchDirectly(UTEDeviceLanguage.english)
+                    }
+                    
+                    //self.smartBandMgr.readDeviceLanguage { (language) in
+                    //  print("read_lang>> rawValue: \(language.rawValue) hashValue: \(language.hashValue) value: \(language)")
+                    // }
+                   // result(GlobalConstants.SC_INIT)
+                    returnResult = GlobalConstants.SC_INIT
                 }else{
-                    self.smartBandMgr.setUTELanguageSwitchDirectly(UTEDeviceLanguage.english)
+                    //result(GlobalConstants.SC_FAILURE)
+                    returnResult = GlobalConstants.SC_FAILURE
                 }
-                
-                //self.smartBandMgr.readDeviceLanguage { (language) in
-                //  print("read_lang>> rawValue: \(language.rawValue) hashValue: \(language.hashValue) value: \(language)")
-                // }
-                result(GlobalConstants.SC_INIT)
-            }else{
-                result(GlobalConstants.SC_FAILURE)
+                group.leave()
             }
+            group.wait()
+            result(returnResult)
         }else{
             result(GlobalConstants.SC_FAILURE)
         }
@@ -704,7 +716,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             // }else{
             
             //print("syncAllStepsData>> Inside ELSE")
-            DispatchQueue.main.async {
+            DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllStepsData)
                 // self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
                 // self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
