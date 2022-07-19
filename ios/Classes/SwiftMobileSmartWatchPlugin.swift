@@ -103,24 +103,22 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             
         case GlobalConstants.GET_DEVICE_VERSION:
             self.getDeviceVersion(result: result)
-        
-        //sync calls
+            
+            //sync calls
         case GlobalConstants.GET_SYNC_STEPS:
             self.syncAllStepsData(result: result)
         case GlobalConstants.GET_SYNC_SLEEP:
             self.syncAllSleepData(result: result)
-            
         case GlobalConstants.GET_SYNC_RATE:
             self.syncRateData(result: result)
         case GlobalConstants.GET_SYNC_BP:
             self.syncBloodPressure(result: result)
-            
         case GlobalConstants.GET_SYNC_OXYGEN:
             self.syncOxygenSaturation(result: result)
         case GlobalConstants.GET_SYNC_TEMPERATURE:
             self.syncBodyTemperature(result: result)
             
-        //fetchoveralldata
+            //fetchoveralldata
         case GlobalConstants.FETCH_OVERALL_DEVICE_DATA:
             self.fetchOverAllDeviceData(result: result)
             
@@ -298,105 +296,110 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     func setUserParams(call: FlutterMethodCall, result: FlutterResult) {
         if let args = call.arguments as? Dictionary<String, Any>{
             print("user_params_arguments \(String(describing: args))")
+            let group = DispatchGroup()
+            group.enter()
             
-            let ageStr = args["age"] as? String
-            let heightStr = args["height"] as? String
-            let weightStr = args["weight"] as? String
-            let genderStr = args["gender"] as? String
-            let stepsStr = args["steps"] as? String
-            let isCelsiusStr = args["isCelsius"] as? String
-            let screenOffTimeStr = args["screenOffTime"] as? String
-            let isChineseLangStr = args["isChineseLang"] as? String
-            let raiseHandWakeUpStr = args["raiseHandWakeUp"] as? String
-            
-            //print("user1 age =\(String(describing: ageStr)) height =\(String(describing: heightStr)) weight =\(String(describing: weightStr))")
-            // print("user2 gender =\(String(describing: genderStr)) steps =\(String(describing: stepsStr)) isCelsius =\(String(describing: isCelsiusStr))")
-            // print("user3 screenOffTime =\(String(describing: screenOffTimeStr)) isChineseLang =\(String(describing: isChineseLangStr)) raiseHandWakeUp =\(String(describing: raiseHandWakeUpStr)) ")
-            
-            //EN:Turn off scan
-            self.smartBandMgr.stopScanDevices()
-            //EN:Set device time
-            self.smartBandMgr.setUTEOption(UTEOption.syncTime)
-            //EN:Set device unit: meters or inches
-            // self.smartBandMgr.setUTEOption(UTEOption.unitInch)
-            self.smartBandMgr.setUTEOption(UTEOption.unitMeter)
-            
-            
-            var heightFloat: CGFloat?
-            var weightFloat: CGFloat?
-            
-            if let doubleValue = Double(heightStr ?? "0.0") {
-                heightFloat = CGFloat(doubleValue)
+            DispatchQueue.global().async {
+                let ageStr = args["age"] as? String
+                let heightStr = args["height"] as? String
+                let weightStr = args["weight"] as? String
+                let genderStr = args["gender"] as? String
+                let stepsStr = args["steps"] as? String
+                let isCelsiusStr = args["isCelsius"] as? String
+                let screenOffTimeStr = args["screenOffTime"] as? String
+                let isChineseLangStr = args["isChineseLang"] as? String
+                let raiseHandWakeUpStr = args["raiseHandWakeUp"] as? String
+                
+                //print("user1 age =\(String(describing: ageStr)) height =\(String(describing: heightStr)) weight =\(String(describing: weightStr))")
+                // print("user2 gender =\(String(describing: genderStr)) steps =\(String(describing: stepsStr)) isCelsius =\(String(describing: isCelsiusStr))")
+                // print("user3 screenOffTime =\(String(describing: screenOffTimeStr)) isChineseLang =\(String(describing: isChineseLangStr)) raiseHandWakeUp =\(String(describing: raiseHandWakeUpStr)) ")
+                
+                //EN:Turn off scan
+                self.smartBandMgr.stopScanDevices()
+                //EN:Set device time
+                self.smartBandMgr.setUTEOption(UTEOption.syncTime)
+                //EN:Set device unit: meters or inches
+                // self.smartBandMgr.setUTEOption(UTEOption.unitInch)
+                self.smartBandMgr.setUTEOption(UTEOption.unitMeter)
+                
+                
+                var heightFloat: CGFloat?
+                var weightFloat: CGFloat?
+                
+                if let doubleValue = Double(heightStr ?? "0.0") {
+                    heightFloat = CGFloat(doubleValue)
+                }
+                
+                if let doubleValue = Double(weightStr ?? "0.0") {
+                    weightFloat = CGFloat(doubleValue)
+                }
+                
+                let age = Int(ageStr ?? "0")
+                
+                let genderSex : UTEDeviceInfoSex
+                if genderStr?.lowercased() == "female" {
+                    genderSex = UTEDeviceInfoSex.female
+                }else if genderStr?.lowercased() == "male"{
+                    genderSex =  UTEDeviceInfoSex.male
+                }else{
+                    genderSex = UTEDeviceInfoSex.default
+                }
+                
+                let stepsTarget = Int(stepsStr ?? "8000")
+                
+                let screenLightTime = Int(screenOffTimeStr ?? "6")
+                
+                var handLight = 0
+                if raiseHandWakeUpStr?.lowercased() == "true" {
+                    handLight = 1
+                } else if raiseHandWakeUpStr?.lowercased() == "false" {
+                    handLight = -1
+                }else{
+                    handLight = 0
+                }
+                
+                print("values_after H=\(String(describing: heightFloat)) W=\(String(describing: weightFloat)) A=\(String(describing: age)) G=\(String(describing: genderSex)) T=\(String(describing: stepsTarget)) SL=\(String(describing: screenLightTime)) HL=\(String(describing: handLight))")
+                
+                let infoModel = UTEModelDeviceInfo.init()
+                infoModel.heigh = heightFloat!
+                infoModel.weight = weightFloat!
+                infoModel.age = age!
+                infoModel.sex = genderSex
+                infoModel.sportTarget = stepsTarget!
+                // light  (unit second), range<5,60>
+                infoModel.lightTime = screenLightTime!
+                // Hand Light 1 is open, -1 is close, 0 is default
+                infoModel.handlight = handLight
+                
+                
+                var isChinese : Bool = false
+                var isCelFah : Bool = false
+                
+                if isChineseLangStr?.lowercased() == "true" {
+                    isChinese = true
+                }else{
+                    isChinese = true
+                }
+                
+                if isCelsiusStr?.lowercased() == "true" {
+                    isCelFah = false
+                }else{
+                    isCelFah = true
+                }
+                
+                if self.smartBandMgr.connectedDevicesModel!.isHasSwitchCH_EN {
+                    infoModel.languageIsChinese = isChinese
+                }
+                
+                if self.smartBandMgr.connectedDevicesModel!.isHasSwitchTempUnit {
+                    infoModel.isFahrenheit = isCelFah
+                }
+                
+                self.smartBandMgr.setUTEInfoModel(infoModel)
+                group.leave()
             }
-            
-            if let doubleValue = Double(weightStr ?? "0.0") {
-                weightFloat = CGFloat(doubleValue)
-            }
-            
-            let age = Int(ageStr ?? "0")
-            
-            let genderSex : UTEDeviceInfoSex
-            if genderStr?.lowercased() == "female" {
-                genderSex = UTEDeviceInfoSex.female
-            }else if genderStr?.lowercased() == "male"{
-                genderSex =  UTEDeviceInfoSex.male
-            }else{
-                genderSex = UTEDeviceInfoSex.default
-            }
-            
-            let stepsTarget = Int(stepsStr ?? "8000")
-            
-            let screenLightTime = Int(screenOffTimeStr ?? "6")
-            
-            var handLight = 0
-            if raiseHandWakeUpStr?.lowercased() == "true" {
-                handLight = 1
-            } else if raiseHandWakeUpStr?.lowercased() == "false" {
-                handLight = -1
-            }else{
-                handLight = 0
-            }
-            
-            print("values_after H=\(String(describing: heightFloat)) W=\(String(describing: weightFloat)) A=\(String(describing: age)) G=\(String(describing: genderSex)) T=\(String(describing: stepsTarget)) SL=\(String(describing: screenLightTime)) HL=\(String(describing: handLight))")
-            
-            let infoModel = UTEModelDeviceInfo.init()
-            infoModel.heigh = heightFloat!
-            infoModel.weight = weightFloat!
-            infoModel.age = age!
-            infoModel.sex = genderSex
-            infoModel.sportTarget = stepsTarget!
-            // light  (unit second), range<5,60>
-            infoModel.lightTime = screenLightTime!
-            // Hand Light 1 is open, -1 is close, 0 is default
-            infoModel.handlight = handLight
-            
-            
-            var isChinese : Bool = false
-            var isCelFah : Bool = false
-            
-            if isChineseLangStr?.lowercased() == "true" {
-                isChinese = true
-            }else{
-                isChinese = true
-            }
-            
-            if isCelsiusStr?.lowercased() == "true" {
-                isCelFah = false
-            }else{
-                isCelFah = true
-            }
-            
-            if self.smartBandMgr.connectedDevicesModel!.isHasSwitchCH_EN {
-                infoModel.languageIsChinese = isChinese
-            }
-            
-            if self.smartBandMgr.connectedDevicesModel!.isHasSwitchTempUnit {
-                infoModel.isFahrenheit = isCelFah
-            }
-            
-            self.smartBandMgr.setUTEInfoModel(infoModel)
-            
-            //print("information_set_returning")
+            group.wait()
+            print("information_set_returning")
             result(GlobalConstants.SC_INIT)
         }else {
             result(GlobalConstants.SC_FAILURE)
@@ -537,113 +540,129 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         // let resultData = try! JSONSerialization.data(withJSONObject: jsonSendObj)
         
         if let args = call.arguments as? Dictionary<String, Any>{
+            
             let dataStr = args["data"] as? String
             print("dataStr: \(String(describing: dataStr))")
             
-            let data = dataStr?.data(using: .utf8)!
+            var returnResult = ""
+            let group = DispatchGroup()
+            group.enter()
             
-            do {
-                if let jsonArray = try JSONSerialization.jsonObject(with: data!, options : .allowFragments) as? NSDictionary
-                {
-                    print(jsonArray) // use the json here
+            DispatchQueue.global().async {
+                let data = dataStr?.data(using: .utf8)!
+                do {
+                    if let jsonArray = try JSONSerialization.jsonObject(with: data!, options : .allowFragments) as? NSDictionary
+                    {
+                        print(jsonArray) // use the json here
+                        
+                        let cityName = jsonArray["cityName"] as? String
+                        
+                        let todayWeatherCode = jsonArray["todayWeatherCode"] as? String
+                        let todayTmpCurrent = jsonArray["todayTmpCurrent"] as? Int
+                        let todayTmpMax = jsonArray["todayTmpMax"] as? Int
+                        let todayTmpMin = jsonArray["todayTmpMin"] as? Int
+                        let todayPm25 = jsonArray["todayPm25"] as? Int
+                        let todayAqi = jsonArray["todayAqi"] as? Int
+                        
+                        let secondDayTmpMax = jsonArray["secondDayTmpMax"] as? Int
+                        let secondDayTmpMin = jsonArray["secondDayTmpMin"] as? Int
+                        let thirdDayTmpMax = jsonArray["thirdDayTmpMax"] as? Int
+                        let thirdDayTmpMin = jsonArray["thirdDayTmpMin"] as? Int
+                        let fourthDayTmpMax = jsonArray["fourthDayTmpMax"] as? Int
+                        let fourthDayTmpMin = jsonArray["fourthDayTmpMin"] as? Int
+                        let fifthDayTmpMax = jsonArray["fifthDayTmpMax"] as? Int
+                        let fifthDayTmpMin = jsonArray["fifthDayTmpMin"] as? Int
+                        let sixthDayTmpMax = jsonArray["sixthDayTmpMax"] as? Int
+                        let sixthDayTmpMin = jsonArray["sixthDayTmpMin"] as? Int
+                        let seventhDayTmpMax = jsonArray["seventhDayTmpMax"] as? Int
+                        let seventhDayTmpMin = jsonArray["seventhDayTmpMin"] as? Int
+                        
+                        let todayWeather = UTEModelWeather();
+                        todayWeather.city = cityName
+                        todayWeather.type = self.getWeatherType(code: Int(todayWeatherCode!)!)
+                        todayWeather.temperatureCurrent = todayTmpCurrent!
+                        todayWeather.temperatureMax = todayTmpMax!
+                        todayWeather.temperatureMin = todayTmpMin!
+                        todayWeather.pm25 = todayPm25!
+                        todayWeather.aqi  = todayAqi!
+                        
+                        let secondDayWeatherCode = jsonArray["secondDayWeatherCode"] as? String
+                        let secondWeather = UTEModelWeather();
+                        secondWeather.city = cityName
+                        secondWeather.type = self.getWeatherType(code: Int(secondDayWeatherCode!)!)
+                        secondWeather.temperatureMax = secondDayTmpMax!
+                        secondWeather.temperatureMin = secondDayTmpMin!
+                        
+                        let thirdDayWeatherCode = jsonArray["thirdDayWeatherCode"] as? String
+                        let thirdWeather = UTEModelWeather();
+                        thirdWeather.city = cityName
+                        thirdWeather.type = self.getWeatherType(code: Int(thirdDayWeatherCode!)!)
+                        thirdWeather.temperatureMax = thirdDayTmpMax!
+                        thirdWeather.temperatureMin = thirdDayTmpMin!
+                        
+                        let fourthDayWeatherCode = jsonArray["fourthDayWeatherCode"] as? String
+                        let fourthWeather = UTEModelWeather();
+                        fourthWeather.city = cityName
+                        fourthWeather.type = self.getWeatherType(code: Int(fourthDayWeatherCode!)!)
+                        fourthWeather.temperatureMax = fourthDayTmpMax!
+                        fourthWeather.temperatureMin = fourthDayTmpMin!
+                        
+                        let fifthDayWeatherCode = jsonArray["fifthDayWeatherCode"] as? String
+                        let fifthhWeather = UTEModelWeather();
+                        fifthhWeather.city = cityName
+                        fifthhWeather.type = self.getWeatherType(code: Int(fifthDayWeatherCode!)!)
+                        fifthhWeather.temperatureMax = fifthDayTmpMax!
+                        fifthhWeather.temperatureMin = fifthDayTmpMin!
+                        
+                        let sixthDayWeatherCode = jsonArray["sixthDayWeatherCode"] as? String
+                        let sixthWeather = UTEModelWeather();
+                        sixthWeather.city = cityName
+                        sixthWeather.type = self.getWeatherType(code: Int(sixthDayWeatherCode!)!)
+                        sixthWeather.temperatureMax = sixthDayTmpMax!
+                        sixthWeather.temperatureMin = sixthDayTmpMin!
+                        
+                        let seventhDayWeatherCode = jsonArray["seventhDayWeatherCode"] as? String
+                        let seventhWeather = UTEModelWeather();
+                        seventhWeather.city = cityName
+                        seventhWeather.type = self.getWeatherType(code: Int(seventhDayWeatherCode!)!)
+                        seventhWeather.temperatureMax = seventhDayTmpMax!
+                        seventhWeather.temperatureMin = seventhDayTmpMin!
+                        
+                        print("cityName: \(String(describing: cityName))")
+                        
+                        var mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
+                        
+                        mArrayWeather.append(todayWeather)
+                        mArrayWeather.append(secondWeather)
+                        mArrayWeather.append(thirdWeather)
+                        mArrayWeather.append(fourthWeather)
+                        mArrayWeather.append(fifthhWeather)
+                        mArrayWeather.append(sixthWeather)
+                        mArrayWeather.append(seventhWeather)
+                        
+                        self.smartBandTool.weatherSync = 0
+                        self.smartBandMgr.sendUTESevenWeather(mArrayWeather)
+                        
+                        returnResult = GlobalConstants.SC_INIT
+                        //result(GlobalConstants.SC_INIT)
+                    } else {
+                        print("bad json")
+                        returnResult = GlobalConstants.SC_FAILURE
+                        // result(GlobalConstants.SC_FAILURE)
+                    }
                     
-                    let cityName = jsonArray["cityName"] as? String
-                    
-                    let todayWeatherCode = jsonArray["todayWeatherCode"] as? String
-                    let todayTmpCurrent = jsonArray["todayTmpCurrent"] as? Int
-                    let todayTmpMax = jsonArray["todayTmpMax"] as? Int
-                    let todayTmpMin = jsonArray["todayTmpMin"] as? Int
-                    let todayPm25 = jsonArray["todayPm25"] as? Int
-                    let todayAqi = jsonArray["todayAqi"] as? Int
-                    
-                    let secondDayTmpMax = jsonArray["secondDayTmpMax"] as? Int
-                    let secondDayTmpMin = jsonArray["secondDayTmpMin"] as? Int
-                    let thirdDayTmpMax = jsonArray["thirdDayTmpMax"] as? Int
-                    let thirdDayTmpMin = jsonArray["thirdDayTmpMin"] as? Int
-                    let fourthDayTmpMax = jsonArray["fourthDayTmpMax"] as? Int
-                    let fourthDayTmpMin = jsonArray["fourthDayTmpMin"] as? Int
-                    let fifthDayTmpMax = jsonArray["fifthDayTmpMax"] as? Int
-                    let fifthDayTmpMin = jsonArray["fifthDayTmpMin"] as? Int
-                    let sixthDayTmpMax = jsonArray["sixthDayTmpMax"] as? Int
-                    let sixthDayTmpMin = jsonArray["sixthDayTmpMin"] as? Int
-                    let seventhDayTmpMax = jsonArray["seventhDayTmpMax"] as? Int
-                    let seventhDayTmpMin = jsonArray["seventhDayTmpMin"] as? Int
-                    
-                    let todayWeather = UTEModelWeather();
-                    todayWeather.city = cityName
-                    todayWeather.type = self.getWeatherType(code: Int(todayWeatherCode!)!)
-                    todayWeather.temperatureCurrent = todayTmpCurrent!
-                    todayWeather.temperatureMax = todayTmpMax!
-                    todayWeather.temperatureMin = todayTmpMin!
-                    todayWeather.pm25 = todayPm25!
-                    todayWeather.aqi  = todayAqi!
-                    
-                    let secondDayWeatherCode = jsonArray["secondDayWeatherCode"] as? String
-                    let secondWeather = UTEModelWeather();
-                    secondWeather.city = cityName
-                    secondWeather.type = self.getWeatherType(code: Int(secondDayWeatherCode!)!)
-                    secondWeather.temperatureMax = secondDayTmpMax!
-                    secondWeather.temperatureMin = secondDayTmpMin!
-                    
-                    let thirdDayWeatherCode = jsonArray["thirdDayWeatherCode"] as? String
-                    let thirdWeather = UTEModelWeather();
-                    thirdWeather.city = cityName
-                    thirdWeather.type = self.getWeatherType(code: Int(thirdDayWeatherCode!)!)
-                    thirdWeather.temperatureMax = thirdDayTmpMax!
-                    thirdWeather.temperatureMin = thirdDayTmpMin!
-                    
-                    let fourthDayWeatherCode = jsonArray["fourthDayWeatherCode"] as? String
-                    let fourthWeather = UTEModelWeather();
-                    fourthWeather.city = cityName
-                    fourthWeather.type = self.getWeatherType(code: Int(fourthDayWeatherCode!)!)
-                    fourthWeather.temperatureMax = fourthDayTmpMax!
-                    fourthWeather.temperatureMin = fourthDayTmpMin!
-                    
-                    let fifthDayWeatherCode = jsonArray["fifthDayWeatherCode"] as? String
-                    let fifthhWeather = UTEModelWeather();
-                    fifthhWeather.city = cityName
-                    fifthhWeather.type = self.getWeatherType(code: Int(fifthDayWeatherCode!)!)
-                    fifthhWeather.temperatureMax = fifthDayTmpMax!
-                    fifthhWeather.temperatureMin = fifthDayTmpMin!
-                    
-                    let sixthDayWeatherCode = jsonArray["sixthDayWeatherCode"] as? String
-                    let sixthWeather = UTEModelWeather();
-                    sixthWeather.city = cityName
-                    sixthWeather.type = self.getWeatherType(code: Int(sixthDayWeatherCode!)!)
-                    sixthWeather.temperatureMax = sixthDayTmpMax!
-                    sixthWeather.temperatureMin = sixthDayTmpMin!
-                    
-                    let seventhDayWeatherCode = jsonArray["seventhDayWeatherCode"] as? String
-                    let seventhWeather = UTEModelWeather();
-                    seventhWeather.city = cityName
-                    seventhWeather.type = self.getWeatherType(code: Int(seventhDayWeatherCode!)!)
-                    seventhWeather.temperatureMax = seventhDayTmpMax!
-                    seventhWeather.temperatureMin = seventhDayTmpMin!
-                    
-                    print("cityName: \(String(describing: cityName))")
-                    
-                    var mArrayWeather : [UTEModelWeather] = NSMutableArray.init() as! [UTEModelWeather]
-                    
-                    mArrayWeather.append(todayWeather)
-                    mArrayWeather.append(secondWeather)
-                    mArrayWeather.append(thirdWeather)
-                    mArrayWeather.append(fourthWeather)
-                    mArrayWeather.append(fifthhWeather)
-                    mArrayWeather.append(sixthWeather)
-                    mArrayWeather.append(seventhWeather)
-                    
-                    self.smartBandTool.weatherSync = 0
-                    self.smartBandMgr.sendUTESevenWeather(mArrayWeather)
-                    result(GlobalConstants.SC_INIT)
-                } else {
-                    print("bad json")
-                    result(GlobalConstants.SC_FAILURE)
+                } catch let error as NSError {
+                    print("NSerror",error)
+                    print("\(error.localizedDescription)")
+                    //result(GlobalConstants.SC_FAILURE)
+                    returnResult = GlobalConstants.SC_FAILURE
                 }
-            } catch let error as NSError {
-                print("NSerror",error)
-                print("\(error.localizedDescription)")
-                result(GlobalConstants.SC_FAILURE)
+                
+                group.leave()
             }
+            
+            group.wait()
+            result(returnResult)
         }else{
             result(GlobalConstants.SC_FAILURE)
         }
@@ -660,9 +679,9 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                     self.smartBandMgr.setUTELanguageSwitchDirectly(UTEDeviceLanguage.english)
                 }
                 
-                self.smartBandMgr.readDeviceLanguage { (language) in
-                    print("read_lang>> rawValue: \(language.rawValue) hashValue: \(language.hashValue) value: \(language)")
-                }
+                //self.smartBandMgr.readDeviceLanguage { (language) in
+                //  print("read_lang>> rawValue: \(language.rawValue) hashValue: \(language.hashValue) value: \(language)")
+                // }
                 result(GlobalConstants.SC_INIT)
             }else{
                 result(GlobalConstants.SC_FAILURE)
@@ -678,109 +697,109 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     //sync related
     func syncAllStepsData(result: FlutterResult) {
-            if self.smartBandMgr.connectedDevicesModel!.isConnected {
-                //if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                 //   self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.steps)
-               //     print("syncAllStepsData>> Inside IF")
-               // }else{
-                   
-                    //print("syncAllStepsData>> Inside ELSE")
-                DispatchQueue.main.async {
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllStepsData)
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
-                }
-                //}
-                result(GlobalConstants.SC_INIT)
-            }else{
-                result(GlobalConstants.SC_FAILURE)
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            //if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+            //   self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.steps)
+            //     print("syncAllStepsData>> Inside IF")
+            // }else{
+            
+            //print("syncAllStepsData>> Inside ELSE")
+            DispatchQueue.main.async {
+                self.smartBandMgr.setUTEOption(UTEOption.syncAllStepsData)
+                // self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
+                // self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
+                //self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
+                //self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
+                //self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
             }
+            //}
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
         
     }
     
     func syncAllSleepData(result: FlutterResult) {
-            if self.smartBandMgr.connectedDevicesModel!.isConnected {
-                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.sleep)
-                }else{
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
-                }
-                result(GlobalConstants.SC_INIT)
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.sleep)
             }else{
-                result(GlobalConstants.SC_FAILURE)
+                self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
             }
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
         
     }
     
     func syncRateData(result: FlutterResult) {
-            if self.smartBandMgr.connectedDevicesModel!.isConnected {
-                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM)
-                }else{
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
-                }
-                result(GlobalConstants.SC_INIT)
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM)
             }else{
-                result(GlobalConstants.SC_FAILURE)
+                self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
             }
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
         
     }
     func syncBloodPressure(result: FlutterResult) {
-            if self.smartBandMgr.connectedDevicesModel!.isConnected {
-                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.blood)
-                }else{
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
-                }
-                result(GlobalConstants.SC_INIT)
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.blood)
             }else{
-                result(GlobalConstants.SC_FAILURE)
+                self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
             }
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
         
     }
     
     func syncOxygenSaturation(result: FlutterResult) {
-            if self.smartBandMgr.connectedDevicesModel!.isConnected {
-                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.bloodOxygen)
-                }else{
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
-                }
-                result(GlobalConstants.SC_INIT)
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.bloodOxygen)
             }else{
-                result(GlobalConstants.SC_FAILURE)
+                self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
             }
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
         
     }
     
     func syncBodyTemperature(result: FlutterResult) {
-            if self.smartBandMgr.connectedDevicesModel!.isConnected {
-                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
-                }else{
-                    self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
-                }
-                result(GlobalConstants.SC_INIT)
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
             }else{
-                result(GlobalConstants.SC_FAILURE)
+                self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
             }
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
         
     }
     
     func fetchOverAllDeviceData(result: FlutterResult) {
-//            if self.smartBandMgr.connectedDevicesModel!.isConnected {
-//                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-//                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
-//                }else{
-//                    self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
-//                }
-//                result(GlobalConstants.SC_INIT)
-//            }else{
-//                result(GlobalConstants.SC_FAILURE)
-//            }
+        //            if self.smartBandMgr.connectedDevicesModel!.isConnected {
+        //                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+        //                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
+        //                }else{
+        //                    self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
+        //                }
+        //                result(GlobalConstants.SC_INIT)
+        //            }else{
+        //                result(GlobalConstants.SC_FAILURE)
+        //            }
         
     }
     
