@@ -132,6 +132,9 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             break
         case .syncError:
             print("IOS_STATE:: Device syncError")
+            if self.manageStateCallback != nil {
+                self.manageStateCallback!(GlobalConstants.SYNC_BLE_WRITE_FAIL, []);
+            }
             break
         case .heartDetectingStart:
             print("IOS_STATE:: Device heartDetectingStart")

@@ -188,7 +188,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         //self.smartBandMgr.initUTESmartBandClient()
         self.smartBandMgr.debugUTELog = true
         self.smartBandMgr.isScanRepeat = true
-        self.smartBandMgr.filerRSSI = -90
+        self.smartBandMgr.filerRSSI = -100
         self.smartBandMgr.filerServers = ["5533","2222","FEE7"]
         print("log sdk vsersion = \(self.smartBandMgr.sdkVersion())")
         
