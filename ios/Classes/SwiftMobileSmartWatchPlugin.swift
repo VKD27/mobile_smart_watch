@@ -679,13 +679,21 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     //sync related
     func syncAllStepsData(result: FlutterResult) {
             if self.smartBandMgr.connectedDevicesModel!.isConnected {
-                if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                    self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.steps)
-                    print("syncAllStepsData>> Inside IF")
-                }else{
+                //if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+                 //   self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.steps)
+               //     print("syncAllStepsData>> Inside IF")
+               // }else{
+                   
+                    //print("syncAllStepsData>> Inside ELSE")
+                DispatchQueue.main.async {
                     self.smartBandMgr.setUTEOption(UTEOption.syncAllStepsData)
-                    print("syncAllStepsData>> Inside ELSE")
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
+                    self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
                 }
+                //}
                 result(GlobalConstants.SC_INIT)
             }else{
                 result(GlobalConstants.SC_FAILURE)

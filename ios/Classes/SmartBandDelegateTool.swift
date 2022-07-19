@@ -91,9 +91,9 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             break
         case .syncBegin:
             print("IOS_STATE:: Device syncBegin")
-            if self.manageStateCallback != nil {
-                self.manageStateCallback!(GlobalConstants.SYNC_STEPS_FINISH, []);
-            }
+//            if self.manageStateCallback != nil {
+//                self.manageStateCallback!(GlobalConstants.SYNC_STEPS_FINISH, []);
+//            }
             break
         case .syncSuccess:
             print("IOS_STATE:: Device syncSuccess")
