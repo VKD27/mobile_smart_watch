@@ -81,7 +81,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             
         case .disconnected:
             print("IOS_STATE:: Device DisConnected")
-            if self.manageStateCallback != nil {              
+            if self.manageStateCallback != nil {
                 self.manageStateCallback!(GlobalConstants.DEVICE_DISCONNECTED, []);
             }
             break
@@ -91,9 +91,9 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             break
         case .syncBegin:
             print("IOS_STATE:: Device syncBegin")
-//            if self.manageStateCallback != nil {
-//                self.manageStateCallback!(GlobalConstants.SYNC_STEPS_FINISH, []);
-//            }
+            //            if self.manageStateCallback != nil {
+            //                self.manageStateCallback!(GlobalConstants.SYNC_STEPS_FINISH, []);
+            //            }
             break
         case .syncSuccess:
             print("IOS_STATE:: Device syncSuccess")
@@ -116,6 +116,12 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             print("arrayHRM=\(String(describing: arrayHRM))")
             print("arrayBlood=\(String(describing: arrayBlood))")
             print("arraySport=\(String(describing: arraySport))")
+            
+            if arrayRun != nil  || arraySport != nil{
+                if self.manageStateCallback != nil {
+                    self.manageStateCallback!(GlobalConstants.SYNC_STEPS_FINISH, []);
+                }
+            }
             
             break
         case .syncError:

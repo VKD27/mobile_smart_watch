@@ -734,9 +734,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     func syncAllSleepData(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.sleep)
-            }else{
+//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.sleep)
+//            }else{
+//                self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
+//            }
+            DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
             }
             result(GlobalConstants.SC_INIT)
@@ -748,9 +751,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     func syncRateData(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM)
-            }else{
+//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM)
+//            }else{
+//                self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
+//            }
+            DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
             }
             result(GlobalConstants.SC_INIT)
@@ -761,9 +767,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     func syncBloodPressure(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.blood)
-            }else{
+//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.blood)
+//            }else{
+//                self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
+//            }
+            DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
             }
             result(GlobalConstants.SC_INIT)
@@ -775,9 +784,12 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     func syncOxygenSaturation(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.bloodOxygen)
-            }else{
+//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.bloodOxygen)
+//            }else{
+//                self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
+//            }
+            DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
             }
             result(GlobalConstants.SC_INIT)
@@ -789,10 +801,14 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     func syncBodyTemperature(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
-            }else{
+//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
+//            }else{
+//                self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
+//            }
+            DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
+               // self.smartBandMgr.setUTEOption(UTEOption.syncTime)
             }
             result(GlobalConstants.SC_INIT)
         }else{
