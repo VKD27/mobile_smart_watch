@@ -139,8 +139,12 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                     for sportModel in arraySport! {
                         let walkModel = sportModel as! UTEModelSportWalkRun
                         let jsonObject = ["time": walkModel.time!, "steps": walkModel.stepsTotal, "calories": (walkModel.walkCalories + walkModel.runCalories), "distance": (walkModel.walkDistances + walkModel.runDistances)] as [String : Any]
+                        
+                        if walkModel.time.contains("2022-07-20") {
+                            print("walkCalories = \(String(describing: walkModel.walkCalories)), runCalories= \(walkModel.runCalories), walkDistances= \(walkModel.walkDistances),runDistances= \(walkModel.runDistances), walkTimeStart=\(String(describing: walkModel.walkTimeStart)),walkTimeEnd =\(String(describing:walkModel.walkTimeEnd)) runTimeStart=\(String(describing: walkModel.runTimeStart)),runTimeEnd =\(String(describing:walkModel.runTimeEnd)) ,walkDuration =\(walkModel.walkDuration),runDuration =\(walkModel.runDuration)")
+                        }
                         sportData.append(jsonObject)
-                        //                        print("sport***time = \(String(describing: model.time)),Total step = \(model.stepsTotal) , walkDistance = \(model.walkDistances) ,walkCalorie = \(model.walkCalories) ,runDistance = \(model.runDistances),runCalorie =\(model.runCalories)")
+                        
                     }
                     print("sportData:: \(sportData)")
                 }
@@ -187,7 +191,9 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 
                 if array24HRM != nil {
                     for hrm24Model in array24HRM! {
-                        print("hrm24Model=\(String(describing: hrm24Model))")
+                        //print("hrm24Model=\(String(describing: hrm24Model))")
+                        let model = hrm24Model as! UTEModelHRMData
+                        print("hrm24Mode>> heartTime=\(String(describing: model.heartTime)),heartCount=\(String(describing: model.heartCount)),type=\(model.heartType)")
                         //                        let model = hrmModel as! UTEModelHRMData
                         //                        print("hrmModel>> heartTime=\(String(describing: model.heartTime)),heartCount=\(String(describing: model.heartCount)),type=\(model.heartType)")
                     }
@@ -216,7 +222,8 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             
             if arrayTemperature != nil {
                 for tempModel in arrayTemperature! {
-                    print("tempModel=\(String(describing: tempModel))")
+                    let model = tempModel as! UTEModelBodyTemperature
+                    print("tempModel>> time=\(String(describing: model.time)),temp=\(String(describing: model.bodyTemperature)),shellT=\(String(describing: model.shellTemperature)),ambientT=\(String(describing: model.ambientTemperature))")
                 }
                 //UTEModelBodyTemperature
                 if self.manageStateCallback != nil {
