@@ -181,7 +181,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             }
             
             if arrayHRM != nil  || array24HRM != nil{
-                
+                var hrData : [Any] = [];
                 if arrayHRM != nil {
                     for hrmModel in arrayHRM! {
                         let model = hrmModel as! UTEModelHRMData
@@ -191,43 +191,56 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 
                 if array24HRM != nil {
                     for hrm24Model in array24HRM! {
-                        //print("hrm24Model=\(String(describing: hrm24Model))")
                         let model = hrm24Model as! UTEModelHRMData
-                        print("hrm24Mode>> heartTime=\(String(describing: model.heartTime)),heartCount=\(String(describing: model.heartCount)),type=\(model.heartType)")
-                        //                        let model = hrmModel as! UTEModelHRMData
-                        //                        print("hrmModel>> heartTime=\(String(describing: model.heartTime)),heartCount=\(String(describing: model.heartCount)),type=\(model.heartType)")
+                        let time = model.heartTime!
+                        let calender = GlobalMethods.convertBandReadableCalender(dateTime: time)
+                        let hrObject = ["dateTime": time, "calender": calender, "rate": model.heartCount!, "type": model.heartType.rawValue] as [String : Any]
+//                        print("hrm24Mode>> heartTime=\(String(describing: model.heartTime)),heartCount=\(String(describing: model.heartCount)),type=\(model.heartType)")
+                        hrData.append(hrObject)
                     }
                 }
                 
-                
+                print("hrData:: \(hrData)")
                 if self.manageStateCallback != nil {
-                    self.manageStateCallback!(GlobalConstants.SYNC_24_HOUR_RATE_FINISH, []);
+                    self.manageStateCallback!(GlobalConstants.SYNC_24_HOUR_RATE_FINISH, hrData);
                 }
             }
             
             if arrayBlood != nil {
-                
+                var bpData : [Any] = [];
                 for bloodModel in arrayBlood! {
                     let model = bloodModel as! UTEModelBloodData
+                    let time = model.bloodTime!
+                    let calender = GlobalMethods.convertBandReadableCalender(dateTime: time)
+                    let bloodObject = ["dateTime": time, "calender": calender, "high": model.bloodSystolic!, "low":  model.bloodDiastolic!, "type": model.bloodType.rawValue] as [String : Any]
                     
-                    print("bloodModel>> bloodTime=\(String(describing: model.bloodTime)),Sys=\(String(describing: model.bloodSystolic)),dys=\(String(describing: model.bloodDiastolic)) ,type=\(String(describing:model.bloodType)) ,hrIrr=\(String(describing:model.heartRateIrregular)) ,HCount=\(String(describing:model.heartCount))")
-                    //self.bloodDetectingData(model: model)
+//                    print("bloodModel>> bloodTime=\(String(describing: model.bloodTime)),Sys=\(String(describing: model.bloodSystolic)),dys=\(String(describing: model.bloodDiastolic)) ,type=\(String(describing:model.bloodType)) ,hrIrr=\(String(describing:model.heartRateIrregular)) ,HCount=\(String(describing:model.heartCount))")
+                    bpData.append(bloodObject)
                 }
                 
-                
+                print("bpData:: \(bpData)")
                 if self.manageStateCallback != nil {
-                    self.manageStateCallback!(GlobalConstants.SYNC_BP_FINISH, []);
+                    self.manageStateCallback!(GlobalConstants.SYNC_BP_FINISH, bpData);
                 }
             }
             
             if arrayTemperature != nil {
+                var temperatureData : [Any] = [];
                 for tempModel in arrayTemperature! {
                     let model = tempModel as! UTEModelBodyTemperature
-                    print("tempModel>> time=\(String(describing: model.time)),temp=\(String(describing: model.bodyTemperature)),shellT=\(String(describing: model.shellTemperature)),ambientT=\(String(describing: model.ambientTemperature))")
+                    //open var weatherSync : Int = 0
+                    let tempInCelsius : String = model.bodyTemperature
+                    let inFahrenheit = GlobalMethods.getTempIntoFahrenheit(tempInCelsius:tempInCelsius)
+                    let time = model.time!
+                    let calender = GlobalMethods.convertBandReadableCalender(dateTime: time)
+                    let tempObject = ["dateTime": time, "inCelsius": tempInCelsius, "inFahrenheit": inFahrenheit, "calender": calender, "type": ""] as [String : Any]
+                    temperatureData.append(tempObject)
+//                    print("tempModel>> time=\(String(describing: model.time)),temp=\(String(describing: model.bodyTemperature)),shellT=\(String(describing: model.shellTemperature)),ambientT=\(String(describing: model.ambientTemperature))")
                 }
-                //UTEModelBodyTemperature
+                print("temperatureData:: \(temperatureData)")
+                
                 if self.manageStateCallback != nil {
-                    self.manageStateCallback!(GlobalConstants.SYNC_TEMPERATURE_FINISH, []);
+                    self.manageStateCallback!(GlobalConstants.SYNC_TEMPERATURE_FINISH, temperatureData);
                 }
             }
             
