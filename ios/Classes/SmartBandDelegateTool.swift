@@ -101,14 +101,15 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             let deviceInfo = info! as NSDictionary
             
             let arrayRun : NSArray? = deviceInfo[kUTEQueryRunData] as? NSArray
+            let arraySport : NSArray? = deviceInfo[kUTEQuerySportWalkRunData] as? NSArray
+            
             let arraySleep : NSArray? = deviceInfo[kUTEQuerySleepData] as? NSArray
             let arraySleepDayByDay : NSArray? = deviceInfo[kUTEQuerySleepDataDayByDay] as? NSArray
+            
             let arrayHRM : NSArray? = deviceInfo[kUTEQueryHRMData] as? NSArray
             let array24HRM : NSArray? = deviceInfo[kUTEQuery24HRMData] as? NSArray
             
             let arrayBlood : NSArray? = deviceInfo[kUTEQueryBloodData] as? NSArray
-            let arraySport : NSArray? = deviceInfo[kUTEQuerySportWalkRunData] as? NSArray
-            
             let arrayTemperature : NSArray? = info[kUTEQueryBodyTemperature] as? NSArray
             
             print("arrayRun=\(String(describing: arrayRun))")
@@ -120,30 +121,104 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             print("arraySport=\(String(describing: arraySport))")
             
             if arrayRun != nil  || arraySport != nil{
+                
+                if arrayRun != nil {
+                    var runData : [Any] = [];
+                    for runModel in arrayRun! {
+                        let runDataModel = runModel as! UTEModelRunData
+                        let jsonObject = ["time": runDataModel.time!, "steps": runDataModel.totalSteps, "calories": runDataModel.calories, "distance": runDataModel.distances] as [String : Any]
+                        runData.append(jsonObject)
+                        //                        print("normal***time = \(String(describing: model.time)), hourStep = \(model.hourSteps),Total step = \(model.totalSteps) , distance = \(model.distances) ,calorie = \(model.calories)")
+                    }
+                    print("runData:: \(runData)")
+                }
+                
+                if arraySport != nil
+                {
+                    var sportData : [Any] = [];
+                    for sportModel in arraySport! {
+                        let walkModel = sportModel as! UTEModelSportWalkRun
+                        let jsonObject = ["time": walkModel.time!, "steps": walkModel.stepsTotal, "calories": (walkModel.walkCalories + walkModel.runCalories), "distance": (walkModel.walkDistances + walkModel.runDistances)] as [String : Any]
+                        sportData.append(jsonObject)
+                        //                        print("sport***time = \(String(describing: model.time)),Total step = \(model.stepsTotal) , walkDistance = \(model.walkDistances) ,walkCalorie = \(model.walkCalories) ,runDistance = \(model.runDistances),runCalorie =\(model.runCalories)")
+                    }
+                    print("sportData:: \(sportData)")
+                }
+                
                 if self.manageStateCallback != nil {
                     self.manageStateCallback!(GlobalConstants.SYNC_STEPS_FINISH, []);
                 }
             }
             
             if arraySleep != nil  || arraySleepDayByDay != nil{
+                
+                if arraySleep != nil {
+                    for sleepModel in arraySleep! {
+                        let model = sleepModel as! UTEModelSleepData
+                        print("sleepModel=\(String(describing: model.startTime)),end=\(String(describing: model.endTime)),type=\(model.sleepType)")
+                    }
+                }
+                
+                if arraySleepDayByDay != nil {
+                    for array in arraySleepDayByDay! {
+                        let dayByDayArray : NSArray? = array as? NSArray
+                        print("ddayByDayArray=\(String(describing: dayByDayArray))")
+                        for sleepModel in dayByDayArray! {
+                            let model = sleepModel as! UTEModelSleepData
+                            print("dayBydaymodel=\(String(describing: model.startTime)),end=\(String(describing: model.endTime)),type=\(model.sleepType)")
+                        }
+                        
+                    }
+                }
+                
                 if self.manageStateCallback != nil {
                     self.manageStateCallback!(GlobalConstants.SYNC_SLEEP_FINISH, []);
                 }
             }
             
             if arrayHRM != nil  || array24HRM != nil{
+                
+                if arrayHRM != nil {
+                    for hrmModel in arrayHRM! {
+                        let model = hrmModel as! UTEModelHRMData
+                        print("hrmModel>> heartTime=\(String(describing: model.heartTime)),heartCount=\(String(describing: model.heartCount)),type=\(model.heartType)")
+                    }
+                }
+                
+                if array24HRM != nil {
+                    for hrm24Model in array24HRM! {
+                        print("hrm24Model=\(String(describing: hrm24Model))")
+                        //                        let model = hrmModel as! UTEModelHRMData
+                        //                        print("hrmModel>> heartTime=\(String(describing: model.heartTime)),heartCount=\(String(describing: model.heartCount)),type=\(model.heartType)")
+                    }
+                }
+                
+                
                 if self.manageStateCallback != nil {
                     self.manageStateCallback!(GlobalConstants.SYNC_24_HOUR_RATE_FINISH, []);
                 }
             }
             
             if arrayBlood != nil {
+                
+                for bloodModel in arrayBlood! {
+                    let model = bloodModel as! UTEModelBloodData
+                    
+                    print("bloodModel>> bloodTime=\(String(describing: model.bloodTime)),Sys=\(String(describing: model.bloodSystolic)),dys=\(String(describing: model.bloodDiastolic)) ,type=\(String(describing:model.bloodType)) ,hrIrr=\(String(describing:model.heartRateIrregular)) ,HCount=\(String(describing:model.heartCount))")
+                    //self.bloodDetectingData(model: model)
+                }
+                
+                
                 if self.manageStateCallback != nil {
                     self.manageStateCallback!(GlobalConstants.SYNC_BP_FINISH, []);
                 }
             }
             
             if arrayTemperature != nil {
+                for tempModel in arrayTemperature! {
+                    print("tempModel=\(String(describing: tempModel))")
+                }
+                //UTEModelBodyTemperature
                 if self.manageStateCallback != nil {
                     self.manageStateCallback!(GlobalConstants.SYNC_TEMPERATURE_FINISH, []);
                 }

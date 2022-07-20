@@ -822,7 +822,6 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                 print("isHasBodyTemperatureFunction2>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperatureFunction2)")
                 
                 self.smartBandMgr.syncBodyTemperature(self.syncDateTime)
-                
                 //self.smartBandMgr.syncUTESportModelCustomTime("2020-08-08-08-08")
                // self.smartBandMgr.setUTEOption(UTEOption.syncTime)
             }
