@@ -143,6 +143,12 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 }
             }
             
+            if arrayTemperature != nil {
+                if self.manageStateCallback != nil {
+                    self.manageStateCallback!(GlobalConstants.SYNC_TEMPERATURE_FINISH, []);
+                }
+            }
+            
             
             break
         case .syncError:
