@@ -95,6 +95,7 @@ class SmartWatchConstants {
   static const String GET_SYNC_BP = "syncBP";
   static const String GET_SYNC_OXYGEN = "syncOxygen";
   static const String GET_SYNC_TEMPERATURE = "syncTemperature";
+  static const String GET_SYNC_SPORT_INFO = "syncAllSportInfo";
 
   // test starts
   static const String START_TEST_TEMP = "startTestTemp";

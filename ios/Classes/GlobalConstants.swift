@@ -72,6 +72,7 @@ struct GlobalConstants {
     static let GET_SYNC_BP = "syncBP"
     static let GET_SYNC_OXYGEN = "syncOxygen"
     static let GET_SYNC_TEMPERATURE = "syncTemperature"
+    static let GET_SYNC_SPORT_INFO = "syncAllSportInfo"
     
     static let START_TEST_TEMP = "startTestTemp"
     static let START_BP_TEST = "startBPTest"

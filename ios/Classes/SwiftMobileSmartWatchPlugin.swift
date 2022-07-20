@@ -15,6 +15,8 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     //var uteManagerDelegate = UTEManagerDelegate
     //weak var connectVc : SmartBandConnectedControl?
     
+    private var syncDateTime : String = "2022-01-01-01-01"
+    
     override init() {
         //self.callbackId = NSMutableDictionary()
         super.init()
@@ -117,6 +119,8 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             self.syncOxygenSaturation(result: result)
         case GlobalConstants.GET_SYNC_TEMPERATURE:
             self.syncBodyTemperature(result: result)
+        case GlobalConstants.GET_SYNC_SPORT_INFO:
+            self.syncAllSportsInfo(result: result)
             
             //fetchoveralldata
         case GlobalConstants.FETCH_OVERALL_DEVICE_DATA:
@@ -801,14 +805,38 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     func syncBodyTemperature(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM24)
-//            }else{
-//                self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
-//            }
             DispatchQueue.global().async {
-                self.smartBandMgr.setUTEOption(UTEOption.syncAllRespirationData)
+//                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemp{
+//                    print("isHasBodyTemp>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemp)")
+//                }
+//                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperature{
+//
+//                }
+//
+//                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperatureFunction2{
+//
+//                }
+                
+                print("isHasBodyTemp>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemp)")
+                print("isHasBodyTemperature>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperature)")
+                print("isHasBodyTemperatureFunction2>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperatureFunction2)")
+                
+                self.smartBandMgr.syncBodyTemperature(self.syncDateTime)
+                
+                //self.smartBandMgr.syncUTESportModelCustomTime("2020-08-08-08-08")
                // self.smartBandMgr.setUTEOption(UTEOption.syncTime)
+            }
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
+        
+    }
+    
+    func syncAllSportsInfo(result: FlutterResult) {
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            DispatchQueue.global().async {
+                self.smartBandMgr.syncUTESportModelCustomTime(self.syncDateTime)
             }
             result(GlobalConstants.SC_INIT)
         }else{

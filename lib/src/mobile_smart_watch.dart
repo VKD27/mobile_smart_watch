@@ -397,6 +397,12 @@ class MobileSmartWatch {
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_OXYGEN);
   }
 
+  Future<String> syncAllSportInfo() async{
+    //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
+    return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_SPORT_INFO);
+  }
+
+
   Future<String> syncTemperature() async{
     //returns result status == SC_INIT or SC_FAILURE or SC_DISCONNECTED (if the device gor disconnected)
     return await _methodChannel.invokeMethod(SmartWatchConstants.GET_SYNC_TEMPERATURE);
