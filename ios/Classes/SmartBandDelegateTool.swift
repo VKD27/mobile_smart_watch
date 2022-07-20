@@ -137,6 +137,12 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 }
             }
             
+            if arrayBlood != nil {
+                if self.manageStateCallback != nil {
+                    self.manageStateCallback!(GlobalConstants.SYNC_BP_FINISH, []);
+                }
+            }
+            
             
             break
         case .syncError:
