@@ -4,29 +4,29 @@ class SmartTempModel {
   final String calender;
   final String time;
   final String dateTime;
-  final String type;
+//  final String type;
   final String inCelsius;
   final String inFahrenheit;
-  final String startDate;  //yyyyMMddHHmmss
+  //final String startDate;  //yyyyMMddHHmmss
 
   const SmartTempModel({
     required this.calender,
     required this.time,
     required this.dateTime,
-    required this.type,
+  //  required this.type,
     required this.inCelsius,
     required this.inFahrenheit,
-    required this.startDate,
+   // required this.startDate,
   });
 
   factory SmartTempModel.fromJson(Map<String, dynamic> data) => SmartTempModel(
     calender: data['calender'].toString(),
     time: data['time'].toString(),
     dateTime: data['dateTime'].toString(),
-    type: data['type'].toString(),
+   // type: data['type'].toString(),
     inCelsius: data['inCelsius'].toString(),
     inFahrenheit: data['inFahrenheit'].toString(),
-    startDate: data['startDate'].toString(),
+   // startDate: data['startDate'].toString(),
   );
 
   Map<String, dynamic> toJson() {
@@ -34,10 +34,10 @@ class SmartTempModel {
     formData['calender'] = calender;
     formData['time'] = time;
     formData['dateTime'] = dateTime;
-    formData['type'] = type;
+   // formData['type'] = type;
     formData['inCelsius'] = inCelsius;
     formData['inFahrenheit'] = inFahrenheit;
-    formData['startDate'] = startDate;
+    //formData['startDate'] = startDate;
     return formData;
   }
 

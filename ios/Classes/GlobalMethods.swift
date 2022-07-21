@@ -63,7 +63,7 @@ struct GlobalMethods {
         
         let calenderTime : String = "\(timeList[0])\(timeList[1])\(timeList[2])"
         
-        let time : String = "\(timeList[timeList.count - 2])\(timeList[timeList.count - 1])"
+        let time : String = "\(timeList[timeList.count - 2]):\(timeList[timeList.count - 1])"
         
         print("timeList>> \(timeList)")
         print("dateTime>> \(dateTime)")

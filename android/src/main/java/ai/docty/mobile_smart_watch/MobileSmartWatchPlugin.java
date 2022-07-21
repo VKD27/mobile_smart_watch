@@ -750,13 +750,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     if (temperatureInfo != null) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("calender", temperatureInfo.getCalendar());
-                        jsonObject.put("type", "" + temperatureInfo.getType());
+                        //jsonObject.put("type", "" + temperatureInfo.getType());
                         jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToCelsiusWithDecimal(temperatureInfo.getBodyTemperature()));
                         jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
-                        jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                        //jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                         jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
 
-                        jsonObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
+                        //jsonObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
                         
                         Log.e("onTestResult", "object: " + jsonObject.toString());
                         //pushEventCallBack(WatchConstants.TEMP_RESULT, jsonObject, WatchConstants.SC_SUCCESS);
@@ -2376,13 +2376,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     for (TemperatureInfo temperatureInfo : temperatureInfoList) {
                         JSONObject tempObj = new JSONObject();
                         tempObj.put("calender", temperatureInfo.getCalendar());
-                        tempObj.put("type", "" + temperatureInfo.getType());
+                        //tempObj.put("type", "" + temperatureInfo.getType());
                         tempObj.put("inCelsius", "" + GlobalMethods.convertDoubleToCelsiusWithDecimal(temperatureInfo.getBodyTemperature()));
                         tempObj.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
-                        tempObj.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                        //tempObj.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                         tempObj.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
 
-                        tempObj.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
+                       // tempObj.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
                         Log.e("jsonObject", "object: " + tempObj.toString());
                         temperatureArray.put(tempObj);
                     }
@@ -2631,14 +2631,14 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     JSONObject object = new JSONObject();
                     object.put("calender", temperatureInfo.getCalendar());
 
-                    object.put("type", "" + temperatureInfo.getType());
+                   // object.put("type", "" + temperatureInfo.getType());
                     object.put("inCelsius", "" + GlobalMethods.convertDoubleToCelsiusWithDecimal(temperatureInfo.getBodyTemperature()));
                     object.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
 //                    object.put("ambientTemp", "" + temperatureInfo.getAmbientTemperature());
 //                    object.put("surfaceTemp", "" + temperatureInfo.getBodySurfaceTemperature());
                     object.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                     object.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
-                    object.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
+                    //object.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
                    
                     Log.e("jsonObject", "object: " + object.toString());
                     jsonArray.put(object);
@@ -2841,13 +2841,13 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     for (TemperatureInfo temperatureInfo : temperatureInfoList) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("calender", temperatureInfo.getCalendar());
-                        jsonObject.put("type", "" + temperatureInfo.getType());
+                        //jsonObject.put("type", "" + temperatureInfo.getType());
                         jsonObject.put("inCelsius", "" + GlobalMethods.convertDoubleToCelsiusWithDecimal(temperatureInfo.getBodyTemperature()));
                         jsonObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
-                        jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                        //jsonObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                         jsonObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
 
-                        jsonObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
+                        //jsonObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
                         
                         jsonArray.put(jsonObject);
                     }
@@ -3023,13 +3023,12 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     for (TemperatureInfo temperatureInfo : temperatureInfoList) {
                         JSONObject temperatureObject = new JSONObject();
                         temperatureObject.put("calender", temperatureInfo.getCalendar());
-                        temperatureObject.put("type", "" + temperatureInfo.getType());
+                       // temperatureObject.put("type", "" + temperatureInfo.getType());
                         temperatureObject.put("inCelsius", "" + GlobalMethods.convertDoubleToCelsiusWithDecimal(temperatureInfo.getBodyTemperature()));
                         temperatureObject.put("inFahrenheit", "" + GlobalMethods.getTempIntoFahrenheit(temperatureInfo.getBodyTemperature()));
-                        temperatureObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
+                        //temperatureObject.put("startDate", "" + temperatureInfo.getStartDate()); //yyyyMMddHHmmss
                         temperatureObject.put("time", "" + GlobalMethods.convertIntToHHMmSs(temperatureInfo.getSecondTime()));
-
-                        temperatureObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
+                        //temperatureObject.put("time1", "" + GlobalMethods.convertTimeToHHMm(temperatureInfo.getStartDate()));
                         temperatureArray.put(temperatureObject);
                     }
                     overAllJson.put("temperature", temperatureArray);
