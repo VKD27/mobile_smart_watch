@@ -59,17 +59,22 @@ struct GlobalMethods {
         // Output: yyyMMddHHmmss
         let timeList = inputDateTime.components(separatedBy: "-")
         
-        let dateTime = timeList.joined(separator: "") // returns in yyyMMddHHmmss
+        let dateTime = timeList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
         
-        let calenderTime : String = "\(timeList[0])\(timeList[1])\(timeList[2])"
-        
-        let time : String = "\(timeList[timeList.count - 2]):\(timeList[timeList.count - 1])"
+        let calender : String = "\(timeList[0])\(timeList[1])\(timeList[2])"
+        let time : String
+        if(timeList.count > 5){
+            time = "\(timeList[timeList.count - 3]):\(timeList[timeList.count - 2])"
+        }else{
+            time = "\(timeList[timeList.count - 2]):\(timeList[timeList.count - 1])"
+        }
+        //let time : String = "\(timeList[timeList.count - 2]):\(timeList[timeList.count - 1])"
         
         print("timeList>> \(timeList)")
         print("dateTime>> \(dateTime)")
-        print("calenderTime>> \(calenderTime)")
+        print("calender>> \(calender)")
         print("time>> \(time)")
         
-        return [calenderTime, dateTime,time];
+        return [calender, dateTime, time];
     }
 }
