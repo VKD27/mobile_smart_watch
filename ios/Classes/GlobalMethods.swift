@@ -59,7 +59,7 @@ struct GlobalMethods {
         // Output: yyyMMddHHmmss
         let timeList = inputDateTime.components(separatedBy: "-")
         
-        let dateTime = timeList.joined(separator: "")+"00" // returns in yyyMMddHHmmss
+        let dateTime = timeList.joined(separator: "") // returns in yyyMMddHHmmss
         
         let calenderTime : String = "\(timeList[0])\(timeList[1])\(timeList[2])"
         
