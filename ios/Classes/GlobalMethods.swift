@@ -10,13 +10,13 @@ import Foundation
 struct GlobalMethods {
     
     public static func getTempIntoFahrenheit(tempInCelsius: String) -> String{
-        let tempCelsius = Double(tempInCelsius)!
+        let tempCelsius = Double(tempInCelsius) ?? 0.0
         let infoValue: Double = (tempCelsius * 1.8000)+32.00;
         return String(format: "%.1f", infoValue);
     }
     
     public static func convertDoubleToStringWithDecimal(infoValue: String) -> String{
-        let info = Double(infoValue)!
+        let info = Double(infoValue) ?? 0.0
         let stringValue = String(format: "%.2f", info)
         return stringValue
     }
@@ -29,12 +29,19 @@ struct GlobalMethods {
   
     public static func convertBandReadableCalender(dateTime:String) -> String{
         //2022-07-20-13-00-00 input datetime
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd"
+        //var formatter: NSDateFormatter = NSDateFormatter()
+        //formatter.dateFormat="yyyy-MM-dd 00:00:00 Z"
+        let timeList = dateTime.components(separatedBy: "-")
+        let timestamp : String = "\(timeList[0])\(timeList[1])\(timeList[2])"
+        
+       // let dateFormatter = DateFormatter()
+       // dateFormatter.dateFormat = "yyyyMMdd"
+        
         //String calenderDate = DateFormat('yyyyMMdd').format(dateTime);
         //return calenderDate;
-        let date = dateFormatter.date(from: dateTime)
-        let timestamp = dateFormatter.string(from: date!)
+        
+        //let date = dateFormatter.date(from: dateTime)
+        //let timestamp = dateFormatter.string(from: date!)
         print("timestamp>> \(timestamp)")
         return timestamp;
     }
