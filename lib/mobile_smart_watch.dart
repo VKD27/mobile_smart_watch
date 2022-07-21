@@ -19,6 +19,7 @@ part 'src/models/smart_bp_model.dart';
 part 'src/models/smart_temperature_model.dart';
 part 'src/models/smart_oxygen_model.dart';
 part 'src/models/smart_steps_model.dart';
+part 'src/models/smart_steps_data_model.dart';
 
 
 /*import 'dart:async';
