@@ -45,4 +45,31 @@ struct GlobalMethods {
         print("timestamp>> \(timestamp)")
         return timestamp;
     }
+    
+    public static func convertDateTimeToyyyyMMddHHmmss(inputDateTime:String) -> String {
+        // Input: 2022-07-20-13-00-00 input datetime
+        // Output: yyyMMddHHmmss
+        let timeList = inputDateTime.components(separatedBy: "-")
+        let dateTime = timeList.joined(separator: "")+"00"
+        return dateTime
+    }
+    
+    public static func convertDateTimeCalenderReturn(inputDateTime:String) -> [String]{
+        // Input: 2022-07-20-13-00-00 input datetime
+        // Output: yyyMMddHHmmss
+        let timeList = inputDateTime.components(separatedBy: "-")
+        
+        let dateTime = timeList.joined(separator: "")+"00" // returns in yyyMMddHHmmss
+        
+        let calenderTime : String = "\(timeList[0])\(timeList[1])\(timeList[2])"
+        
+        let time : String = "\(timeList[timeList.count - 2])\(timeList[timeList.count - 1])"
+        
+        print("timeList>> \(timeList)")
+        print("dateTime>> \(dateTime)")
+        print("calenderTime>> \(calenderTime)")
+        print("time>> \(time)")
+        
+        return [calenderTime, dateTime,time];
+    }
 }

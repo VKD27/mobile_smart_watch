@@ -141,6 +141,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                         let jsonObject = ["time": walkModel.time!, "steps": walkModel.stepsTotal, "calories": (walkModel.walkCalories + walkModel.runCalories), "distance": (walkModel.walkDistances + walkModel.runDistances)] as [String : Any]
                         
                         if walkModel.time.contains("2022-07-20") {
+                            print("jsonObject>> \(jsonObject)")
                             print("walkCalories = \(String(describing: walkModel.walkCalories)), runCalories= \(walkModel.runCalories), walkDistances= \(walkModel.walkDistances),runDistances= \(walkModel.runDistances), walkTimeStart=\(String(describing: walkModel.walkTimeStart)),walkTimeEnd =\(String(describing:walkModel.walkTimeEnd)) runTimeStart=\(String(describing: walkModel.runTimeStart)),runTimeEnd =\(String(describing:walkModel.runTimeEnd)) ,walkDuration =\(walkModel.walkDuration),runDuration =\(walkModel.runDuration)")
                         }
                         sportData.append(jsonObject)
@@ -212,6 +213,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                     let model = bloodModel as! UTEModelBloodData
                     let time = model.bloodTime!
                     let calender = GlobalMethods.convertBandReadableCalender(dateTime: time)
+                    
                     let bloodObject = ["dateTime": time, "calender": calender, "high": model.bloodSystolic!, "low":  model.bloodDiastolic!, "type": model.bloodType.rawValue] as [String : Any]
                     
 //                    print("bloodModel>> bloodTime=\(String(describing: model.bloodTime)),Sys=\(String(describing: model.bloodSystolic)),dys=\(String(describing: model.bloodDiastolic)) ,type=\(String(describing:model.bloodType)) ,hrIrr=\(String(describing:model.heartRateIrregular)) ,HCount=\(String(describing:model.heartCount))")
@@ -232,8 +234,11 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                     let tempInCelsius : String = model.bodyTemperature
                     let inFahrenheit = GlobalMethods.getTempIntoFahrenheit(tempInCelsius:tempInCelsius)
                     let time = model.time!
-                    let calender = GlobalMethods.convertBandReadableCalender(dateTime: time)
-                    let tempObject = ["dateTime": time, "inCelsius": tempInCelsius, "inFahrenheit": inFahrenheit, "calender": calender, "type": ""] as [String : Any]
+                    
+                    let calenderList = GlobalMethods.convertDateTimeCalenderReturn(inputDateTime: time)
+                    
+                    //let calender = GlobalMethods.convertBandReadableCalender(dateTime: time)
+                    let tempObject = ["calender": calenderList[0], "dateTime": calenderList[1], "time": calenderList[2],"inCelsius": tempInCelsius, "inFahrenheit": inFahrenheit, "type": ""] as [String : Any]
                     temperatureData.append(tempObject)
 //                    print("tempModel>> time=\(String(describing: model.time)),temp=\(String(describing: model.bodyTemperature)),shellT=\(String(describing: model.shellTemperature)),ambientT=\(String(describing: model.ambientTemperature))")
                 }
