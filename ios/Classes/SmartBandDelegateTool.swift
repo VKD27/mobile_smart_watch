@@ -460,6 +460,30 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 self.manageStateCallback!(GlobalConstants.UPDATE_DEVICE_PARAMS, []);
             }
             break
+        case 68:
+            // Ble Device Version
+            if self.manageStateCallback != nil {
+                let version = self.smartBandMgr.connectedDevicesModel!.version
+                let jsonSendData: [String: Any] = [
+                    "status" : true,
+                    "deviceVersion": version
+                ]
+                self.manageStateCallback!(GlobalConstants.DEVICE_VERSION, jsonSendData);
+            }
+            break
+            
+        case 74:
+            // Device Battery Staus
+            if self.manageStateCallback != nil {
+                let battery = self.smartBandMgr.connectedDevicesModel!.battery
+                let jsonSendData: [String: Any] = [
+                    "status" : true,
+                    "batteryStatus": battery
+                ]
+                self.manageStateCallback!(GlobalConstants.BATTERY_STATUS, jsonSendData);
+            }
+            break
+            
         case 96:
             // open 24-hour heart rate test
             var status = false
