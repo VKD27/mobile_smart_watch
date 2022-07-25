@@ -150,7 +150,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                         sportData.append(jsonObject)
                     }
                     print("stepsSportsData:: \(sportData)")
-                }                
+                }
                 if self.manageStateCallback != nil {
                     self.manageStateCallback!(GlobalConstants.SYNC_STEPS_FINISH, sportData);
                 }

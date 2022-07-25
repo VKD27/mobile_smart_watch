@@ -106,6 +106,9 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         case GlobalConstants.GET_DEVICE_VERSION:
             self.getDeviceVersion(result: result)
             
+        case GlobalConstants.GET_DEVICE_BATTERY_STATUS:
+            self.getDeviceBatteryStatus(result: result)
+            
             //sync calls
         case GlobalConstants.GET_SYNC_STEPS:
             self.syncAllStepsData(result: result)
@@ -121,6 +124,9 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             self.syncBodyTemperature(result: result)
         case GlobalConstants.GET_SYNC_SPORT_INFO:
             self.syncAllSportsInfo(result: result)
+            
+        case GlobalConstants.FETCH_STEPS_BY_DATE:
+            self.fetchStepsBySelectedDate(call: call, result: result)
             
             //fetchoveralldata
         case GlobalConstants.FETCH_OVERALL_DEVICE_DATA:
@@ -439,19 +445,30 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     
     func getDeviceVersion(result: FlutterResult) {
-        // self.smartBandMgr.readUTEDeviceVersion()
+        self.smartBandMgr.readUTEDeviceVersion()
+        
     }
+    
+    func getDeviceBatteryStatus(result: FlutterResult) {
+        
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            self.smartBandMgr.setUTEOption(UTEOption.readDevicesBattery)
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
+    }   
     
     
     func set24HeartRate(call: FlutterMethodCall, result: FlutterResult) {
         if let args = call.arguments as? Dictionary<String, Any>{
             let enableStr = args["enable"] as? String
             DispatchQueue.global().async {
-            if enableStr?.lowercased() == "true" {
-                self.smartBandMgr.setUTEOption(UTEOption.open24HourHRM)
-            }else {
-                self.smartBandMgr.setUTEOption(UTEOption.close24HourHRM)
-            }
+                if enableStr?.lowercased() == "true" {
+                    self.smartBandMgr.setUTEOption(UTEOption.open24HourHRM)
+                }else {
+                    self.smartBandMgr.setUTEOption(UTEOption.close24HourHRM)
+                }
             }
             //self.smartBandMgr.connectedDevicesModel?.isHas24HourHRM
             print("24_hrm_status \(String(describing: self.smartBandMgr.connectedDevicesModel?.isHas24HourHRM))")
@@ -465,11 +482,11 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         if let args = call.arguments as? Dictionary<String, Any>{
             let enableStr = args["enable"] as? String
             DispatchQueue.global().async {
-            if enableStr?.lowercased() == "true" {
-                self.smartBandMgr.setBloodOxygenAutoTest(true, time: UTECommonTestTime.time1Hour)
-            }else {
-                self.smartBandMgr.setBloodOxygenAutoTest(false, time: UTECommonTestTime.time1Hour)
-            }
+                if enableStr?.lowercased() == "true" {
+                    self.smartBandMgr.setBloodOxygenAutoTest(true, time: UTECommonTestTime.time1Hour)
+                }else {
+                    self.smartBandMgr.setBloodOxygenAutoTest(false, time: UTECommonTestTime.time1Hour)
+                }
             }
             result(GlobalConstants.SC_INIT)
         }else{
@@ -481,11 +498,11 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         if let args = call.arguments as? Dictionary<String, Any>{
             let enableStr = args["enable"] as? String
             DispatchQueue.global().async {
-            if enableStr?.lowercased() == "true" {
-                self.smartBandMgr.setBodyTemperatureAutoTest(true, time: UTECommonTestTime.time1Hour)
-            }else {
-                self.smartBandMgr.setBodyTemperatureAutoTest(false, time: UTECommonTestTime.time1Hour)
-            }
+                if enableStr?.lowercased() == "true" {
+                    self.smartBandMgr.setBodyTemperatureAutoTest(true, time: UTECommonTestTime.time1Hour)
+                }else {
+                    self.smartBandMgr.setBodyTemperatureAutoTest(false, time: UTECommonTestTime.time1Hour)
+                }
             }
             result(GlobalConstants.SC_INIT)
         }else{
@@ -692,7 +709,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                     //self.smartBandMgr.readDeviceLanguage { (language) in
                     //  print("read_lang>> rawValue: \(language.rawValue) hashValue: \(language.hashValue) value: \(language)")
                     // }
-                   // result(GlobalConstants.SC_INIT)
+                    // result(GlobalConstants.SC_INIT)
                     returnResult = GlobalConstants.SC_INIT
                 }else{
                     //result(GlobalConstants.SC_FAILURE)
@@ -709,6 +726,15 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         //        self.smartBandMgr.readDeviceLanguage { (language) in
         //
         //        }
+    }
+    
+    func fetchStepsBySelectedDate(call: FlutterMethodCall, result: FlutterResult) {
+        if let args = call.arguments as? Dictionary<String, Any>{
+            //let dateTime = args["dateTime"] as? String
+            //self.smartBandMgr.
+            
+            // String dateTime = call.argument("dateTime");
+        }
     }
     
     //sync related
@@ -738,11 +764,11 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     func syncAllSleepData(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.sleep)
-//            }else{
-//                self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
-//            }
+            //            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+            //                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.sleep)
+            //            }else{
+            //                self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
+            //            }
             DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllSleepData)
             }
@@ -755,11 +781,11 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     func syncRateData(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM)
-//            }else{
-//                self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
-//            }
+            //            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+            //                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.HRM)
+            //            }else{
+            //                self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
+            //            }
             DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllHRMData)
             }
@@ -771,11 +797,11 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     }
     func syncBloodPressure(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.blood)
-//            }else{
-//                self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
-//            }
+            //            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+            //                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.blood)
+            //            }else{
+            //                self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
+            //            }
             DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodData)
             }
@@ -788,11 +814,11 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     
     func syncOxygenSaturation(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
-//            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
-//                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.bloodOxygen)
-//            }else{
-//                self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
-//            }
+            //            if self.smartBandMgr.connectedDevicesModel!.isHasDataStatus {
+            //                self.smartBandMgr.syncDataCustomTime("2022-01-01-01-01", type: UTEDeviceDataType.bloodOxygen)
+            //            }else{
+            //                self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
+            //            }
             DispatchQueue.global().async {
                 self.smartBandMgr.setUTEOption(UTEOption.syncAllBloodOxygenData)
             }
@@ -806,16 +832,16 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
     func syncBodyTemperature(result: FlutterResult) {
         if self.smartBandMgr.connectedDevicesModel!.isConnected {
             DispatchQueue.global().async {
-//                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemp{
-//                    print("isHasBodyTemp>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemp)")
-//                }
-//                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperature{
-//
-//                }
-//
-//                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperatureFunction2{
-//
-//                }
+                //                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemp{
+                //                    print("isHasBodyTemp>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemp)")
+                //                }
+                //                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperature{
+                //
+                //                }
+                //
+                //                if self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperatureFunction2{
+                //
+                //                }
                 
                 print("isHasBodyTemp>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemp)")
                 print("isHasBodyTemperature>> value: \(self.smartBandMgr.connectedDevicesModel!.isHasBodyTemperature)")
@@ -823,7 +849,7 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
                 
                 self.smartBandMgr.syncBodyTemperature(self.syncDateTime)
                 //self.smartBandMgr.syncUTESportModelCustomTime("2020-08-08-08-08")
-               // self.smartBandMgr.setUTEOption(UTEOption.syncTime)
+                // self.smartBandMgr.setUTEOption(UTEOption.syncTime)
             }
             result(GlobalConstants.SC_INIT)
         }else{
