@@ -2357,11 +2357,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                         object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
                         object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
                         object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
-                        object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                       // object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 
                         object.put("startTimeNum", "" + sleepInfo.getStartTime());
                         object.put("endTimeNum", "" + sleepInfo.getEndTime());
-                        object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
+                       // object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
                         sleepArray.put(object);
                     }
                     sleepJsonData.put("data", sleepArray);
@@ -2486,11 +2486,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                     object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
                     object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
                     object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
-                    object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                   // object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 
                     object.put("startTimeNum", "" + sleepInfo.getStartTime());
                     object.put("endTimeNum", "" + sleepInfo.getEndTime());
-                    object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
+                    //object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
 //                    Log.e("sleepInfoList", "getColorIndex: " + sleepInfo.getColorIndex());
 //                    Log.e("sleepInfoList", "getDiffTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 //                    Log.e("sleepInfoList", "getStartTime: " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()) + " -- " + GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
@@ -2774,11 +2774,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             object.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
                             object.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
                             object.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
-                            object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                           // object.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 
                             object.put("startTimeNum", "" + sleepInfo.getStartTime());
                             object.put("endTimeNum", "" + sleepInfo.getEndTime());
-                            object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
+                           // object.put("diffTimeNum", "" + sleepInfo.getDiffTime());
                             sleepDataArray.put(object);
                         }
 
@@ -2972,11 +2972,11 @@ public class MobileSmartWatchPlugin implements FlutterPlugin, MethodCallHandler,
                             obj.put("state", sleepInfo.getColorIndex()); // deep sleep: 0, Light sleep: 1,  awake: 2
                             obj.put("startTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getStartTime()));
                             obj.put("endTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getEndTime()));
-                            obj.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
+                           // obj.put("diffTime", GlobalMethods.getTimeByIntegerMin(sleepInfo.getDiffTime()));
 
                             obj.put("startTimeNum", "" + sleepInfo.getStartTime());
                             obj.put("endTimeNum", "" + sleepInfo.getEndTime());
-                            obj.put("diffTimeNum", "" + sleepInfo.getDiffTime());
+                           // obj.put("diffTimeNum", "" + sleepInfo.getDiffTime());
                             sleepDataArray.put(obj);
                         }
                         sleepObject.put("data", sleepDataArray);

@@ -1,44 +1,48 @@
 part of mobile_smart_watch;
 
 class SmartSleepModel {
+  final String calender;
   final String state;
   final String startTime;
   final String endTime;
-  final String diffTime;
+ // final String diffTime;
 
   final String startTimeNum;
   final String endTimeNum;
-  final String diffTimeNum;
+  //final String diffTimeNum;
 
   const SmartSleepModel({
+    required this.calender,
     required this.state,
     required this.startTime,
     required this.endTime,
-    required this.diffTime,
+   // required this.diffTime,
     required this.startTimeNum,
     required this.endTimeNum,
-    required this.diffTimeNum
+   // required this.diffTimeNum
   });
 
   factory SmartSleepModel.fromJson(Map<String, dynamic> data) => SmartSleepModel(
+    calender: data['calender'].toString(),
     state: data['state'].toString(),
     startTime: data['startTime'].toString(),
     endTime: data['endTime'].toString(),
-    diffTime: data['diffTime'].toString(),
+   // diffTime: data['diffTime'].toString(),
     startTimeNum: data['startTimeNum'].toString(),
     endTimeNum: data['endTimeNum'].toString(),
-    diffTimeNum: data['diffTimeNum'].toString(),
+   // diffTimeNum: data['diffTimeNum'].toString(),
   );
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> formData = new Map<String, dynamic>();
-    formData['state'] = this.state;
-    formData['startTime'] = this.startTime;
-    formData['endTime'] = this.endTime;
-    formData['diffTime'] = this.diffTime;
-    formData['startTimeNum'] = this.startTimeNum;
-    formData['endTimeNum'] = this.endTimeNum;
-    formData['diffTimeNum'] = this.diffTimeNum;
+    final Map<String, dynamic> formData = <String, dynamic>{};
+    formData['calender'] = calender;
+    formData['state'] = state;
+    formData['startTime'] = startTime;
+    formData['endTime'] = endTime;
+    //formData['diffTime'] = diffTime;
+    formData['startTimeNum'] = startTimeNum;
+    formData['endTimeNum'] = endTimeNum;
+   // formData['diffTimeNum'] = diffTimeNum;
     return formData;
   }
 

@@ -109,15 +109,24 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             let arrayHRM : NSArray? = deviceInfo[kUTEQueryHRMData] as? NSArray
             let array24HRM : NSArray? = deviceInfo[kUTEQuery24HRMData] as? NSArray
             
-            let arrayBlood : NSArray? = deviceInfo[kUTEQueryBloodData] as? NSArray
+            let arrayBloodPressure : NSArray? = deviceInfo[kUTEQueryBloodData] as? NSArray
             let arrayTemperature : NSArray? = info[kUTEQueryBodyTemperature] as? NSArray
             
+            let arrayBloodOxygen : NSArray? = info[kUTEQueryBloodOxygenData] as? NSArray
+            
+            
             print("arrayRun=\(String(describing: arrayRun))")
-            print("arraySleep=\(String(describing: arraySleep))")
             print("arrayTemperature=\(String(describing: arrayTemperature))")
+            
+            print("arraySleep=\(String(describing: arraySleep))")
             print("arraySleepDayByDay=\(String(describing: arraySleepDayByDay))")
+            
             print("arrayHRM=\(String(describing: arrayHRM))")
-            print("arrayBlood=\(String(describing: arrayBlood))")
+            
+            print("arrayBloodPressure=\(String(describing: arrayBloodPressure))")
+            
+            print("arrayBloodOxygen=\(String(describing: arrayBloodOxygen))")
+            
             print("arraySport=\(String(describing: arraySport))")
             
             if arrayRun != nil  || arraySport != nil{
@@ -158,10 +167,23 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
             
             if arraySleep != nil  || arraySleepDayByDay != nil{
                 
+                var sleepAnalysisData : [Any] = [];
+                
                 if arraySleep != nil {
                     for sleepModel in arraySleep! {
                         let model = sleepModel as! UTEModelSleepData
-                        print("sleepModel=\(String(describing: model.startTime)),end=\(String(describing: model.endTime)),type=\(model.sleepType)")
+                        
+                        print("sleepModel=\(String(describing: model.startTime)),end=\(String(describing: model.endTime)),type=\(model.sleepType.rawValue)")
+                        
+                        let listData = GlobalMethods.getDateTimeInNumber(startTime: model.startTime, endTime: model.endTime)
+                        
+                        let state = GlobalMethods.getCommonSleepState(inputState: model.sleepType.rawValue)
+                        
+                        print("listData=\(listData),")
+                        
+                        let jsonObject = ["calender": listData[0], "startTime": listData[1], "endTime": listData[2], "startTimeNum": listData[3], "endTimeNum": listData[4], "state": state] as [String : Any]
+                        
+                        sleepAnalysisData.append(jsonObject)
                     }
                 }
                 
@@ -178,7 +200,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 }
                 
                 if self.manageStateCallback != nil {
-                    self.manageStateCallback!(GlobalConstants.SYNC_SLEEP_FINISH, []);
+                    self.manageStateCallback!(GlobalConstants.SYNC_SLEEP_FINISH, sleepAnalysisData);
                 }
             }
             
@@ -209,9 +231,9 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                 }
             }
             
-            if arrayBlood != nil {
+            if arrayBloodPressure != nil {
                 var bpData : [Any] = [];
-                for bloodModel in arrayBlood! {
+                for bloodModel in arrayBloodPressure! {
                     let model = bloodModel as! UTEModelBloodData
                     let time = model.bloodTime!
                     //let calender = GlobalMethods.convertBandReadableCalender(dateTime: time)

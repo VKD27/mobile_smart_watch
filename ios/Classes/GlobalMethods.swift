@@ -77,4 +77,70 @@ struct GlobalMethods {
         
         return [calender, dateTime, time];
     }
+    
+    public static func getDateTimeInNumber(startTime:String, endTime:String) -> [String]{
+        // inputTime == 2022-07-26-00-38
+        let startList = startTime.components(separatedBy: "-")
+        let startDateTime = startList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
+        
+        let endList = startTime.components(separatedBy: "-")
+        let endDateTime = endList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
+        
+        let calender : String = "\(startList[0])\(startList[1])\(startList[2])"
+        
+        var startHourNum : Int  = 0
+        var startMinNum : Int  = 0
+        var startTotalSeconds : Int = 0
+       
+        if(startList.count > 5){
+            let hour = Int(startList[startList.count - 3])
+            let min = Int(startList[startList.count - 2])
+            let sec = Int(startList[startList.count - 1])
+            
+            startHourNum = hour! * 60 * 60
+            startMinNum = min! * 60
+            startTotalSeconds = startHourNum + startMinNum + sec!;
+        }else{
+            let hour = Int(startList[startList.count - 2])
+            let min = Int(startList[startList.count - 1])
+            startHourNum = hour! * 60 * 60
+            startMinNum = min! * 60
+            startTotalSeconds = startHourNum + startMinNum;
+        }
+        
+        var endHourNum : Int  = 0
+        var endMinNum : Int  = 0
+        var endTotalSeconds : Int = 0
+       
+        if(endList.count > 5){
+            let hour = Int(endList[endList.count - 3])
+            let min = Int(endList[endList.count - 2])
+            let sec = Int(endList[endList.count - 1])
+            
+            endHourNum = hour! * 60 * 60
+            endMinNum = min! * 60
+            endTotalSeconds = endHourNum + endMinNum + sec!;
+        }else{
+            let hour = Int(endList[endList.count - 2])
+            let min = Int(endList[endList.count - 1])
+            endHourNum = hour! * 60 * 60
+            endMinNum = min! * 60
+            endTotalSeconds = endHourNum + endMinNum;
+        }
+        
+        return [calender, startDateTime, endDateTime, "\(startTotalSeconds)", "\(endTotalSeconds)"];
+    }
+    
+    
+    public static func getCommonSleepState(inputState:Int) -> String {
+        if inputState == 0{
+            return "2"; // Awake
+        }else if inputState == 1{
+            return "0"; // deep sleep
+        }else if inputState == 2{
+            return "1"; // light sleep
+        }else{
+            return "";
+        }
+    }
 }
