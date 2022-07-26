@@ -132,6 +132,14 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
         case GlobalConstants.FETCH_OVERALL_DEVICE_DATA:
             self.fetchOverAllDeviceData(result: result)
             
+        case GlobalConstants.FIND_BAND_DEVICE:
+            self.findBandDevice(result: result)
+            
+        case GlobalConstants.READ_ONLINE_DIAL_CONFIG:
+            self.readOnlineDialConfig(result: result)
+     
+        
+            
         case "ios":
             result("iOS " + UIDevice.current.systemVersion)
             
@@ -458,6 +466,33 @@ public class SwiftMobileSmartWatchPlugin: NSObject, FlutterPlugin, FlutterStream
             result(GlobalConstants.SC_FAILURE)
         }
     }   
+    
+    func findBandDevice(result: FlutterResult) {
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            
+            self.smartBandMgr.setUTEOption(UTEOption.findBand)
+                        
+            //self.smartBandMgr.setUTEOption(UTEOption.findPhoneFunctionOpen)
+            //self.smartBandMgr.setUTEOption(UTEOption.findPhoneFunctionClose)
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
+    }
+    
+    func readOnlineDialConfig(result: FlutterResult) {
+        if self.smartBandMgr.connectedDevicesModel!.isConnected {
+            
+            self.smartBandMgr.setUTEOption(UTEOption.findBand)
+                        
+            //self.smartBandMgr.setUTEOption(UTEOption.findPhoneFunctionOpen)
+            //self.smartBandMgr.setUTEOption(UTEOption.findPhoneFunctionClose)
+            result(GlobalConstants.SC_INIT)
+        }else{
+            result(GlobalConstants.SC_FAILURE)
+        }
+    }
+    
     
     
     func set24HeartRate(call: FlutterMethodCall, result: FlutterResult) {
