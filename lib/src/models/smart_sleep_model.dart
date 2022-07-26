@@ -2,7 +2,7 @@ part of mobile_smart_watch;
 
 class SmartSleepModel {
   final String calender;
-  final String state;
+  final String state; // deep sleep: 0, Light sleep: 1,  awake: 2
   final String startTime;
   final String endTime;
  // final String diffTime;
@@ -24,7 +24,7 @@ class SmartSleepModel {
 
   factory SmartSleepModel.fromJson(Map<String, dynamic> data) => SmartSleepModel(
     calender: data['calender'].toString(),
-    state: data['state'].toString(),
+    state: data['state'].toString(), // deep sleep: 0, Light sleep: 1,  awake: 2
     startTime: data['startTime'].toString(),
     endTime: data['endTime'].toString(),
    // diffTime: data['diffTime'].toString(),

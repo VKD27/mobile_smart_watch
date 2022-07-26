@@ -83,7 +83,7 @@ struct GlobalMethods {
         let startList = startTime.components(separatedBy: "-")
         let startDateTime = startList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
         
-        let endList = startTime.components(separatedBy: "-")
+        let endList = endTime.components(separatedBy: "-")
         let endDateTime = endList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
         
         let calender : String = "\(startList[0])\(startList[1])\(startList[2])"
