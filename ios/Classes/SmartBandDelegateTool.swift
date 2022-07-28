@@ -175,7 +175,7 @@ class SmartBandDelegateTool: NSObject,UTEManagerDelegate {
                         
                         print("sleepModel=\(String(describing: model.startTime)),end=\(String(describing: model.endTime)),type=\(model.sleepType.rawValue)")
                         
-                        let listData = GlobalMethods.getDateTimeInNumber(startTime: model.startTime, endTime: model.endTime)
+                        let listData = GlobalMethods.getDateTimeInNumberMins(startTime: model.startTime, endTime: model.endTime)
                         
                         let state = GlobalMethods.getCommonSleepState(inputState: model.sleepType.rawValue)
                         
