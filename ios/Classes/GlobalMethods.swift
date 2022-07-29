@@ -81,10 +81,13 @@ struct GlobalMethods {
     public static func getDateTimeInNumberMins(startTime:String, endTime:String) -> [String]{
         // inputTime == 2022-07-26-00-38
         let startList = startTime.components(separatedBy: "-")
-        let startDateTime = startList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
+       // var startDateTime = startList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
+        var startDateTime : String = ""
         
         let endList = endTime.components(separatedBy: "-")
-        let endDateTime = endList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
+        //let endDateTime = endList.joined(separator: "") // returns in yyyMMddHHmmss or yyyMMddHHmm
+        var endDateTime : String = ""
+    
         
         let calender : String = "\(startList[0])\(startList[1])\(startList[2])"
         
@@ -103,6 +106,7 @@ struct GlobalMethods {
             //startMinNum = min!
            // startTotalSeconds = startHourNum + min! + sec!;
             startTotalSeconds = startHourNum + min!;
+            startDateTime = "\(startList[startList.count - 3]):\(startList[startList.count - 2])"
         }else{
             let hour = Int(startList[startList.count - 2])
             let min = Int(startList[startList.count - 1])
@@ -110,6 +114,7 @@ struct GlobalMethods {
             //startMinNum = min! * 60
             //startMinNum = min!
             startTotalSeconds = startHourNum + min!;
+            startDateTime = "\(startList[startList.count - 2]):\(startList[startList.count - 1])"
         }
         
         var endHourNum : Int  = 0
@@ -125,12 +130,14 @@ struct GlobalMethods {
             //endMinNum = min!
             //endTotalSeconds = endHourNum +  min!  + sec!;
             endTotalSeconds = endHourNum +  min!;
+            endDateTime = "\(endList[endList.count - 3]):\(endList[endList.count - 2])"
         }else{
             let hour = Int(endList[endList.count - 2])
             let min = Int(endList[endList.count - 1])
             endHourNum = hour! * 60
             //endMinNum = min!
             endTotalSeconds = endHourNum +  min!;
+            endDateTime = "\(endList[endList.count - 2]):\(endList[endList.count - 1])"
         }
         
         return [calender, startDateTime, endDateTime, "\(startTotalSeconds)", "\(endTotalSeconds)"];
